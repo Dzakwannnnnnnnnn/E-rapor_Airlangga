@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+@theme {
+  --color-bg: #F4F7FC;
+  --color-primary: #132B7A;
+  --color-primary-light: #1D4ED8;
+  --color-secondary: #FFD028;
+  --color-text: #0F172A;
+  --color-muted: #64748B;
+  --color-success: #22C55E;
+  --color-danger: #EF4444;
+  --color-warning: #FACC15;
+}
+
+html { scroll-behavior: smooth; }
+* { scrollbar-width: thin; scrollbar-color: var(--color-primary) transparent; }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 90%, white), var(--color-primary));
+    border-radius: 999px; border: 2px solid transparent; background-clip: content-box;
+}
+::selection {
+    background: color-mix(in srgb, var(--color-primary) 25%, transparent); color: var(--color-primary);
+}
