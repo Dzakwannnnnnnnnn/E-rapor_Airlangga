@@ -4,7 +4,28 @@
 
 @section('content')
 
-<header class="fixed top-0 left-0 w-full bg-[#002B80] z-50 shadow-lg border-b border-white/10">
+<header x-data="{
+        mobileMenuOpen: false,
+        activeSection: 'beranda',
+        checkActive() {
+            const sections = ['beranda', 'fitur', 'alur', 'faq'];
+            let current = 'beranda';
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    /* Deteksi jika elemen mendekati area pandang atas (offset 150px) */
+                    if (rect.top <= 150) {
+                        current = id;
+                    }
+                }
+            });
+            this.activeSection = current;
+        }
+    }"
+    @scroll.window="checkActive()"
+    x-init="checkActive()"
+    class="fixed top-0 left-0 w-full bg-[#002B80] z-50 shadow-lg border-b border-white/10">
     <div class="max-w-7xl mx-auto flex justify-between items-center relative h-10 lg:h-10 transition-all">
 
         <div class="bg-white h-full flex items-center pl-4 pr-8 relative"
@@ -21,17 +42,98 @@
         </div>
 
         <div class="pr-4 lg:pr-8 flex items-center gap-5">
-            <nav class="hidden lg:flex gap-6 text-[10px] font-bold text-white/85 tracking-wider uppercase">
-                <a href="#beranda" class="text-[#FFB800] border-b border-[#FFB800] pb-0.5">Beranda</a>
-                <a href="#fitur" class="hover:text-[#FFB800] transition-colors">Fitur</a>
-                <a href="#alur" class="hover:text-[#FFB800] transition-colors">Alur</a>
-                <a href="#faq" class="hover:text-[#FFB800] transition-colors">Bantuan</a>
+
+            <nav class="hidden lg:flex gap-6 text-[10px] font-bold tracking-wider uppercase">
+                <a href="#beranda"
+                   :class="activeSection === 'beranda' ? 'text-[#FFB800] border-b-2 border-[#FFB800]' : 'text-white/85 border-b-2 border-transparent hover:text-[#FFB800]'"
+                   class="pb-0.5 transition-colors">Beranda</a>
+                <a href="#fitur"
+                   :class="activeSection === 'fitur' ? 'text-[#FFB800] border-b-2 border-[#FFB800]' : 'text-white/85 border-b-2 border-transparent hover:text-[#FFB800]'"
+                   class="pb-0.5 transition-colors">Fitur</a>
+                <a href="#alur"
+                   :class="activeSection === 'alur' ? 'text-[#FFB800] border-b-2 border-[#FFB800]' : 'text-white/85 border-b-2 border-transparent hover:text-[#FFB800]'"
+                   class="pb-0.5 transition-colors">Alur</a>
+                <a href="#faq"
+                   :class="activeSection === 'faq' ? 'text-[#FFB800] border-b-2 border-[#FFB800]' : 'text-white/85 border-b-2 border-transparent hover:text-[#FFB800]'"
+                   class="pb-0.5 transition-colors">Bantuan</a>
             </nav>
 
             <a href="/login" class="hidden lg:flex items-center gap-2 bg-[#FFB800] hover:bg-yellow-500 text-slate-950 font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-lg transition-all shadow-md">
                 <i class="fa-solid fa-right-to-bracket"></i>
                 Login
             </a>
+
+            <button @click="mobileMenuOpen = true"
+                    class="block lg:hidden text-white/85 hover:text-[#FFB800] focus:outline-none transition-colors">
+                <i class="fa-solid fa-bars text-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <div x-show="mobileMenuOpen" class="fixed inset-0 z-[100] lg:hidden" style="display: none;">
+
+        <div x-show="mobileMenuOpen"
+             @click="mobileMenuOpen = false"
+             x-transition:enter="transition-opacity ease-linear duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition-opacity ease-linear duration-300"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm"></div>
+
+        <div x-show="mobileMenuOpen"
+             @click.away="mobileMenuOpen = false"
+             x-transition:enter="transition ease-in-out duration-300 transform"
+             x-transition:enter-start="translate-x-full"
+             x-transition:enter-end="translate-x-0"
+             x-transition:leave="transition ease-in-out duration-300 transform"
+             x-transition:leave-start="translate-x-0"
+             x-transition:leave-end="translate-x-full"
+             class="absolute top-0 right-0 h-full w-full max-w-[280px] bg-[#002B80] shadow-2xl border-l border-white/10 flex flex-col">
+
+            <div class="flex items-center justify-between px-6 py-5 border-b border-white/10 shrink-0">
+                <div class="flex items-center gap-3">
+                    <img src="{{ asset('SMKTI Airlangga Samarinda Icon.png') }}" alt="Logo" class="w-6 h-6">
+                    <span class="text-[12px] font-black text-white tracking-tight uppercase">Menu</span>
+                </div>
+                <button @click="mobileMenuOpen = false" class="text-white/70 hover:text-[#FFB800] focus:outline-none transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto px-6 py-8">
+                <nav class="flex flex-col gap-6 text-[11px] font-bold tracking-wider uppercase">
+                    <a href="#beranda" @click="mobileMenuOpen = false"
+                       :class="activeSection === 'beranda' ? 'text-[#FFB800]' : 'text-white/85 hover:text-[#FFB800] transition-colors'"
+                       class="flex items-center gap-4">
+                        <i class="fa-solid fa-house w-4 text-center"></i> Beranda
+                    </a>
+                    <a href="#fitur" @click="mobileMenuOpen = false"
+                       :class="activeSection === 'fitur' ? 'text-[#FFB800]' : 'text-white/85 hover:text-[#FFB800] transition-colors'"
+                       class="flex items-center gap-4">
+                        <i class="fa-solid fa-star w-4 text-center"></i> Fitur
+                    </a>
+                    <a href="#alur" @click="mobileMenuOpen = false"
+                       :class="activeSection === 'alur' ? 'text-[#FFB800]' : 'text-white/85 hover:text-[#FFB800] transition-colors'"
+                       class="flex items-center gap-4">
+                        <i class="fa-solid fa-route w-4 text-center"></i> Alur
+                    </a>
+                    <a href="#faq" @click="mobileMenuOpen = false"
+                       :class="activeSection === 'faq' ? 'text-[#FFB800]' : 'text-white/85 hover:text-[#FFB800] transition-colors'"
+                       class="flex items-center gap-4">
+                        <i class="fa-solid fa-circle-question w-4 text-center"></i> Bantuan
+                    </a>
+                </nav>
+            </div>
+
+            <div class="p-6 border-t border-white/10 shrink-0">
+                <a href="/login" class="flex justify-center items-center gap-2 bg-[#FFB800] hover:bg-yellow-500 text-slate-950 font-black text-[11px] uppercase tracking-widest px-4 py-3.5 rounded-lg transition-all shadow-md w-full">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    Masuk Portal
+                </a>
+            </div>
+
         </div>
     </div>
 </header>
