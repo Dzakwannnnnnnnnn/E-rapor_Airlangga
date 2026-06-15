@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Subject;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +13,25 @@ class SubjectSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Subject::create([
+            'name' => 'Dasar Dasar PPLG',
+            'type' => 'academic',
+        ]);
+
+        Subject::create([
+            'name' => 'Matematika',
+            'type' => 'academic',
+        ]);
+
+        Subject::create([
+            'name' => 'Pendidikan Pancasila Dan Kewarganegaraan (PPKN)',
+            'type' => 'academic',
+        ]);
+
+        Subject::create([
+            'name' => 'Web Design',
+            'type' => 'extracurricular',
+        ]);
     }
 }
+

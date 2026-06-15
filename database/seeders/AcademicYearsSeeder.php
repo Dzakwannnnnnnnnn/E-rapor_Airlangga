@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AcademicYear;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +13,17 @@ class AcademicYearsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        AcademicYear::create([
+            'year' => '2025/2026',
+            'semester' => 'ganjil',
+            'is_active' => true,
+        ]);
+
+        AcademicYear::create([
+            'year' => '2025/2026',
+            'semester' => 'genap',
+            'is_active' => false,
+        ]);
     }
 }
+
