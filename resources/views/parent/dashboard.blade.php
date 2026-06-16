@@ -1,0 +1,179 @@
+@extends('layouts.app')
+
+@section('title', 'Parent Dashboard - e-Rapor')
+
+@section('content')
+@php
+    $parentName = Auth::user()->name;
+    $studentName = str_contains(strtolower($parentName), 'ilham') ? 'Ilham' : 'Herlambang';
+    
+    // Fetch student details from DB dynamically
+    $student = \App\Models\Student::where('name', $studentName)->first();
+    $grades = $student ? $student->grades()->with('subject', 'teacher')->get() : collect();
+    $attendance = $student ? $student->attendances()->first() : null;
+    $reportCard = $student ? $student->reportCards()->first() : null;
+@endphp
+
+<div class="min-h-screen bg-[#F4F6F9] flex flex-col font-sans selection:bg-[#003399]/25 selection:text-[#003399]">
+    <!-- Navbar -->
+    <nav class="bg-[#003399] text-white shadow-md border-b-4 border-[#FFB800]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-white p-1.5 rounded-lg shadow-sm">
+                        <img src="{{ asset('SMKTI Airlangga Samarinda Icon.png') }}" alt="Logo" class="w-6 h-6 object-contain">
+                    </div>
+                    <div>
+                        <h1 class="text-md font-black tracking-tight uppercase leading-none">e-Rapor</h1>
+                        <p class="text-[8px] text-[#FFB800] font-bold uppercase tracking-widest mt-0.5">SMK TI Airlangga</p>
+                    </div>
+                </div>
+
+                <!-- User Profile & Logout -->
+                <div class="flex items-center gap-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-xs font-bold leading-none">{{ $parentName }}</p>
+                        <span class="inline-block mt-1 px-2 py-0.5 bg-[#FFB800] text-slate-900 text-[8px] font-black uppercase tracking-wider rounded">Wali Murid</span>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-right-from-bracket text-[#FFB800]"></i> Keluar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight leading-none uppercase">Laporan Akademik Siswa</h2>
+            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mt-1.5">
+                Wali Murid dari: <span class="text-[#003399]">{{ $studentName }}</span> (Kelas {{ $student->classroom->name ?? 'N/A' }} - {{ $student->classroom->major ?? '' }})
+            </p>
+        </div>
+
+        @if($student)
+            <!-- Student Header & Highlights -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <!-- Rapor Card Summary -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition-all">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Rata-Rata Nilai</p>
+                        <p class="text-3xl font-black text-[#003399] tracking-tight mt-2">{{ $reportCard ? number_format($reportCard->final_score, 2) : 'N/A' }}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-[10px] text-emerald-600 font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-arrow-trend-up"></i> Performa Baik
+                    </div>
+                </div>
+
+                <!-- Rank Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition-all">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Peringkat Kelas</p>
+                        <p class="text-3xl font-black text-[#FFB800] tracking-tight mt-2">#{{ $reportCard->rank ?? 'N/A' }}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                        Dari {{ \App\Models\Student::where('classroom_id', $student->classroom_id)->count() }} Siswa
+                    </div>
+                </div>
+
+                <!-- Attendance Summary -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition-all col-span-1 md:col-span-2">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-3">Kehadiran Semester</p>
+                        <div class="grid grid-cols-4 gap-4 text-center">
+                            <div class="bg-emerald-50 rounded-lg p-2">
+                                <span class="block text-xs font-black text-emerald-700">{{ $attendance->hadir ?? 0 }}</span>
+                                <span class="text-[8px] font-bold uppercase tracking-wider text-emerald-600">Hadir</span>
+                            </div>
+                            <div class="bg-blue-50 rounded-lg p-2">
+                                <span class="block text-xs font-black text-blue-700">{{ $attendance->sakit ?? 0 }}</span>
+                                <span class="text-[8px] font-bold uppercase tracking-wider text-blue-600">Sakit</span>
+                            </div>
+                            <div class="bg-amber-50 rounded-lg p-2">
+                                <span class="block text-xs font-black text-amber-700">{{ $attendance->izin ?? 0 }}</span>
+                                <span class="text-[8px] font-bold uppercase tracking-wider text-amber-600">Izin</span>
+                            </div>
+                            <div class="bg-red-50 rounded-lg p-2">
+                                <span class="block text-xs font-black text-red-700">{{ $attendance->alpha ?? 0 }}</span>
+                                <span class="text-[8px] font-bold uppercase tracking-wider text-red-600">Alpha</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grades Table & Notes -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Grades Details -->
+                <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                        <h3 class="text-xs font-black text-slate-900 uppercase tracking-wider">Detail Nilai Mata Pelajaran</h3>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Smt Ganjil 2025/2026</span>
+                    </div>
+
+                    <div class="flex flex-col gap-4">
+                        @forelse($grades as $grade)
+                            <div class="p-4 rounded-xl border border-slate-100 hover:border-slate-200 transition-all">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div>
+                                        <h4 class="text-sm font-black text-slate-800">{{ $grade->subject->name ?? 'N/A' }}</h4>
+                                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
+                                            Guru: {{ $grade->teacher->name ?? 'N/A' }}
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-lg font-black text-[#003399]">{{ number_format($grade->final_score, 2) }}</span>
+                                        <span class="block text-[8px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Predikat: {{ $grade->final_score >= 85 ? 'A' : ($grade->final_score >= 75 ? 'B' : 'C') }}</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-600 bg-slate-50 rounded-lg p-2.5 mt-2 italic">
+                                    "{{ $grade->description }}"
+                                </p>
+                            </div>
+                        @empty
+                            <p class="text-xs font-bold text-slate-400 py-6 text-center">Belum ada data nilai.</p>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Notes & Download Card -->
+                <div class="lg:col-span-1 flex flex-col gap-6">
+                    <!-- School Message -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <h3 class="text-xs font-black text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-3 mb-4">Catatan Wali Kelas</h3>
+                        <div class="bg-[#003399]/5 border-l-4 border-[#003399] p-4 rounded-r-xl">
+                            <p class="text-xs text-slate-700 italic">
+                                "{{ $reportCard->description ?? 'Belum ada catatan wali kelas.' }}"
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Print Report PDF -->
+                    <div class="bg-[#003399] text-white rounded-2xl border border-[#FFB800]/20 shadow-lg p-6 relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 opacity-10 text-white text-8xl pointer-events-none">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
+                        <h3 class="text-sm font-black tracking-tight uppercase leading-none mb-1">Cetak e-Rapor Resmi</h3>
+                        <p class="text-[9px] text-[#FFB800] font-bold uppercase tracking-widest mb-4">Format PDF Siap Cetak</p>
+                        <button class="w-full bg-white hover:bg-slate-50 text-[#003399] font-black text-xs uppercase tracking-widest py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-download"></i> Unduh Rapor PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @else
+            <div class="bg-white rounded-2xl border border-slate-200 p-8 text-center">
+                <i class="fa-solid fa-triangle-exclamation text-amber-500 text-3xl mb-3"></i>
+                <h3 class="text-md font-black text-slate-800">Siswa Tidak Ditemukan</h3>
+                <p class="text-xs text-slate-500 mt-1">Gagal memuat profil siswa untuk wali murid ini.</p>
+            </div>
+        @endif
+    </main>
+</div>
+@endsection

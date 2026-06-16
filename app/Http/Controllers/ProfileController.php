@@ -22,6 +22,26 @@ class ProfileController extends Controller
     }
 
     /**
+     * Display the edit profile details form.
+     */
+    public function editDetails(Request $request): View
+    {
+        return view('profile.edit-details', [
+            'user' => $request->user(),
+        ]);
+    }
+
+    /**
+     * Display the change password form.
+     */
+    public function changePassword(Request $request): View
+    {
+        return view('profile.change-password', [
+            'user' => $request->user(),
+        ]);
+    }
+
+    /**
      * Update the user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
@@ -34,7 +54,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile.edit-details')->with('status', 'profile-updated');
     }
 
     /**
