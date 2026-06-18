@@ -12,7 +12,8 @@ class Teacher extends Model
     protected $fillable = [
         'user_id',
         'nip',
-        'name',
+        'gender',
+        'telp',
     ];
 
     public function user()

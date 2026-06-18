@@ -49,14 +49,28 @@
             @csrf
             <div class="mb-5 relative group">
                 <label for="email" class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block ml-1">Alamat Email</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus placeholder="Masukkan email Anda"
-                    class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:border-[#003399] focus:ring-2 focus:ring-[#003399]/20 transition-all outline-none shadow-sm">
+                <div class="relative">
+                    <span class="absolute bottom-4 left-4 text-slate-400 group-focus-within:text-[#003399] transition-colors z-10">
+                        <i class="fa-solid fa-envelope text-sm"></i>
+                    </span>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus placeholder="Masukkan email Anda"
+                        class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:border-[#003399] focus:ring-2 focus:ring-[#003399]/20 transition-all outline-none shadow-sm">
+                </div>
             </div>
 
             <div class="mb-6 relative group">
                 <label for="password" class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block ml-1">Kata Sandi</label>
-                <input id="password" type="password" name="password" required autocomplete="current-password" placeholder="••••••••"
-                    class="w-full pl-11 pr-12 py-3.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:border-[#003399] focus:ring-2 focus:ring-[#003399]/20 transition-all outline-none shadow-sm">
+                <div class="relative">
+                    <span class="absolute bottom-4 left-4 text-slate-400 group-focus-within:text-[#003399] transition-colors z-10">
+                        <i class="fa-solid fa-lock text-sm"></i>
+                    </span>
+                    <input id="password" type="password" name="password" required autocomplete="current-password" placeholder="••••••••" maxlength="16"
+                        class="w-full pl-11 pr-12 py-3.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:border-[#003399] focus:ring-2 focus:ring-[#003399]/20 transition-all outline-none shadow-sm">
+                    <button type="button" onclick="togglePw('password', this)"
+                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
+                        <i class="fa-regular fa-eye text-sm"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="flex items-center justify-between mb-8">
@@ -85,4 +99,18 @@
         </div>
     </div>
 </div>
+
+<script>
+    function togglePw(fieldId, btn) {
+        const field = document.getElementById(fieldId);
+        const icon = btn.querySelector('i');
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+</script>
 @endsection

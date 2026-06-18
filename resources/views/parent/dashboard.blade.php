@@ -9,7 +9,7 @@
     
     // Fetch student details from DB dynamically
     $student = \App\Models\Student::where('name', $studentName)->first();
-    $grades = $student ? $student->grades()->with('subject', 'teacher')->get() : collect();
+    $grades = $student ? $student->grades()->with('subject', 'teacher.user')->get() : collect();
     $attendance = $student ? $student->attendances()->first() : null;
     $reportCard = $student ? $student->reportCards()->first() : null;
 @endphp
@@ -124,7 +124,7 @@
                                     <div>
                                         <h4 class="text-sm font-black text-slate-800">{{ $grade->subject->name ?? 'N/A' }}</h4>
                                         <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
-                                            Guru: {{ $grade->teacher->name ?? 'N/A' }}
+                                            Guru: {{ $grade->teacher->user->name ?? 'N/A' }}
                                         </p>
                                     </div>
                                     <div class="text-right">

@@ -33,7 +33,19 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => [
+                'required',
+                'confirmed',
+                'min:8',
+                'max:16',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).+$/',
+            ],
+        ], [
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+            'password.min' => 'Kata sandi minimal harus 8 karakter.',
+            'password.max' => 'Kata sandi maksimal tidak boleh lebih dari 16 karakter.',
+            'password.regex' => 'Kata sandi harus mengandung huruf kecil, huruf besar, angka, dan simbol.',
         ]);
 
         $user = User::create([

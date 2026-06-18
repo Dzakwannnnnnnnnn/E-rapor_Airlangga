@@ -1,6 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', 'Ubah Password - e-Rapor')
+@section('back_url', route('profile.edit'))
 @section('hide_bottom_nav', true)
 
 @section('content')
@@ -47,13 +48,10 @@
 
 <!-- Form Container (Centered and padded for mobile bottom bar) -->
 <div class="max-w-xl mx-auto px-4 md:px-0 mt-8 pb-24 md:pb-6 relative z-20">
-    
+
     <!-- Status Alerts -->
     @if (session('status') === 'password-updated')
-        <div class="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4 flex items-center gap-3 justify-center select-none font-bold text-xs uppercase tracking-wider mb-6 shadow-sm">
-            <i class="fa-solid fa-circle-check text-lg text-green-500"></i>
-            <span>Password Akun Berhasil Diperbarui</span>
-        </div>
+        <x-alert type="success" message="Password Akun Berhasil Diperbarui" class="mb-6" />
     @endif
 
     <form method="post" action="{{ route('password.update') }}" class="space-y-6">
@@ -68,8 +66,14 @@
                 </div>
                 <label for="update_password_current_password" class="font-extrabold text-xs text-slate-500 uppercase tracking-widest">Password Saat Ini</label>
             </div>
-            <input type="password" name="current_password" id="update_password_current_password" autocomplete="current-password" required
-                   class="w-full text-center font-extrabold text-slate-800 bg-white border-2 border-slate-200 focus:border-primary focus:ring-primary rounded-2xl py-3 px-4 shadow-sm text-base transition-colors duration-150">
+            <div class="relative">
+                <input type="password" name="current_password" id="update_password_current_password" autocomplete="current-password" required maxlength="16"
+                       class="w-full text-center font-extrabold text-slate-800 bg-white border-2 border-slate-200 focus:border-primary focus:ring-primary rounded-2xl py-3 px-12 shadow-sm text-base transition-colors duration-150">
+                <button type="button" onclick="togglePw('update_password_current_password', this)"
+                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
+                    <i class="fa-regular fa-eye text-sm"></i>
+                </button>
+            </div>
             <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-1" />
         </div>
 
@@ -81,8 +85,21 @@
                 </div>
                 <label for="update_password_password" class="font-extrabold text-xs text-slate-500 uppercase tracking-widest">Password Baru</label>
             </div>
-            <input type="password" name="password" id="update_password_password" autocomplete="new-password" required
-                   class="w-full text-center font-extrabold text-slate-800 bg-white border-2 border-slate-200 focus:border-primary focus:ring-primary rounded-2xl py-3 px-4 shadow-sm text-base transition-colors duration-150">
+            <div class="relative">
+                <input type="password" name="password" id="update_password_password" autocomplete="new-password" required maxlength="16" oninput="checkStrength(this.value)"
+                       class="w-full text-center font-extrabold text-slate-800 bg-white border-2 border-slate-200 focus:border-primary focus:ring-primary rounded-2xl py-3 px-12 shadow-sm text-base transition-colors duration-150">
+                <button type="button" onclick="togglePw('update_password_password', this)"
+                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
+                    <i class="fa-regular fa-eye text-sm"></i>
+                </button>
+            </div>
+            <div class="flex gap-1 mt-2.5 mx-1" id="strengthBar">
+                <div class="h-1.5 flex-1 rounded-full bg-slate-200 transition-all duration-300" id="s1"></div>
+                <div class="h-1.5 flex-1 rounded-full bg-slate-200 transition-all duration-300" id="s2"></div>
+                <div class="h-1.5 flex-1 rounded-full bg-slate-200 transition-all duration-300" id="s3"></div>
+                <div class="h-1.5 flex-1 rounded-full bg-slate-200 transition-all duration-300" id="s4"></div>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-wider mt-1.5 ml-1" id="strengthLabel"></p>
             <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-1" />
         </div>
 
@@ -94,8 +111,15 @@
                 </div>
                 <label for="update_password_password_confirmation" class="font-extrabold text-xs text-slate-500 uppercase tracking-widest">Konfirmasi Password Baru</label>
             </div>
-            <input type="password" name="password_confirmation" id="update_password_password_confirmation" autocomplete="new-password" required
-                   class="w-full text-center font-extrabold text-slate-800 bg-white border-2 border-slate-200 focus:border-primary focus:ring-primary rounded-2xl py-3 px-4 shadow-sm text-base transition-colors duration-150">
+            <div class="relative">
+                <input type="password" name="password_confirmation" id="update_password_password_confirmation" autocomplete="new-password" required maxlength="16" oninput="checkMatch()"
+                       class="w-full text-center font-extrabold text-slate-800 bg-white border-2 border-slate-200 focus:border-primary focus:ring-primary rounded-2xl py-3 px-12 shadow-sm text-base transition-colors duration-150">
+                <button type="button" onclick="togglePw('update_password_password_confirmation', this)"
+                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
+                    <i class="fa-regular fa-eye text-sm"></i>
+                </button>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-wider mt-1.5 ml-1 hidden" id="matchLabel"></p>
             <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-1" />
         </div>
 
@@ -107,4 +131,83 @@
         </div>
     </form>
 </div>
+
+<script>
+    function togglePw(fieldId, btn) {
+        const field = document.getElementById(fieldId);
+        const icon = btn.querySelector('i');
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    function checkStrength(val) {
+        const bars = ['s1', 's2', 's3', 's4'];
+        const label = document.getElementById('strengthLabel');
+        let score = 0;
+
+        if (val.length > 0) {
+            let hasLower = /[a-z]/.test(val) ? 1 : 0;
+            let hasUpper = /[A-Z]/.test(val) ? 1 : 0;
+            let hasNumber = /[0-9]/.test(val) ? 1 : 0;
+            let hasSymbol = /[^A-Za-z0-9]/.test(val) ? 1 : 0;
+
+            let criteriaMet = hasLower + hasUpper + hasNumber + hasSymbol;
+
+            if (val.length < 8) {
+                score = 1;
+            } else {
+                score = criteriaMet;
+            }
+        }
+
+        const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-emerald-500'];
+        const labels = ['Sangat Lemah', 'Lemah', 'Kuat', 'Sangat Kuat'];
+        const texts  = ['text-red-500', 'text-orange-500', 'text-yellow-600', 'text-emerald-600'];
+
+        bars.forEach((id, i) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.className = 'h-1.5 flex-1 rounded-full transition-all duration-300 ' +
+                    (i < score ? colors[score - 1] : 'bg-slate-200');
+            }
+        });
+
+        if (val.length > 0) {
+            let warning = '';
+            if (val.length < 8) {
+                warning = ' (Minimal 8 karakter)';
+            }
+            label.textContent = labels[score - 1] + warning;
+            label.className = 'text-[10px] font-black uppercase tracking-wider mt-1.5 ml-1 ' + (texts[score - 1] || 'text-red-500');
+        } else {
+            label.textContent = '';
+        }
+        checkMatch();
+    }
+
+    function checkMatch() {
+        const pw = document.getElementById('update_password_password').value;
+        const conf = document.getElementById('update_password_password_confirmation').value;
+        const lbl = document.getElementById('matchLabel');
+
+        if (conf.length === 0) {
+            lbl.classList.add('hidden');
+            return;
+        }
+
+        lbl.classList.remove('hidden');
+        if (pw === conf) {
+            lbl.textContent = '✓ Kata sandi cocok';
+            lbl.className = 'text-[10px] font-black uppercase tracking-wider mt-1.5 ml-1 text-emerald-600';
+        } else {
+            lbl.textContent = '✗ Kata sandi tidak cocok';
+            lbl.className = 'text-[10px] font-black uppercase tracking-wider mt-1.5 ml-1 text-red-500';
+        }
+    }
+</script>
 @endsection

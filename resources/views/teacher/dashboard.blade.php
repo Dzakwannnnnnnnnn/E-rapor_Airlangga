@@ -22,7 +22,7 @@
                 <!-- User Profile & Logout -->
                 <div class="flex items-center gap-4">
                     <div class="text-right hidden sm:block">
-                        <p class="text-xs font-bold leading-none">{{ Auth::user()->teacher?->name ?? Auth::user()->name }}</p>
+                        <p class="text-xs font-bold leading-none">{{ Auth::user()->name }}</p>
                         <span class="inline-block mt-1 px-2 py-0.5 bg-[#FFB800] text-slate-900 text-[8px] font-black uppercase tracking-wider rounded">Guru</span>
                     </div>
                     <form method="POST" action="{{ route('logout') }}">
@@ -41,7 +41,7 @@
         <!-- Header Section -->
         <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-black text-slate-900 tracking-tight leading-none uppercase">Selamat Datang, <span class="text-[#003399]">{{ Auth::user()->teacher?->name ?? Auth::user()->name }}</span>!</h2>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight leading-none uppercase">Selamat Datang, <span class="text-[#003399]">{{ Auth::user()->name }}</span>!</h2>
                 <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mt-1.5">Panel Guru — Tahun Ajaran 2025/2026 (Semester Ganjil)</p>
             </div>
             <div class="bg-white border border-slate-200 shadow-sm rounded-xl px-4 py-3 flex items-center gap-3">

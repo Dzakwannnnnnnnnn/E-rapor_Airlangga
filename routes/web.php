@@ -9,6 +9,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Auth\AccountActivationController;
 use Illuminate\Support\Facades\Route;
 
 // ──────────────────────────────────────────────
@@ -18,6 +19,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// ──────────────────────────────────────────────
+// Account Activation (public – no auth needed)
+// ──────────────────────────────────────────────
+
+Route::get('/activate/{token}', [AccountActivationController::class, 'showForm'])
+    ->name('account.activate.form');
+
+Route::post('/activate', [AccountActivationController::class, 'activate'])
+    ->name('account.activate');
 
 // ──────────────────────────────────────────────
 // Dashboard Redirect (berdasarkan role)
@@ -40,7 +51,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         return view('admin.dashboard');
     })->name('dashboard');
 
-    // Tambahkan resource controller admin di sini:
+    Route::get('/management', function () {
+        return view('management.index');
+    })->name('management.index');
+
+    Route::resource('teachers', TeacherController::class);
+    Route::resource('parents', ParentsController::class);
 });
 
 // ──────────────────────────────────────────────

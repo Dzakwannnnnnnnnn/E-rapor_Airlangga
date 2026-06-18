@@ -28,8 +28,13 @@ class StudentSeeder extends Seeder
         $subjectMath = Subject::where('name', 'Matematika')->first();
         $subjectPpkn = Subject::where('name', 'Pendidikan Pancasila Dan Kewarganegaraan (PPKN)')->first();
 
-        $teacherPplgMath = Teacher::where('name', 'Guru Penguji PPLG')->first();
-        $teacherPpkn = Teacher::where('name', 'Guru Penguji TJKT')->first();
+        $teacherPplgMath = Teacher::whereHas('user', function ($query) {
+            $query->where('name', 'Guru Penguji PPLG');
+        })->first();
+
+        $teacherPpkn = Teacher::whereHas('user', function ($query) {
+            $query->where('name', 'Guru Penguji TJKT');
+        })->first();
 
         // 1. Seed Student: Ilham
         $ilham = Student::create([

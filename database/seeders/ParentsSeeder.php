@@ -16,7 +16,7 @@ class ParentsSeeder extends Seeder
     public function run(): void
     {
         $user1 = User::create([
-            'name' => 'Wali Murid Ilham',
+            'name' => 'Wali Ilham',
             'email' => 'wali@test.com',
             'password' => Hash::make('password'),
             'role' => 'parent',
@@ -24,11 +24,12 @@ class ParentsSeeder extends Seeder
 
         Parents::create([
             'user_id' => $user1->id,
-            'name' => 'Wali Murid Ilham',
+            'relation' => 'ayah',
+            'telp' => '081122334455',
         ]);
 
         $user2 = User::create([
-            'name' => 'Wali Murid Herlambang',
+            'name' => 'Wali Herlambang',
             'email' => 'wali2@test.com',
             'password' => Hash::make('password'),
             'role' => 'parent',
@@ -36,7 +37,8 @@ class ParentsSeeder extends Seeder
 
         Parents::create([
             'user_id' => $user2->id,
-            'name' => 'Wali Murid Herlambang',
+            'relation' => 'ibu',
+            'telp' => '085566778899',
         ]);
     }
 }

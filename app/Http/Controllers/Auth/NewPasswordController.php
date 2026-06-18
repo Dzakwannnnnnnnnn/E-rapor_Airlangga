@@ -34,7 +34,19 @@ class NewPasswordController extends Controller
         $request->validate([
             'token' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => [
+                'required',
+                'confirmed',
+                'min:8',
+                'max:16',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).+$/',
+            ],
+        ], [
+            'password.required' => 'Kata sandi baru wajib diisi.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+            'password.min' => 'Kata sandi baru minimal harus 8 karakter.',
+            'password.max' => 'Kata sandi baru maksimal tidak boleh lebih dari 16 karakter.',
+            'password.regex' => 'Kata sandi baru harus mengandung huruf kecil, huruf besar, angka, dan simbol.',
         ]);
 
         // Here we will attempt to reset the user's password. If it is successful we

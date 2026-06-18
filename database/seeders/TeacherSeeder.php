@@ -25,7 +25,8 @@ class TeacherSeeder extends Seeder
         Teacher::create([
             'user_id' => $user1->id,
             'nip' => '1981020320050110',
-            'name' => 'Guru Penguji PPLG',
+            'gender' => 'L',
+            'telp' => '081234567890',
         ]);
 
         $user2 = User::create([
@@ -38,7 +39,8 @@ class TeacherSeeder extends Seeder
         Teacher::create([
             'user_id' => $user2->id,
             'nip' => '1985040520100220',
-            'name' => 'Guru Penguji TJKT',
+            'gender' => 'P',
+            'telp' => '089876543210',
         ]);
     }
 }

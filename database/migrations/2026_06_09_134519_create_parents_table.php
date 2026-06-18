@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('parents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
+            $table->string('telp', 16);
+            $table->enum('relation', ['ayah', 'ibu', 'wali']);
             $table->timestamps();
         });
     }

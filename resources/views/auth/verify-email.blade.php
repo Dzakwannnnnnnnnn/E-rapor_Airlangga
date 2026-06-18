@@ -45,16 +45,10 @@
     <div class="flex-1 px-6 pt-8 w-full max-w-md mx-auto relative z-10 pb-28 lg:pb-12">
 
         @if (session('status') == 'verification-link-sent')
-            <div class="mb-6 p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-xl text-xs font-bold text-emerald-800 leading-relaxed shadow-sm flex items-start gap-2.5 animate-fadeIn">
-                <i class="fa-solid fa-circle-check text-emerald-500 text-sm mt-0.5"></i>
-                <span>Tautan verifikasi baru telah berhasil dikirim ke alamat email yang Anda tentukan saat registrasi.</span>
-            </div>
+            <x-alert type="success" message="Tautan verifikasi baru telah berhasil dikirim ke alamat email yang Anda tentukan saat registrasi." class="mb-6" />
         @endif
 
-        <div class="mb-8 p-4 bg-blue-50 border border-blue-100 rounded-xl text-xs font-bold text-slate-600 leading-relaxed shadow-sm flex items-start gap-2.5">
-            <i class="fa-solid fa-circle-info text-[#003399] text-sm mt-0.5"></i>
-            <span>Belum menerima email dari kami? Periksa folder Spam atau klik tombol di bawah untuk mengirim ulang tautan verifikasi.</span>
-        </div>
+        <x-alert type="info" message="Belum menerima email dari kami? Periksa folder Spam atau klik tombol di bawah untuk mengirim ulang tautan verifikasi." class="mb-8" />
 
         <form method="POST" action="{{ route('verification.send') }}" id="resendVerificationForm" class="flex flex-col">
             @csrf

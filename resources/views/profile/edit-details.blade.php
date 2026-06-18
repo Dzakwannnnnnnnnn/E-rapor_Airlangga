@@ -1,6 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', 'Edit Profil - e-Rapor')
+@section('back_url', route('profile.edit'))
 @section('hide_bottom_nav', true)
 
 @section('content')
@@ -50,10 +51,7 @@
 
     <!-- Status Alerts -->
     @if (session('status') === 'profile-updated')
-        <div class="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4 flex items-center gap-3 justify-center select-none font-bold text-xs uppercase tracking-wider mb-6 shadow-sm">
-            <i class="fa-solid fa-circle-check text-lg text-green-500"></i>
-            <span>Perubahan Profil Berhasil Disimpan</span>
-        </div>
+        <x-alert type="success" message="Perubahan Profil Berhasil Disimpan" class="mb-6" />
     @endif
 
     <form method="post" action="{{ route('profile.update') }}" class="space-y-6">
@@ -114,16 +112,10 @@
             </div>
 
             @if (session('status') === 'verification-link-sent')
-                <div class="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4 flex items-center gap-3 justify-center select-none font-bold text-xs uppercase tracking-wider mt-4 shadow-sm animate-bounce">
-                    <i class="fa-solid fa-paper-plane text-green-500"></i>
-                    <span>Tautan verifikasi baru telah dikirim ke alamat email Anda.</span>
-                </div>
+                <x-alert type="success" message="Tautan verifikasi baru telah dikirim ke alamat email Anda." class="mt-4" />
             @endif
         @else
-            <div class="bg-green-50/70 border border-green-100 text-green-800 rounded-2xl py-3.5 px-4 flex items-center gap-3 justify-center select-none font-extrabold text-xs uppercase tracking-widest shadow-sm">
-                <i class="fa-solid fa-circle-check text-base text-green-500"></i>
-                <span>Email Telah Terverifikasi</span>
-            </div>
+            <x-alert type="success" message="Email Telah Terverifikasi" />
         @endif
 
         <!-- Floating Bottom Save Button Bar on Mobile, Normal Inline Button on Desktop -->

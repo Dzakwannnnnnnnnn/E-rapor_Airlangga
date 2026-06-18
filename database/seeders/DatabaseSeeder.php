@@ -18,10 +18,11 @@ class DatabaseSeeder extends Seeder
     {
         // Seed Admin User
         User::create([
-            'name' => 'Admin E-Rapor',
-            'email' => 'admin@test.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
+            'name'              => 'Admin E-Rapor',
+            'email'             => 'admin@test.com',
+            'password'          => Hash::make('password'),
+            'role'              => 'admin',
+            'email_verified_at' => now(),
         ]);
 
         // Call other seeders

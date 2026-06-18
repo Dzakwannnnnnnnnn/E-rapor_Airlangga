@@ -1,3 +1,15 @@
+@php
+    $initials = '';
+    if (Auth::check()) {
+        $nameParts = explode(' ', Auth::user()->name);
+        $initials = strtoupper(substr($nameParts[0], 0, 1));
+        if (count($nameParts) > 1) {
+            $initials .= strtoupper(substr($nameParts[1], 0, 1));
+        } else {
+            $initials .= strtoupper(substr($nameParts[0], 1, 1));
+        }
+    }
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -93,109 +105,100 @@
                         <span class="text-sm sidebar-text">Home</span>
                     </a>
 
+                    @if(auth()->user()->role == 'admin')
+                        <a href="{{ route('admin.management.index') }}"
+                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
+                        {{ request()->is('admin/management*') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                            <i class="fa-solid fa-grip w-5 text-center text-lg shrink-0"></i>
+                            <span class="text-sm sidebar-text">Management</span>
+                        </a>
+
+
+                        <a href="/dashboard"
+                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
+                        {{ request()->is('*dashboards') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                            <i class="fa-solid fa-file-lines w-5 text-center text-lg shrink-0"></i>
+                            <span class="text-sm sidebar-text">Laporan</span>
+                        </a>
+                    @endif
+
                     <a href="/profile"
                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
                        {{ request()->is('*profile') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
-                        <i class="fa-solid fa-user w-5 text-center text-lg shrink-0"></i>
+                        @if(Auth::user()->avatar_url ?? false)
+                            <img src="{{ Auth::user()->avatar_url }}" alt="Profile" class="w-5 h-5 rounded-full object-cover shrink-0">
+                        @else
+                            <div class="w-5 h-5 rounded-full bg-secondary text-primary font-black text-[8px] flex items-center justify-center shrink-0 border border-white/10">
+                                {{ $initials }}
+                            </div>
+                        @endif
                         <span class="text-sm sidebar-text">Profile</span>
                     </a>
                 </nav>
-
-                <div class="p-4 border-t border-white/10 bg-primary-light/10 shrink-0 sidebar-profile-block transition-all duration-300">
-                    <div class="flex items-center gap-3 px-2 mb-4 min-w-0 sidebar-user-info">
-                        <div class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center font-bold shrink-0 shadow-inner">
-                            {{ substr(Auth::user()->name ?? 'G', 0, 1) }}
-                        </div>
-                        <div class="flex-1 min-w-0 sidebar-text">
-                            <p class="text-sm font-bold text-white truncate">{{ Auth::user()->name ?? 'Nama Petugas' }}</p>
-                            <p class="text-xs text-secondary truncate">{{ Auth::user()->role ?? 'Role' }}</p>
-                        </div>
-                    </div>
-
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="sidebar-logout-btn w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-danger/80 hover:bg-danger text-white rounded font-bold transition text-sm shadow-sm">
-                            <i class="fa-solid fa-arrow-right-from-bracket shrink-0"></i>
-                            <span class="sidebar-text">Keluar</span>
-                        </button>
-                    </form>
-                </div>
             </aside>
 
             <main class="flex-1 h-screen overflow-y-auto bg-bg relative pb-20 md:pb-0 sidebar-transition">
 
-                <div class="md:hidden flex items-center justify-between bg-primary px-4 h-16 border-b border-white/10 sticky top-0 z-30 shadow-md">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded flex items-center justify-center bg-white p-0.5 shadow-sm">
-                            <img src="{{ asset('SMKTI Airlangga Samarinda Icon.png') }}" alt="Logo">
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="font-bold text-white text-sm leading-none mb-0.5">E Rapor</span>
-                            <span class="text-[10px] text-secondary font-medium">SMKTI Airlangga Samarinda</span>
-                        </div>
-                    </div>
-
-                    <div class="w-8 h-8 rounded-full bg-white text-primary flex items-center justify-center text-xs font-bold shadow-sm">
-                        {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
-                    </div>
-                </div>
-
-                @if(session('error'))
-                    <div class="mt-4 mx-4 md:mx-8 flex items-center gap-3 p-4 rounded-lg bg-primary border-l-4 border-secondary shadow-md relative overflow-hidden">
-                        <div class="absolute inset-0 bg-secondary opacity-5 pointer-events-none"></div>
-                        <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center shrink-0 z-10">
-                            <i class="fa-solid fa-triangle-exclamation text-secondary text-lg"></i>
-                        </div>
-                        <div class="flex-1 z-10">
-                            <p class="text-white text-sm font-medium">{{ session('error') }}</p>
-                        </div>
-                        <button type="button" onclick="this.parentElement.remove()" class="text-white/60 hover:text-secondary transition-colors z-10 p-2">
-                            <i class="fa-solid fa-xmark text-lg"></i>
-                        </button>
-                    </div>
-                @endif
-
-                @if(session('success'))
-                    <div class="mt-4 mx-4 md:mx-8 flex items-center gap-3 p-4 rounded-lg bg-primary border-l-4 border-secondary shadow-md relative overflow-hidden">
-                        <div class="absolute inset-0 bg-secondary opacity-5 pointer-events-none"></div>
-                        <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center shrink-0 z-10">
-                            <i class="fa-solid fa-circle-check text-secondary text-lg"></i>
-                        </div>
-                        <div class="flex-1 z-10">
-                            <h4 class="text-secondary font-bold text-xs uppercase tracking-wider mb-0.5">Berhasil</h4>
-                            <p class="text-white text-sm font-medium">{{ session('success') }}</p>
-                        </div>
-                        <button type="button" onclick="this.parentElement.remove()" class="text-white/60 hover:text-secondary transition-colors z-10 p-2">
-                            <i class="fa-solid fa-xmark text-lg"></i>
-                        </button>
-                    </div>
-                @endif
+                <x-mobile-top-bar :back-url="View::getSection('back_url')" :title="trim(str_replace(' - e-Rapor', '', View::getSection('title')))" />
 
                 <div class="p-4 md:p-8">
                     @yield('content')
                 </div>
             </main>
 
-            @if(!View::hasSection('hide_bottom_nav'))
+            @if(View::hasSection('bottom_bar'))
+                @yield('bottom_bar')
+            @elseif(!View::hasSection('hide_bottom_nav'))
             <div class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-100 flex justify-around items-center z-50 px-2 shadow-[0_-4px_14px_rgba(0,0,0,0.08)]">
 
                 <a href="/dashboard"
-                   class="flex flex-col items-center justify-center w-16 h-full transition-colors
+                   class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
                    {{ request()->is('*dashboard') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                    <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->is('*dashboard') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
                     <i class="fa-solid fa-house text-lg mb-0.5"></i>
                     <span class="text-[10px] tracking-wide">Home</span>
                 </a>
 
+                @if(auth()->user()->role == 'admin')
+                <a href="{{ route('admin.management.index') }}"
+                   class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
+                   {{ (request()->is('admin/*') && !request()->is('admin/dashboard')) ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                    <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ (request()->is('admin/*') && !request()->is('admin/dashboard')) ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                    <i class="fa-solid fa-grip text-lg mb-0.5"></i>
+                    <span class="text-[10px] tracking-wide">Management</span>
+                </a>
+
+                <a href="/dashboard"
+                   class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
+                   {{ request()->is('*dashboards') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                    <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->is('*dashboards') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                    <i class="fa-solid fa-file-lines text-lg mb-0.5"></i>
+                    <span class="text-[10px] tracking-wide">Laporan</span>
+                </a>
+
+                @endif
+
                 <a href="/profile"
-                   class="flex flex-col items-center justify-center w-16 h-full transition-colors
+                   class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
                    {{ request()->is('*profile') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
-                    <i class="fa-solid fa-user text-lg mb-0.5"></i>
+                    <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->is('*profile') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                    @if(Auth::user()->avatar_url ?? false)
+                        <img src="{{ Auth::user()->avatar_url }}" alt="Profile"
+                             class="w-5 h-5 rounded-full object-cover shrink-0 mb-0.5 {{ request()->is('*profile') ? 'ring-2 ring-primary' : '' }}">
+                    @else
+                        <div class="w-5 h-5 rounded-full bg-secondary text-primary font-black text-[8px] flex items-center justify-center shrink-0 mb-0.5 {{ request()->is('*profile') ? 'ring-2 ring-primary' : '' }}">
+                            {{ $initials }}
+                        </div>
+                    @endif
                     <span class="text-[10px] tracking-wide">Profile</span>
                 </a>
             </div>
             @endif
 
         </div>
+
+        <x-toast />
+        <x-confirm-modal />
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -204,17 +207,14 @@
                 const toggleIcon = document.getElementById('sidebar-toggle-icon');
 
                 if (toggleBtn && sidebar) {
-                    // Sinkronisasi ikon panah awal berdasarkan class terpasang
                     if (sidebar.classList.contains('sidebar-collapsed')) {
                         toggleIcon.classList.replace('fa-chevron-left', 'fa-chevron-right');
                     }
 
-                    // Event Listener Klik
                     toggleBtn.addEventListener('click', () => {
                         const isCollapsed = sidebar.classList.toggle('sidebar-collapsed');
                         localStorage.setItem('sidebar-collapsed', isCollapsed);
 
-                        // Transformasi arah ikon panah secara dinamis
                         if (isCollapsed) {
                             toggleIcon.classList.replace('fa-chevron-left', 'fa-chevron-right');
                         } else {
@@ -224,5 +224,9 @@
                 }
             });
         </script>
+
+        <form id="global-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+            @csrf
+        </form>
     </body>
 </html>

@@ -13,15 +13,22 @@
             </p>
 
             <div class="mt-6">
-                <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
+                <x-input-label for="password_delete" value="{{ __('Password') }}" class="sr-only" />
 
-                <x-text-input
-                    id="password"
-                    name="password"
-                    type="password"
-                    class="mt-1 block w-full border-gray-300 focus:border-danger focus:ring-danger rounded-lg"
-                    placeholder="{{ __('Masukkan Password Anda') }}"
-                />
+                <div class="relative">
+                    <x-text-input
+                        id="password_delete"
+                        name="password"
+                        type="password"
+                        maxlength="16"
+                        class="mt-1 block w-full pr-12 border-gray-300 focus:border-danger focus:ring-danger rounded-lg"
+                        placeholder="{{ __('Masukkan Password Anda') }}"
+                    />
+                    <button type="button" onclick="toggleDeletePw('password_delete', this)"
+                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
+                        <i class="fa-regular fa-eye text-sm"></i>
+                    </button>
+                </div>
 
                 <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
             </div>
@@ -36,5 +43,18 @@
                 </x-danger-button>
             </div>
         </form>
+        <script>
+            function toggleDeletePw(fieldId, btn) {
+                const field = document.getElementById(fieldId);
+                const icon = btn.querySelector('i');
+                if (field.type === 'password') {
+                    field.type = 'text';
+                    icon.classList.replace('fa-eye', 'fa-eye-slash');
+                } else {
+                    field.type = 'password';
+                    icon.classList.replace('fa-eye-slash', 'fa-eye');
+                }
+            }
+        </script>
     </x-modal>
 </section>

@@ -18,5 +18,6 @@
         <main>
             @yield('content')
         </main>
+        <x-toast />
     </body>
 </html>
