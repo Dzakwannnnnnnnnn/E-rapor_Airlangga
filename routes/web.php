@@ -57,6 +57,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::resource('teachers', TeacherController::class);
     Route::resource('parents', ParentsController::class);
+    Route::resource('students', StudentController::class);
+    Route::resource('classrooms', ClassroomController::class);
 });
 
 // ──────────────────────────────────────────────
