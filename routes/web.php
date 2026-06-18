@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AcademicYearsController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\GradeController;
@@ -46,9 +47,7 @@ Route::get('/dashboard', function () {
 // ──────────────────────────────────────────────
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/management', function () {
         return view('management.index');
