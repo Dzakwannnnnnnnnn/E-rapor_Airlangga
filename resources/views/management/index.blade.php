@@ -179,7 +179,7 @@
             </a>
 
             <!-- Card: Tahun Akademik -->
-            <a href="{{ Route::has('admin.academic-years.index') ? route('admin.academic-years.index') : '#' }}" class="group bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-slate-200 transition-all border-l-4 border-l-violet-500">
+            <a href="{{ Route::has('admin.academic_years.index') ? route('admin.academic_years.index') : '#' }}" class="group bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-slate-200 transition-all border-l-4 border-l-violet-500">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
                         <i class="fa-solid fa-calendar-days text-lg"></i>

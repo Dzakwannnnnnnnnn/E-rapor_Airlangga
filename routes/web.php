@@ -8,7 +8,6 @@ use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\AccountActivationController;
 use Illuminate\Support\Facades\Route;
 
@@ -59,6 +58,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('parents', ParentsController::class);
     Route::resource('students', StudentController::class);
     Route::resource('classrooms', ClassroomController::class);
+    Route::resource('subjects', SubjectController::class);
+    Route::resource('academic_years', AcademicYearsController::class);
 });
 
 // ──────────────────────────────────────────────

@@ -10,9 +10,24 @@ class AcademicYearsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $search = $request->input('search');
+        $query = AcademicYear::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('year', 'like', "%{$search}%")
+                  ->orWhere('semester', 'like', "%{$search}%");
+            });
+        }
+
+        $academicYears = $query
+            ->latest()
+            ->paginate(10)
+            ->appends($request->query());
+
+        return view('management.academic_years.index', compact('academicYears', 'search'));
     }
 
     /**
@@ -20,7 +35,8 @@ class AcademicYearsController extends Controller
      */
     public function create()
     {
-        //
+        $activeYear = AcademicYear::where('is_active', true)->first();
+        return view('management.academic_years.create', compact('activeYear'));
     }
 
     /**
@@ -28,15 +44,22 @@ class AcademicYearsController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $validated = $request->validate([
+            'year' => 'required|max:255',
+            'semester' => 'required|in:genap,ganjil',
+            'is_active' => 'required|boolean',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(AcademicYear $academicYear)
-    {
-        //
+        \DB::transaction(function () use ($validated) {
+            if ($validated['is_active']) {
+                AcademicYear::where('is_active', true)->update(['is_active' => false]);
+            }
+            AcademicYear::create($validated);
+        });
+
+        return redirect()
+            ->route('admin.academic_years.index')
+            ->with('success', 'Tahun ajaran berhasil ditambahkan.');
     }
 
     /**
@@ -44,7 +67,10 @@ class AcademicYearsController extends Controller
      */
     public function edit(AcademicYear $academicYear)
     {
-        //
+        $activeYear = AcademicYear::where('is_active', true)
+            ->where('id', '!=', $academicYear->id)
+            ->first();
+        return view('management.academic_years.edit', compact('academicYear', 'activeYear'));
     }
 
     /**
@@ -52,7 +78,24 @@ class AcademicYearsController extends Controller
      */
     public function update(Request $request, AcademicYear $academicYear)
     {
-        //
+        $validated = $request->validate([
+            'year' => 'required|max:255',
+            'semester' => 'required|in:genap,ganjil',
+            'is_active' => 'required|boolean',
+        ]);
+
+        \DB::transaction(function () use ($validated, $academicYear) {
+            if ($validated['is_active']) {
+                AcademicYear::where('id', '!=', $academicYear->id)
+                    ->where('is_active', true)
+                    ->update(['is_active' => false]);
+            }
+            $academicYear->update($validated);
+        });
+
+        return redirect()
+            ->route('admin.academic_years.index')
+            ->with('success', 'Tahun ajaran berhasil diperbarui.');
     }
 
     /**
@@ -60,6 +103,10 @@ class AcademicYearsController extends Controller
      */
     public function destroy(AcademicYear $academicYear)
     {
-        //
+        $academicYear->delete();
+
+        return redirect()
+            ->route('admin.academic_years.index')
+            ->with('success', 'Tahun ajaran berhasil dihapus.');
     }
 }

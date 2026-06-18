@@ -10,9 +10,24 @@ class SubjectController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $search = $request->input('search');
+        $query = Subject::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('type', 'like', "%{$search}%");
+            });
+        }
+
+        $subjects = $query
+            ->latest()
+            ->paginate(10)
+            ->appends($request->query());
+
+        return view('management.subjects.index', compact('subjects', 'search'));
     }
 
     /**
@@ -20,7 +35,7 @@ class SubjectController extends Controller
      */
     public function create()
     {
-        //
+        return view('management.subjects.create');
     }
 
     /**
@@ -28,7 +43,16 @@ class SubjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'type' => 'required|in:academic,extracurricular',
+        ]);
+
+        Subject::create($validated);
+
+        return redirect()
+            ->route('admin.subjects.index')
+            ->with('success', 'Data mata pelajaran berhasil ditambahkan.');
     }
 
     /**
@@ -36,7 +60,6 @@ class SubjectController extends Controller
      */
     public function show(Subject $subject)
     {
-        //
     }
 
     /**
@@ -44,7 +67,7 @@ class SubjectController extends Controller
      */
     public function edit(Subject $subject)
     {
-        //
+        return view('management.subjects.edit', compact('subject'));
     }
 
     /**
@@ -52,7 +75,16 @@ class SubjectController extends Controller
      */
     public function update(Request $request, Subject $subject)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'type' => 'required|in:academic,extracurricular',
+        ]);
+
+        $subject->update($validated);
+
+        return redirect()
+            ->route('admin.subjects.index')
+            ->with('success', 'Data mata pelajaran berhasil diperbarui.');
     }
 
     /**
@@ -60,6 +92,10 @@ class SubjectController extends Controller
      */
     public function destroy(Subject $subject)
     {
-        //
+        $subject->delete();
+
+        return redirect()
+            ->route('admin.subjects.index')
+            ->with('success', 'Data mata pelajaran berhasil dihapus.');
     }
 }
