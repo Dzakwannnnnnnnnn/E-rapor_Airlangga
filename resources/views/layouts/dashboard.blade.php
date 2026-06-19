@@ -122,6 +122,23 @@
                         </a>
                     @endif
 
+                    @if(auth()->user()->role == 'teacher')
+                    <a href="{{ route('teacher.kelas_saya.index') }}"
+                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
+                        {{ request()->routeIs('teacher.kelas_saya.index') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                            <i class="fa-solid fa-book-open w-5 text-center text-lg shrink-0"></i>
+                            <span class="text-sm sidebar-text">Kelas Saya</span>
+                        </a>
+
+
+                        <a href="/dashboard"
+                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
+                        {{ request()->is('*dashboards') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                            <i class="fa-solid fa-file-lines w-5 text-center text-lg shrink-0"></i>
+                            <span class="text-sm sidebar-text">Laporan</span>
+                        </a>
+                    @endif
+
                     <a href="/profile"
                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
                        {{ request()->is('*profile') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
@@ -176,6 +193,24 @@
                     <span class="text-[10px] tracking-wide">Laporan</span>
                 </a>
 
+                @endif
+
+                @if(auth()->user()->role == 'teacher')
+                <a href="{{ route('teacher.kelas_saya.index') }}"
+                   class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
+                   {{ request()->routeIs('teacher.kelas_saya.index') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                    <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->is('kelas_saya.index') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                    <i class="fa-solid fa-book-open text-lg mb-0.5"></i>
+                    <span class="text-[10px] tracking-wide">Kelas Saya</span>
+                </a>
+
+                <a href="/dashboard"
+                   class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
+                   {{ request()->is('*dashboards') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                    <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->is('*dashboards') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                    <i class="fa-solid fa-file-lines text-lg mb-0.5"></i>
+                    <span class="text-[10px] tracking-wide">Laporan</span>
+                </a>
                 @endif
 
                 <a href="/profile"

@@ -10,6 +10,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\Auth\AccountActivationController;
+use App\Http\Controllers\KelasSayaController;
 use Illuminate\Support\Facades\Route;
 
 // ──────────────────────────────────────────────
@@ -70,7 +71,8 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
         return view('teacher.dashboard');
     })->name('dashboard');
 
-    // Tambahkan resource controller guru di sini:
+    Route::get('/kelas_saya', [KelasSayaController::class, 'index'])->name('kelas_saya.index');
+
 });
 
 // ──────────────────────────────────────────────
