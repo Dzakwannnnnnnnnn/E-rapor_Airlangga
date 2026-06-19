@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AcademicYearsController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\TeacherAssignmentController;
 use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
@@ -54,6 +55,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         return view('management.index');
     })->name('management.index');
 
+    Route::get('assignments', [TeacherAssignmentController::class, 'allTeachers'])->name('assignments.teachers');
+
+    Route::get('teachers/{teacher}/assignments', [TeacherAssignmentController::class, 'index'])->name('teachers.assignments.index');
+
+    Route::get('teachers/{teacher}/assignments/create', [TeacherAssignmentController::class, 'create'])->name('teachers.assignments.create');
+
+    Route::post('teachers/{teacher}/assignments', [TeacherAssignmentController::class, 'store'])->name('teachers.assignments.store');
+    Route::delete('teachers/{teacher}/assignments/{assignment}', [TeacherAssignmentController::class, 'destroy'])->name('teachers.assignments.destroy');
+    // ===============================================
+
+    // Data Master Resource
     Route::resource('teachers', TeacherController::class);
     Route::resource('parents', ParentsController::class);
     Route::resource('students', StudentController::class);

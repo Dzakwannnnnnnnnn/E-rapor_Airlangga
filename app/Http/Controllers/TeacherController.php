@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademicYear;
+use App\Models\Classroom;
+use App\Models\ClassroomSubjectTeacher;
+use App\Models\Subject;
 use App\Models\User;
 use App\Models\Teacher;
 use App\Mail\AccountActivationMail;
@@ -103,7 +107,26 @@ class TeacherController extends Controller
     public function show($id)
     {
         $user = User::with('teacher')->where('role', 'teacher')->findOrFail($id);
-        return view('management.users.teacher.show', compact('user'));
+
+        // Data untuk form penugasan
+        $classrooms    = Classroom::orderBy('name')->get();
+        $subjects      = Subject::orderBy('name')->get();
+        $academicYears = AcademicYear::orderByDesc('year')->orderByDesc('semester')->get();
+        $activeYear    = AcademicYear::where('is_active', true)->first();
+
+        // Ambil semua penugasan guru ini, dikelompokkan per tahun ajaran
+        $assignments = collect();
+        if ($user->teacher) {
+            $assignments = ClassroomSubjectTeacher::where('teacher_id', $user->teacher->id)
+                ->with(['classroom', 'subject', 'academicYear'])
+                ->orderByDesc('academic_year_id')
+                ->get()
+                ->groupBy('academic_year_id');
+        }
+
+        return view('management.users.teacher.show', compact(
+            'user', 'classrooms', 'subjects', 'academicYears', 'activeYear', 'assignments'
+        ));
     }
 
     /**

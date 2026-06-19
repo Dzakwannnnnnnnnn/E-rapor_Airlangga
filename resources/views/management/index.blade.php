@@ -130,6 +130,22 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Card: Penugasan Guru -->
+            <a href="{{ route('admin.assignments.teachers') }}" class="group bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-slate-200 transition-all border-l-4 border-l-cyan-500">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-50 text-cyan-500 flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+                        <i class="fa-solid fa-chalkboard-user text-lg"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-slate-800 text-base group-hover:text-primary transition-colors">Penugasan Mengajar</span>
+                        <span class="text-xs text-slate-500 mt-0.5">Kelola Penugasan Mengajar</span>
+                    </div>
+                </div>
+                <div class="text-slate-300 group-hover:text-primary transition-colors mr-1">
+                    <i class="fa-solid fa-chevron-right transition-transform group-hover:translate-x-1"></i>
+                </div>
+            </a>
+
             <!-- Card: Siswa -->
             <a href="{{ Route::has('admin.students.index') ? route('admin.students.index') : '#' }}" class="group bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-slate-200 transition-all border-l-4 border-l-emerald-500">
                 <div class="flex items-center gap-4">

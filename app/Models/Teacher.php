@@ -30,4 +30,12 @@ class Teacher extends Model
     {
         return $this->hasMany(ClassroomSubjectTeacher::class);
     }
+
+    /**
+     * Tambahkan relasi ini agar sesuai dengan panggilan di TeacherAssignmentController
+     */
+    public function assignments()
+    {
+        return $this->hasMany(ClassroomSubjectTeacher::class, 'teacher_id');
+    }
 }
