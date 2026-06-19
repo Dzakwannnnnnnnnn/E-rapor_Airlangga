@@ -11,12 +11,9 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Seed Admin User
+        // ─── Admin ───
         User::create([
             'name'              => 'Admin E-Rapor',
             'email'             => 'admin@test.com',
@@ -25,17 +22,16 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Call other seeders (ORDER MATTERS)
+        // ─── Urutan seeder PENTING – jangan diubah ───
         $this->call([
-            AcademicYearsSeeder::class,
-            ClassroomSeeder::class,
-            SubjectSeeder::class,
-            TeacherSeeder::class,
-            ParentsSeeder::class,
-            StudentSeeder::class,
-            ClassroomSubjectTeacherSeeder::class,
-            AssessmentSeeder::class,
-            GradeEntrySeeder::class,
+            AcademicYearsSeeder::class,           // 1. Tahun ajaran
+            ClassroomSeeder::class,               // 2. Kelas (butuh academic year tidak, tapi dibutuhkan student)
+            SubjectSeeder::class,                 // 3. Mata pelajaran
+            TeacherSeeder::class,                 // 4. Guru (User + Teacher)
+            StudentSeeder::class,                 // 5. Siswa + Parent (User + Parents + Student + Attendance)
+            ClassroomSubjectTeacherSeeder::class, // 6. Penugasan guru per kelas per mapel
+            AssessmentSeeder::class,              // 7. Assessment template per assignment
+            GradeEntrySeeder::class,              // 8. Nilai siswa
         ]);
     }
 }

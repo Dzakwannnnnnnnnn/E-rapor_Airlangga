@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('students', function (Blueprint $table) {
+            // Link each student to one parent account (nullable so existing data is safe)
+            $table->foreignId('parent_id')
+                  ->nullable()
+                  ->after('classroom_id')
+                  ->constrained('parents')
+                  ->nullOnDelete();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('students', function (Blueprint $table) {
+            $table->dropForeign(['parent_id']);
+            $table->dropColumn('parent_id');
+        });
+    }
+};

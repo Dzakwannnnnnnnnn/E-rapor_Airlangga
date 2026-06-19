@@ -13,11 +13,17 @@ class Student extends Model
         'nisn',
         'name',
         'classroom_id',
+        'parent_id',
     ];
 
     public function classroom()
     {
         return $this->belongsTo(Classroom::class);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Parents::class);
     }
 
     public function grades()

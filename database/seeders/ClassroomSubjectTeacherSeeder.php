@@ -12,66 +12,83 @@ use Illuminate\Database\Seeder;
 
 class ClassroomSubjectTeacherSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+    use WithoutModelEvents;
+
     public function run(): void
     {
-        $academicYear = AcademicYear::where('is_active', true)->first();
-        if (!$academicYear) {
-            $academicYear = AcademicYear::first();
+        $ay = AcademicYear::where('is_active', true)->first() ?? AcademicYear::first();
+        if (!$ay) return;
+
+        // ─── Helper: resolve Teacher by user name ───
+        $teacher = fn($name) => Teacher::whereHas('user', fn($q) => $q->where('name', $name))->first();
+
+        // ─── Helper: resolve Subject by name ───
+        $subject = fn($name) => Subject::where('name', $name)->first();
+
+        // ─── Helper: resolve Classroom by name ───
+        $class = fn($name) => Classroom::where('name', $name)->first();
+
+        // ─── Helper: create assignment ───
+        $assign = function ($classroomName, $subjectName, $teacherName) use ($ay, $teacher, $subject, $class) {
+            $c = $class($classroomName);
+            $s = $subject($subjectName);
+            $t = $teacher($teacherName);
+            if ($c && $s && $t) {
+                ClassroomSubjectTeacher::firstOrCreate([
+                    'classroom_id'     => $c->id,
+                    'subject_id'       => $s->id,
+                    'teacher_id'       => $t->id,
+                    'academic_year_id' => $ay->id,
+                ]);
+            }
+        };
+
+        // ═══════════════════════════════════════════════════
+        // MAPEL UMUM — 1 guru mengajar di semua 4 kelas
+        // ═══════════════════════════════════════════════════
+        $sharedSubjects = [
+            'PPKN'                               => 'Bpk. Sudarsono, S.Pd.',
+            'PJOK'                               => 'Ibu Rahmawati, S.Pd.',
+            'Bahasa Indonesia'                   => 'Bpk. Firmansyah, S.Pd.',
+            'Bahasa Inggris'                     => 'Ibu Nurlaila, S.Pd.',
+            'Sejarah'                            => 'Bpk. Hendra Susilo, M.Pd.',
+            'Matematika'                         => 'Ibu Siti Maryam, S.Pd.',
+            'PKK (Proyek Kreatif dan Kewirausahaan)' => 'Bpk. Wahyudi, S.E., M.Pd.',
+        ];
+
+        $allClasses = ['X PPLG', 'X DKV', 'XI PPLG', 'XI DKV'];
+
+        foreach ($sharedSubjects as $subjectName => $teacherName) {
+            foreach ($allClasses as $className) {
+                $assign($className, $subjectName, $teacherName);
+            }
         }
 
-        $classPplg = Classroom::where('name', 'XI PPLG')->first();
-        $classTjkt = Classroom::where('name', 'XI TJKT')->first();
+        // ═══════════════════════════════════════════════════
+        // MAPEL KEJURUAN PPLG — X PPLG & XI PPLG
+        // ═══════════════════════════════════════════════════
+        foreach (['X PPLG', 'XI PPLG'] as $className) {
+            $assign($className, 'Dasar-Dasar PPLG',    'Bpk. Rizki Pratama, S.Kom.');
+            $assign($className, 'Database Foundation',  'Bpk. Andi Setiawan, S.Kom.');
+        }
 
-        $subjectPplg = Subject::where('name', 'Dasar Dasar PPLG')->first();
-        $subjectMath = Subject::where('name', 'Matematika')->first();
-        $subjectPpkn = Subject::where('name', 'Pendidikan Pancasila Dan Kewarganegaraan (PPKN)')->first();
+        // ═══════════════════════════════════════════════════
+        // MAPEL KEJURUAN DKV — X DKV & XI DKV
+        // ═══════════════════════════════════════════════════
+        foreach (['X DKV', 'XI DKV'] as $className) {
+            $assign($className, 'Konsentrasi DKV',          'Ibu Dewi Kartika, S.Ds.');
+            $assign($className, 'Editing dan Visual Effect', 'Ibu Larasati, S.Sn.');
+        }
 
-        $teacherPplgMath = Teacher::whereHas('user', function ($query) {
-            $query->where('name', 'Guru Penguji PPLG');
-        })->first();
+        // ═══════════════════════════════════════════════════
+        // EKSTRAKURIKULER
+        // ═══════════════════════════════════════════════════
+        foreach (['X PPLG', 'XI PPLG'] as $className) {
+            $assign($className, 'Web Design', 'Bpk. Fadlan Maulana, S.Kom.');
+        }
 
-        $teacherPpkn = Teacher::whereHas('user', function ($query) {
-            $query->where('name', 'Guru Penguji TJKT');
-        })->first();
-
-        // Check if all necessary entities exist before seeding
-        if ($academicYear && $classPplg && $classTjkt && $subjectPplg && $subjectMath && $subjectPpkn && $teacherPplgMath && $teacherPpkn) {
-            // Guru Penguji PPLG teaches:
-            // 1. Dasar Dasar PPLG in XI PPLG
-            ClassroomSubjectTeacher::create([
-                'classroom_id' => $classPplg->id,
-                'subject_id' => $subjectPplg->id,
-                'teacher_id' => $teacherPplgMath->id,
-                'academic_year_id' => $academicYear->id,
-            ]);
-
-            // 2. Matematika in XI PPLG
-            ClassroomSubjectTeacher::create([
-                'classroom_id' => $classPplg->id,
-                'subject_id' => $subjectMath->id,
-                'teacher_id' => $teacherPplgMath->id,
-                'academic_year_id' => $academicYear->id,
-            ]);
-
-            // Guru Penguji TJKT teaches:
-            // 1. PPKN in XI PPLG
-            ClassroomSubjectTeacher::create([
-                'classroom_id' => $classPplg->id,
-                'subject_id' => $subjectPpkn->id,
-                'teacher_id' => $teacherPpkn->id,
-                'academic_year_id' => $academicYear->id,
-            ]);
-
-            // 2. Matematika in XI TJKT
-            ClassroomSubjectTeacher::create([
-                'classroom_id' => $classTjkt->id,
-                'subject_id' => $subjectMath->id,
-                'teacher_id' => $teacherPpkn->id,
-                'academic_year_id' => $academicYear->id,
-            ]);
+        foreach (['X DKV', 'XI DKV'] as $className) {
+            $assign($className, 'Editing', 'Bpk. Dimas Arifin, S.Sn.');
         }
     }
 }

@@ -8,20 +8,16 @@ use Illuminate\Database\Seeder;
 
 class ClassroomSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+    use WithoutModelEvents;
+
     public function run(): void
     {
-        Classroom::create([
-            'name' => 'XI PPLG',
-            'major' => 'Pengembangan Perangkat Lunak dan Gim',
-        ]);
+        // Kelas X
+        Classroom::create(['name' => 'X PPLG',  'major' => 'Pengembangan Perangkat Lunak dan Gim']);
+        Classroom::create(['name' => 'X DKV',   'major' => 'Desain Komunikasi Visual']);
 
-        Classroom::create([
-            'name' => 'XI TJKT',
-            'major' => 'Teknik Jaringan Komputer & Telekomunikasi',
-        ]);
+        // Kelas XI
+        Classroom::create(['name' => 'XI PPLG', 'major' => 'Pengembangan Perangkat Lunak dan Gim']);
+        Classroom::create(['name' => 'XI DKV',  'major' => 'Desain Komunikasi Visual']);
     }
 }
-
