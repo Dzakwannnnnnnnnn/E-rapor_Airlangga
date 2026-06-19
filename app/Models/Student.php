@@ -25,6 +25,11 @@ class Student extends Model
         return $this->hasMany(Grade::class);
     }
 
+    public function gradeEntries()
+    {
+        return $this->hasMany(GradeEntry::class);
+    }
+
     public function reportCards()
     {
         return $this->hasMany(ReportCard::class);
@@ -35,3 +40,4 @@ class Student extends Model
         return $this->hasMany(Attendance::class);
     }
 }
+

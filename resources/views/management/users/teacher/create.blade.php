@@ -71,7 +71,7 @@
         </a>
     </div>
 
-    <form method="POST" action="{{ route('admin.teachers.store') }}" class="space-y-6 px-4 sm:px-0">
+    <form id="teacher-form" method="POST" action="{{ route('admin.teachers.store') }}" class="space-y-6 px-4 sm:px-0">
         @csrf
 
         <div class="space-y-3">
@@ -186,7 +186,8 @@
             </div>
         </div>
 
-        <div class="flex items-center justify-end gap-4 pt-2">
+        {{-- Desktop only buttons --}}
+        <div class="hidden md:flex items-center justify-end gap-4 pt-2 pb-4">
             <a href="{{ route('admin.teachers.index') }}"
                class="px-5 py-3 rounded-xl border border-slate-200 text-xs font-black text-slate-400 uppercase tracking-wider hover:bg-slate-50 transition-all text-center">
                 Batal
@@ -198,5 +199,22 @@
         </div>
 
     </form>
+</div>
+@endsection
+
+@section('bottom_bar')
+<div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.10)]">
+    <div class="flex items-center gap-3 px-4 py-3">
+        <a href="{{ route('admin.teachers.index') }}"
+           class="flex-1 flex items-center justify-center gap-2 h-12 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold text-xs uppercase tracking-wider transition-all active:scale-95">
+            <i class="fa-solid fa-arrow-left text-sm"></i>
+            <span>Batal</span>
+        </a>
+        <button form="teacher-form" type="submit"
+                class="flex-[2] flex items-center justify-center gap-2 h-12 rounded-xl bg-primary hover:bg-blue-800 text-white font-black text-xs uppercase tracking-wider transition-all shadow-md shadow-primary/25 active:scale-95">
+            <i class="fa-solid fa-floppy-disk text-sm"></i>
+            <span>Simpan Data Guru</span>
+        </button>
+    </div>
 </div>
 @endsection

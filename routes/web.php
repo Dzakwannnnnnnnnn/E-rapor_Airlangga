@@ -12,6 +12,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\Auth\AccountActivationController;
 use App\Http\Controllers\KelasSayaController;
+use App\Http\Controllers\GradesController;
 use Illuminate\Support\Facades\Route;
 
 // ──────────────────────────────────────────────
@@ -84,6 +85,10 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
     })->name('dashboard');
 
     Route::get('/kelas_saya', [KelasSayaController::class, 'index'])->name('kelas_saya.index');
+
+    // Grade management routes
+    Route::get('/assignments/{assignment}/grades', [GradesController::class, 'index'])->name('grades.index');
+    Route::post('/assignments/{assignment}/grades', [GradesController::class, 'update'])->name('grades.update');
 
 });
 

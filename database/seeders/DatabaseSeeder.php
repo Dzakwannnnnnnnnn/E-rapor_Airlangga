@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Call other seeders
+        // Call other seeders (ORDER MATTERS)
         $this->call([
             AcademicYearsSeeder::class,
             ClassroomSeeder::class,
@@ -34,7 +34,8 @@ class DatabaseSeeder extends Seeder
             ParentsSeeder::class,
             StudentSeeder::class,
             ClassroomSubjectTeacherSeeder::class,
+            AssessmentSeeder::class,
+            GradeEntrySeeder::class,
         ]);
     }
 }
-

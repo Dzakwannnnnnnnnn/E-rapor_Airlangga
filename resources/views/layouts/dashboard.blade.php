@@ -263,5 +263,7 @@
         <form id="global-logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
             @csrf
         </form>
+
+        @stack('scripts')
     </body>
 </html>

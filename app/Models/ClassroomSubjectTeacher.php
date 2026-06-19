@@ -37,4 +37,10 @@ class ClassroomSubjectTeacher extends Model
     {
         return $this->belongsTo(AcademicYear::class);
     }
+
+    public function assessments()
+    {
+        return $this->hasMany(Assessment::class, 'classroom_subject_teacher_id');
+    }
 }
+

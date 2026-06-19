@@ -138,7 +138,7 @@
                                 $studentCount = $classroom->students->count();
                             @endphp
 
-                            <a href="#" class="group bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-slate-200 transition-all border-l-4 {{ $borderTheme }}">
+                            <a href="{{ route('teacher.grades.index', $assignment->id) }}" class="group bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-slate-200 transition-all border-l-4 {{ $borderTheme }}">
                                 <div class="flex items-center gap-4 overflow-hidden">
                                     <div class="w-12 h-12 rounded-xl {{ $cardIconTheme }} flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
                                         <i class="fa-solid fa-users text-lg"></i>
