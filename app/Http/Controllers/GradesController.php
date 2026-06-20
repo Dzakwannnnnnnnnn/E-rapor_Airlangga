@@ -18,7 +18,7 @@ class GradesController extends Controller
     {
         // Make sure the logged-in teacher owns this assignment
         $teacher = Auth::user()->teacher;
-        abort_if(!$teacher || $assignment->teacher_id !== $teacher->id, 403);
+        abort_if(!$teacher || $assignment->teacher_id != $teacher->id, 403);
 
         $assignment->load([
             'classroom.students',
@@ -58,7 +58,7 @@ class GradesController extends Controller
     public function update(Request $request, ClassroomSubjectTeacher $assignment)
     {
         $teacher = Auth::user()->teacher;
-        abort_if(!$teacher || $assignment->teacher_id !== $teacher->id, 403);
+        abort_if(!$teacher || $assignment->teacher_id != $teacher->id, 403);
 
         $scores = $request->input('scores', []); // scores[assessment_id][student_id] = nilai
 

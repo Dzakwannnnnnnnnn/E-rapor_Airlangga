@@ -18,6 +18,13 @@ class ClassroomSubjectTeacher extends Model
         'academic_year_id',
     ];
 
+    protected $casts = [
+        'classroom_id' => 'integer',
+        'subject_id' => 'integer',
+        'teacher_id' => 'integer',
+        'academic_year_id' => 'integer',
+    ];
+
     public function classroom()
     {
         return $this->belongsTo(Classroom::class);
