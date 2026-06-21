@@ -28,7 +28,7 @@ class GradesController extends Controller
         ]);
 
         $classroom   = $assignment->classroom;
-        $students    = $classroom->students->sortBy('name');
+        $students    = $classroom->students->sortBy('name')->values();
         $assessments = $assignment->assessments;
 
         // Group assessments by type for the header

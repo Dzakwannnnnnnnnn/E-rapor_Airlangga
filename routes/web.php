@@ -13,6 +13,7 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\Auth\AccountActivationController;
 use App\Http\Controllers\KelasSayaController;
 use App\Http\Controllers\GradesController;
+use App\Http\Controllers\TeacherDashboardController;
 use Illuminate\Support\Facades\Route;
 
 // ──────────────────────────────────────────────
@@ -80,9 +81,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // ──────────────────────────────────────────────
 
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('teacher.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [TeacherDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/kelas_saya', [KelasSayaController::class, 'index'])->name('kelas_saya.index');
 
