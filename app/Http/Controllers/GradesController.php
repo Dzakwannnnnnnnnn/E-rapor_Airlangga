@@ -28,7 +28,21 @@ class GradesController extends Controller
         ]);
 
         $classroom   = $assignment->classroom;
-        $students    = $classroom->students->sortBy('name')->values();
+        
+        $search = request()->query('search');
+        if ($search) {
+            $students = $classroom->students()
+                ->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('nisn', 'like', "%{$search}%");
+                })
+                ->get()
+                ->sortBy('name')
+                ->values();
+        } else {
+            $students = $classroom->students->sortBy('name')->values();
+        }
+
         $assessments = $assignment->assessments;
 
         // Group assessments by type for the header

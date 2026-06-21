@@ -9,6 +9,14 @@
             $initials .= strtoupper(substr($nameParts[0], 1, 1));
         }
     }
+
+    $availableRoles = [];
+    if (Auth::check()) {
+        if (Auth::user()->hasRole('admin')) $availableRoles[] = 'admin';
+        if (Auth::user()->hasRole('teacher')) $availableRoles[] = 'teacher';
+        if (Auth::user()->hasRole('parent')) $availableRoles[] = 'parent';
+    }
+    $activeRole = session('active_role', Auth::check() ? Auth::user()->role : null);
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -97,6 +105,27 @@
                     </div>
                 </div>
 
+                @if(count($availableRoles) > 1)
+                <div class="px-6 py-3 border-b border-white/10 sidebar-text shrink-0">
+                    <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Pilih Area Akses</label>
+                    <form action="{{ route('switch-role') }}" method="POST" id="role-switcher-form">
+                        @csrf
+                        <div class="relative">
+                            <select name="role" onchange="this.form.submit()" class="w-full bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl px-3 py-2 text-xs font-black text-white focus:outline-none focus:ring-1 focus:ring-secondary/50 cursor-pointer appearance-none">
+                                @foreach($availableRoles as $roleOption)
+                                    <option value="{{ $roleOption }}" {{ $activeRole === $roleOption ? 'selected' : '' }} class="text-slate-800 font-bold bg-white">
+                                        {{ $roleOption === 'admin' ? 'Administrator' : ($roleOption === 'teacher' ? 'Area Guru' : 'Area Orang Tua') }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-300">
+                                <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                @endif
+
                 <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
                     <a href="/dashboard"
                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
@@ -105,7 +134,7 @@
                         <span class="text-sm sidebar-text">Home</span>
                     </a>
 
-                    @if(auth()->user()->role == 'admin')
+                    @if($activeRole == 'admin')
                         <a href="{{ route('admin.management.index') }}"
                         class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
                         {{ request()->is('admin/management*') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
@@ -114,29 +143,37 @@
                         </a>
 
 
-                        <a href="/dashboard"
+                        <a href="{{ route('admin.report-cards.index') }}"
                         class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
-                        {{ request()->is('*dashboards') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
-                            <i class="fa-solid fa-file-lines w-5 text-center text-lg shrink-0"></i>
-                            <span class="text-sm sidebar-text">Laporan</span>
+                        {{ request()->routeIs('admin.report-cards.*') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                            <i class="fa-solid fa-stamp w-5 text-center text-lg shrink-0"></i>
+                            <span class="text-sm sidebar-text">Pengesahan Rapor</span>
                         </a>
                     @endif
 
-                    @if(auth()->user()->role == 'teacher')
-                    <a href="{{ route('teacher.kelas_saya.index') }}"
+                    @if($activeRole == 'teacher')
+                        <a href="{{ route('teacher.kelas_saya.index') }}"
                         class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
                         {{ request()->routeIs('teacher.kelas_saya.index') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
                             <i class="fa-solid fa-book-open w-5 text-center text-lg shrink-0"></i>
                             <span class="text-sm sidebar-text">Kelas Saya</span>
                         </a>
 
-
-                        <a href="/dashboard"
+                        <a href="{{ route('teacher.laporan.index') }}"
                         class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
-                        {{ request()->is('*dashboards') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                        {{ request()->routeIs('teacher.laporan.*') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
                             <i class="fa-solid fa-file-lines w-5 text-center text-lg shrink-0"></i>
                             <span class="text-sm sidebar-text">Laporan</span>
                         </a>
+
+                        @if(auth()->user()->teacher && auth()->user()->teacher->classroomAsHomeroom()->exists())
+                        <a href="{{ route('teacher.homeroom.index') }}"
+                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
+                        {{ request()->routeIs('teacher.homeroom.*') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                            <i class="fa-solid fa-chalkboard-user w-5 text-center text-lg shrink-0"></i>
+                            <span class="text-sm sidebar-text">Wali Kelas</span>
+                        </a>
+                        @endif
                     @endif
 
                     <a href="/profile"
@@ -176,7 +213,7 @@
                     <span class="text-[10px] tracking-wide">Home</span>
                 </a>
 
-                @if(auth()->user()->role == 'admin')
+                @if($activeRole == 'admin')
                 <a href="{{ route('admin.management.index') }}"
                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
                    {{ (request()->is('admin/*') && !request()->is('admin/dashboard')) ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
@@ -185,17 +222,16 @@
                     <span class="text-[10px] tracking-wide">Management</span>
                 </a>
 
-                <a href="/dashboard"
+                <a href="{{ route('admin.report-cards.index') }}"
                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
-                   {{ request()->is('*dashboards') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
-                    <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->is('*dashboards') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
-                    <i class="fa-solid fa-file-lines text-lg mb-0.5"></i>
-                    <span class="text-[10px] tracking-wide">Laporan</span>
+                   {{ request()->routeIs('admin.report-cards.*') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                    <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->routeIs('admin.report-cards.*') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                    <i class="fa-solid fa-stamp text-lg mb-0.5"></i>
+                    <span class="text-[10px] tracking-wide">Pengesahan</span>
                 </a>
-
                 @endif
 
-                @if(auth()->user()->role == 'teacher')
+                @if($activeRole == 'teacher')
                 <a href="{{ route('teacher.kelas_saya.index') }}"
                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
                    {{ request()->routeIs('teacher.kelas_saya.index') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
@@ -204,10 +240,10 @@
                     <span class="text-[10px] tracking-wide">Kelas Saya</span>
                 </a>
 
-                <a href="/dashboard"
+                <a href="{{ route('teacher.laporan.index') }}"
                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
-                   {{ request()->is('*dashboards') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
-                    <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->is('*dashboards') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                   {{ request()->routeIs('teacher.laporan.*') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                    <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->routeIs('teacher.laporan.*') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
                     <i class="fa-solid fa-file-lines text-lg mb-0.5"></i>
                     <span class="text-[10px] tracking-wide">Laporan</span>
                 </a>

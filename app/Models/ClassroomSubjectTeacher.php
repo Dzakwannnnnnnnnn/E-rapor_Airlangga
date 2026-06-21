@@ -16,6 +16,7 @@ class ClassroomSubjectTeacher extends Model
         'subject_id',
         'teacher_id',
         'academic_year_id',
+        'is_submitted',
     ];
 
     protected $casts = [
@@ -23,6 +24,7 @@ class ClassroomSubjectTeacher extends Model
         'subject_id' => 'integer',
         'teacher_id' => 'integer',
         'academic_year_id' => 'integer',
+        'is_submitted' => 'boolean',
     ];
 
     public function classroom()

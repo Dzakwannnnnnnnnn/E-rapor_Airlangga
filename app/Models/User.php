@@ -39,4 +39,21 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Parents::class);
     }
+
+    /**
+     * Check if user possesses a specific profile/role in the system.
+     */
+    public function hasRole(string $role): bool
+    {
+        if ($role === 'admin') {
+            return $this->role === 'admin';
+        }
+        if ($role === 'teacher') {
+            return $this->teacher()->exists();
+        }
+        if ($role === 'parent') {
+            return $this->parent()->exists();
+        }
+        return false;
+    }
 }

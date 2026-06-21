@@ -102,6 +102,9 @@
                                 <span class="text-xs text-slate-500 block truncate mt-1">
                                     <i class="fa-solid fa-graduation-cap mr-1.5 opacity-60"></i>{{ $classroom->major }}
                                 </span>
+                                <span class="text-xs text-slate-500 block truncate mt-1">
+                                    <i class="fa-solid fa-chalkboard-user mr-1.5 opacity-60"></i>Wali: <strong class="text-slate-700">{{ $classroom->homeroomTeacher ? $classroom->homeroomTeacher->user->name : 'Belum Ditentukan' }}</strong>
+                                </span>
                             </div>
                         </div>
 

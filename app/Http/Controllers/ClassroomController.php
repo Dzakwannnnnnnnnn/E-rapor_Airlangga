@@ -37,7 +37,8 @@ class ClassroomController extends Controller
      */
     public function create()
     {
-        return view('management.classrooms.create');
+        $teachers = \App\Models\Teacher::with('user')->get();
+        return view('management.classrooms.create', compact('teachers'));
     }
 
     /**
@@ -48,6 +49,7 @@ class ClassroomController extends Controller
         $validated = $request->validate([
             'name'  => 'required|max:255',
             'major' => 'required|max:255',
+            'homeroom_teacher_id' => 'nullable|exists:teachers,id',
         ]);
 
         Classroom::create($validated);
@@ -72,7 +74,8 @@ class ClassroomController extends Controller
      */
     public function edit(Classroom $classroom)
     {
-        return view('management.classrooms.edit', compact('classroom'));
+        $teachers = \App\Models\Teacher::with('user')->get();
+        return view('management.classrooms.edit', compact('classroom', 'teachers'));
     }
 
     /**
@@ -83,6 +86,7 @@ class ClassroomController extends Controller
         $validated = $request->validate([
             'name'  => 'required|max:255',
             'major' => 'required|max:255',
+            'homeroom_teacher_id' => 'nullable|exists:teachers,id',
         ]);
 
         $classroom->update($validated);

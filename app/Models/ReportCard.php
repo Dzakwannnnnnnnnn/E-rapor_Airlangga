@@ -18,6 +18,9 @@ class ReportCard extends Model
         'rank',
         'description',
         'publish_at',
+        'is_validated',
+        'is_submitted',
+        'status',
     ];
 
     protected $casts = [

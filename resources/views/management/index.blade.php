@@ -209,6 +209,7 @@
                     <i class="fa-solid fa-chevron-right transition-transform group-hover:translate-x-1"></i>
                 </div>
             </a>
+
         </div>
     </div>
 

@@ -20,7 +20,15 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        if (!in_array($request->user()->role, $roles)) {
+        $activeRole = session('active_role', $request->user()->role);
+
+        // Prevent session tampering: verify user actually has the active role
+        if (!$request->user()->hasRole($activeRole)) {
+            $activeRole = $request->user()->role;
+            session(['active_role' => $activeRole]);
+        }
+
+        if (!in_array($activeRole, $roles)) {
             abort(403, 'Unauthorized action.');
         }
 

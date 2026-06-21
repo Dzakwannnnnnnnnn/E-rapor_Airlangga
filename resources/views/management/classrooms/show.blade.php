@@ -103,6 +103,16 @@
                     </div>
                 </div>
 
+                <div class="space-y-1.5">
+                    <span class="block text-[10px] font-black text-slate-400 uppercase tracking-wider pl-0.5">Wali Kelas</span>
+                    <div class="flex items-center gap-3 bg-slate-50/70 border border-slate-100 rounded-xl px-4 py-3">
+                        <i class="fa-solid fa-chalkboard-user text-slate-400 text-sm w-4 text-center"></i>
+                        <span class="text-sm font-bold text-slate-700">
+                            {{ $classroom->homeroomTeacher ? $classroom->homeroomTeacher->user->name : 'Belum Ditentukan' }}
+                        </span>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

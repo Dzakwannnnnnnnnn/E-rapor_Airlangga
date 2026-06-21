@@ -12,7 +12,13 @@ class Classroom extends Model
     protected $fillable = [
         'name',
         'major',
+        'homeroom_teacher_id',
     ];
+
+    public function homeroomTeacher()
+    {
+        return $this->belongsTo(Teacher::class, 'homeroom_teacher_id');
+    }
 
     public function students()
     {

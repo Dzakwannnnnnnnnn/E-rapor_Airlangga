@@ -109,6 +109,29 @@
                         @enderror
                     </div>
 
+                    <div class="space-y-2 col-span-1 md:col-span-2">
+                        <label for="homeroom_teacher_id" class="block text-xs font-black text-slate-500 uppercase tracking-wider pl-1">Wali Kelas</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-chalkboard-user text-sm"></i>
+                            </div>
+                            <select name="homeroom_teacher_id" id="homeroom_teacher_id"
+                                class="w-full pl-11 pr-4 py-3.5 bg-slate-50/50 border @error('homeroom_teacher_id') border-danger @else border-slate-200 focus:border-primary @enderror rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:bg-white transition-all shadow-sm">
+                                <option value="">-- Pilih Wali Kelas (Opsional) --</option>
+                                @foreach($teachers as $teacher)
+                                    <option value="{{ $teacher->id }}" {{ old('homeroom_teacher_id', $classroom->homeroom_teacher_id) == $teacher->id ? 'selected' : '' }}>
+                                        {{ $teacher->user->name }} - NIP. {{ $teacher->nip }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @error('homeroom_teacher_id')
+                            <p class="text-xs font-bold text-danger mt-1.5 uppercase tracking-wide flex items-center gap-1.5 pl-1">
+                                <i class="fa-solid fa-circle-exclamation text-[10px]"></i> {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
                 </div>
             </div>
         </div>

@@ -108,10 +108,30 @@
             </div>
         @endif
 
-        {{-- Section Title --}}
-        <div class="flex items-center gap-2 mb-4">
-            <i class="fa-solid fa-table-list text-primary"></i>
-            <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wide">Formulir Penilaian Siswa</h4>
+        {{-- Section Title & Search --}}
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-table-list text-primary"></i>
+                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wide">Formulir Penilaian Siswa</h4>
+            </div>
+
+            {{-- Search Bar --}}
+            <form action="{{ url()->current() }}" method="GET" class="w-full sm:w-72 shrink-0">
+                <div class="relative flex items-center bg-white border border-slate-200 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary rounded-xl transition-all px-3 py-2 group">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs mr-2 transition-colors shrink-0"></i>
+                    <input type="text" 
+                           name="search"
+                           value="{{ request('search') }}"
+                           placeholder="Cari Nama / NISN Siswa..." 
+                           class="w-full bg-transparent border-0 p-0 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0 focus:border-0 transition-colors">
+                    
+                    @if(request('search'))
+                        <a href="{{ url()->current() }}" class="absolute right-3 text-slate-400 hover:text-red-500 transition-colors">
+                            <i class="fa-solid fa-xmark text-xs"></i>
+                        </a>
+                    @endif
+                </div>
+            </form>
         </div>
 
         {{-- ─── Grade Form ─── --}}

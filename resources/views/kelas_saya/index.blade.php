@@ -106,7 +106,37 @@
             </a>
         </div>
     @else
-        <div class="space-y-10">
+        <div class="space-y-8">
+            {{-- Menu Khusus KKM --}}
+            <div class="space-y-4">
+                <div>
+                    <h4 class="font-extrabold text-slate-800 text-sm uppercase tracking-wider">Menu Pengelolaan</h4>
+                    <p class="text-xs text-slate-400">Parameter Kriteria Ketuntasan Minimal untuk seluruh mata pelajaran.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <a href="{{ route('teacher.kelas_saya.kkm') }}" class="group bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-slate-200 transition-all border-l-4 border-l-amber-500">
+                        <div class="flex items-center gap-4 overflow-hidden">
+                            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+                                <i class="fa-solid fa-calculator text-lg"></i>
+                            </div>
+                            <div class="flex flex-col min-w-0">
+                                <span class="font-bold text-slate-800 text-sm group-hover:text-primary transition-colors truncate">
+                                    KKM Mata Pelajaran
+                                </span>
+                                <span class="text-[10px] text-slate-400 font-semibold mt-0.5">
+                                    Atur batas KKM per mata pelajaran
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-slate-300 group-hover:text-primary transition-colors ml-2 shrink-0">
+                            <i class="fa-solid fa-chevron-right transition-transform group-hover:translate-x-1"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="w-full h-px bg-slate-100 my-6"></div>
+
             @foreach($groupedAssignments as $subjectName => $assignments)
                 @php
                     $subjectType = $assignments->first()->subject->type;

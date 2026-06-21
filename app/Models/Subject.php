@@ -12,6 +12,11 @@ class Subject extends Model
     protected $fillable = [
         'name',
         'type',
+        'kkm',
+    ];
+
+    protected $casts = [
+        'kkm' => 'integer',
     ];
 
     public function grades()

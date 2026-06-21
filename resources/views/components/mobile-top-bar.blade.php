@@ -6,7 +6,7 @@
 @php
     $menus = [];
     if (auth()->check()) {
-        $role = auth()->user()->role;
+        $role = session('active_role', auth()->user()->role);
         
         // Base menus for all logged in users
         $menus[] = [
@@ -68,12 +68,12 @@
                 'keywords' => ['wali', 'orang tua', 'parent', 'murid', 'ibu', 'ayah', 'kelola wali', 'tambah wali', 'wali murid']
             ];
             $menus[] = [
-                'title' => 'Laporan Nilai',
-                'url' => '/dashboard',
-                'icon' => 'fa-solid fa-file-lines',
-                'bg' => 'bg-rose-50 text-rose-600',
-                'description' => 'Lihat laporan nilai dan e-rapor',
-                'keywords' => ['laporan', 'nilai', 'rapor', 'pdf', 'print', 'cetak', 'laporan nilai']
+                'title' => 'Pengesahan Rapor',
+                'url' => route('admin.report-cards.index'),
+                'icon' => 'fa-solid fa-stamp',
+                'bg' => 'bg-amber-50 text-amber-600',
+                'description' => 'Verifikasi dan sahkan usulan rapor dari wali kelas',
+                'keywords' => ['sahkan', 'pengesahan', 'rapor', 'laporan', 'validasi', 'tolak', 'setujui']
             ];
         } elseif ($role === 'teacher') {
             $menus[] = [
@@ -84,6 +84,32 @@
                 'description' => 'Halaman utama dashboard guru',
                 'keywords' => ['home', 'beranda', 'dashboard', 'utama', 'awal', 'guru']
             ];
+            $menus[] = [
+                'title' => 'Kelas Saya',
+                'url' => route('teacher.kelas_saya.index'),
+                'icon' => 'fa-solid fa-book-open',
+                'bg' => 'bg-blue-50 text-blue-600',
+                'description' => 'Lihat rombongan belajar dan input nilai mata pelajaran',
+                'keywords' => ['kelas', 'mapel', 'nilai', 'kkm', 'siswa', 'mengajar']
+            ];
+            $menus[] = [
+                'title' => 'Laporan Nilai',
+                'url' => route('teacher.laporan.index'),
+                'icon' => 'fa-solid fa-file-lines',
+                'bg' => 'bg-rose-50 text-rose-600',
+                'description' => 'Lihat detail capaian nilai per rombel',
+                'keywords' => ['laporan', 'nilai', 'rapor', 'draft', 'kirim']
+            ];
+            if (auth()->user()->teacher && auth()->user()->teacher->classroomAsHomeroom()->exists()) {
+                $menus[] = [
+                    'title' => 'Wali Kelas',
+                    'url' => route('teacher.homeroom.index'),
+                    'icon' => 'fa-solid fa-chalkboard-user',
+                    'bg' => 'bg-indigo-50 text-indigo-600',
+                    'description' => 'Kelola kehadiran, catatan, dan pengesahan rapor kelas Anda',
+                    'keywords' => ['wali', 'kelas', 'rapor', 'sahkan', 'absen', 'catatan', 'homeroom']
+                ];
+            }
         } elseif ($role === 'parent') {
             $menus[] = [
                 'title' => 'Home / Dashboard',
