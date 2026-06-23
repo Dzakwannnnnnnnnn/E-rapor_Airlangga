@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard ')
 
 @section('title', 'Parent Dashboard - e-Rapor')
 
@@ -6,57 +6,17 @@
 @php
     $parentName = Auth::user()->name;
     $parent = Auth::user()->parent;
-    
+
     // Fetch student details from DB dynamically using the parent relationship
     $student = $parent ? \App\Models\Student::where('parent_id', $parent->id)->first() : null;
     $studentName = $student ? $student->name : '';
-    
-    $grades = $student ? $student->grades()->with('subject', 'teacher.user')->get() : collect();
+
+    $grades = $student ? $student->grades()->with('classroomSubjectTeacher.subject', 'classroomSubjectTeacher.teacher.user')->get() : collect();
     $attendance = $student ? $student->attendances()->first() : null;
     $reportCard = $student ? $student->reportCards()->first() : null;
 @endphp
 
 <div class="min-h-screen bg-[#F4F6F9] flex flex-col font-sans selection:bg-[#003399]/25 selection:text-[#003399]">
-    <!-- Navbar -->
-    <nav class="bg-[#003399] text-white shadow-md border-b-4 border-[#FFB800]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
-                <div class="flex items-center gap-3">
-                    <div class="bg-white p-1.5 rounded-lg shadow-sm">
-                        <img src="{{ asset('SMKTI Airlangga Samarinda Icon.png') }}" alt="Logo" class="w-6 h-6 object-contain">
-                    </div>
-                    <div>
-                        <h1 class="text-md font-black tracking-tight uppercase leading-none">e-Rapor</h1>
-                        <p class="text-[8px] text-[#FFB800] font-bold uppercase tracking-widest mt-0.5">SMK TI Airlangga</p>
-                    </div>
-                </div>
-
-                <!-- User Profile & Logout -->
-                <div class="flex items-center gap-4">
-                    @if(auth()->user()->hasRole('teacher'))
-                        <form method="POST" action="{{ route('switch-role') }}" class="inline">
-                            @csrf
-                            <input type="hidden" name="role" value="teacher">
-                            <button type="submit" class="bg-[#FFB800] hover:bg-[#e6a500] text-slate-900 border border-transparent px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm cursor-pointer">
-                                <i class="fa-solid fa-chalkboard-user"></i> Area Guru
-                            </button>
-                        </form>
-                    @endif
-                    <div class="text-right hidden sm:block">
-                        <p class="text-xs font-bold leading-none">{{ $parentName }}</p>
-                        <span class="inline-block mt-1 px-2 py-0.5 bg-[#FFB800] text-slate-900 text-[8px] font-black uppercase tracking-wider rounded">Wali Murid</span>
-                    </div>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer">
-                            <i class="fa-solid fa-right-from-bracket text-[#FFB800]"></i> Keluar
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
 
     <!-- Main Content -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -134,9 +94,9 @@
                                 <div class="p-4 rounded-xl border border-slate-100 hover:border-slate-200 transition-all">
                                     <div class="flex items-center justify-between mb-2">
                                         <div>
-                                            <h4 class="text-sm font-black text-slate-800">{{ $grade->subject->name ?? 'N/A' }}</h4>
+                                            <h4 class="text-sm font-black text-slate-800">{{ $grade->classroomSubjectTeacher->subject->name ?? 'N/A' }}</h4>
                                             <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
-                                                Guru: {{ $grade->teacher->user->name ?? 'N/A' }}
+                                                Guru: {{ $grade->classroomSubjectTeacher->teacher->user->name ?? 'N/A' }}
                                             </p>
                                         </div>
                                         <div class="text-right">
