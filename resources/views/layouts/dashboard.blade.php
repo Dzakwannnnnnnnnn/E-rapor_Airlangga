@@ -176,6 +176,30 @@
                         @endif
                     @endif
 
+                    @if($activeRole == 'parent')
+                        <a href="{{ route('teacher.kelas_saya.index') }}"
+                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
+                        {{ request()->routeIs('teacher.kelas_saya.index') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                            <i class="fa-solid fa-book-open w-5 text-center text-lg shrink-0"></i>
+                            <span class="text-sm sidebar-text">Profil Anak</span>
+                        </a>
+
+                        <a href="{{ route('teacher.laporan.index') }}"
+                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
+                        {{ request()->routeIs('teacher.laporan.*') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                            <i class="fa-solid fa-file-lines w-5 text-center text-lg shrink-0"></i>
+                            <span class="text-sm sidebar-text">Akademik</span>
+                        </a>
+
+                        <a href="{{ route('teacher.laporan.index') }}"
+                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
+                        {{ request()->routeIs('teacher.laporan.*') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                            <i class="fa-solid fa-file-lines w-5 text-center text-lg shrink-0"></i>
+                            <span class="text-sm sidebar-text">Informasi Sekolah</span>
+                        </a>
+
+                    @endif
+
                     <a href="/profile"
                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
                        {{ request()->is('*profile') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
@@ -221,7 +245,7 @@
                     <i class="fa-solid fa-grip text-lg mb-0.5"></i>
                     <span class="text-[10px] tracking-wide">Management</span>
                 </a>
-
+                
                 <a href="{{ route('admin.report-cards.index') }}"
                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
                    {{ request()->routeIs('admin.report-cards.*') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
@@ -232,20 +256,56 @@
                 @endif
 
                 @if($activeRole == 'teacher')
+                    <a href="{{ route('teacher.kelas_saya.index') }}"
+                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
+                    {{ request()->routeIs('teacher.kelas_saya.index') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                        <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->is('kelas_saya.index') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                        <i class="fa-solid fa-book-open text-lg mb-0.5"></i>
+                        <span class="text-[10px] tracking-wide">Kelas Saya</span>
+                    </a>
+
+                    <a href="{{ route('teacher.laporan.index') }}"
+                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
+                    {{ request()->routeIs('teacher.laporan.*') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                        <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->routeIs('teacher.laporan.*') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                        <i class="fa-solid fa-file-lines text-lg mb-0.5"></i>
+                        <span class="text-[10px] tracking-wide">Laporan</span>
+                    </a>
+
+                    @if(auth()->user()->teacher && auth()->user()->teacher->classroomAsHomeroom()->exists())
+                    <a href="{{ route('teacher.homeroom.index') }}"
+                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
+                    {{ request()->routeIs('teacher.homeroom.index') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                        <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->routeIs('teacher.homeroom.index') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                        <i class="fa-solid fa-chalkboard-user text-lg mb-0.5"></i>
+                        <span class="text-[10px] tracking-wide">Wali Kelas</span>
+                    </a>
+                    @endif
+                @endif
+
+                @if($activeRole == 'parent')
                 <a href="{{ route('teacher.kelas_saya.index') }}"
                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
                    {{ request()->routeIs('teacher.kelas_saya.index') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
                     <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->is('kelas_saya.index') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
-                    <i class="fa-solid fa-book-open text-lg mb-0.5"></i>
-                    <span class="text-[10px] tracking-wide">Kelas Saya</span>
+                    <i class="fa-solid fa-children text-lg mb-0.5"></i>
+                    <span class="text-[10px] tracking-wide">Anak</span>
                 </a>
 
                 <a href="{{ route('teacher.laporan.index') }}"
                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
                    {{ request()->routeIs('teacher.laporan.*') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
                     <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->routeIs('teacher.laporan.*') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
-                    <i class="fa-solid fa-file-lines text-lg mb-0.5"></i>
-                    <span class="text-[10px] tracking-wide">Laporan</span>
+                    <i class="fa-solid fa-address-book text-lg mb-0.5"></i>
+                    <span class="text-[10px] tracking-wide">Akademik</span>
+                </a>
+
+                <a href="{{ route('teacher.laporan.index') }}"
+                   class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
+                   {{ request()->routeIs('teacher.laporan.*') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                    <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->routeIs('teacher.laporan.*') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                    <i class="fa-solid fa-school text-lg mb-0.5"></i>
+                    <span class="text-[10px] tracking-wide">Sekolah</span>
                 </a>
                 @endif
 
