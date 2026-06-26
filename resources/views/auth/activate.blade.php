@@ -106,8 +106,9 @@
                 <p class="text-[10px] font-black uppercase tracking-wider mt-1.5 ml-1 hidden" id="matchLabel"></p>
             </div>
 
-            <button type="submit" class="hidden lg:flex w-full bg-[#003399] hover:bg-[#002266] text-white font-black text-xs uppercase tracking-widest py-4 rounded-xl transition-all shadow-lg shadow-[#003399]/20 items-center justify-center gap-2 border-b-2 border-slate-900/20 cursor-pointer">
-                <i class="fa-solid fa-shield-check text-[#FFB800]"></i>
+            <button type="submit" id="submitBtnDesktop" disabled
+                class="hidden lg:flex w-full bg-slate-200 text-slate-400 font-black text-xs uppercase tracking-widest py-4 rounded-xl transition-all items-center justify-center gap-2 border-b-2 border-slate-300 cursor-not-allowed opacity-60">
+                <i class="fa-solid fa-shield-check"></i>
                 Aktifkan Akun Sekarang
             </button>
         </form>
@@ -119,8 +120,9 @@
 
     <div class="lg:hidden fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 p-4 pb-6 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)] z-50">
         <div class="max-w-md mx-auto">
-            <button type="submit" form="activateForm" class="w-full bg-[#003399] hover:bg-[#002266] text-white font-black text-xs uppercase tracking-widest py-4 rounded-xl transition-all shadow-lg shadow-[#003399]/20 flex items-center justify-center gap-2 border-b-2 border-slate-900/20 cursor-pointer">
-                <i class="fa-solid fa-shield-check text-[#FFB800]"></i>
+            <button type="submit" id="submitBtnMobile" form="activateForm" disabled
+                class="w-full bg-slate-200 text-slate-400 font-black text-xs uppercase tracking-widest py-4 rounded-xl transition-all flex items-center justify-center gap-2 border-b-2 border-slate-300 cursor-not-allowed opacity-60">
+                <i class="fa-solid fa-shield-check"></i>
                 Aktifkan Akun Sekarang
             </button>
         </div>
@@ -138,6 +140,37 @@
             field.type = 'password';
             icon.classList.replace('fa-eye-slash', 'fa-eye');
         }
+    }
+
+    function setSubmitEnabled(enabled) {
+        const btns = [
+            document.getElementById('submitBtnDesktop'),
+            document.getElementById('submitBtnMobile'),
+        ];
+        btns.forEach(btn => {
+            if (!btn) return;
+            if (enabled) {
+                btn.disabled = false;
+                btn.className = btn.className
+                    .replace('bg-slate-200', 'bg-[#003399]')
+                    .replace('text-slate-400', 'text-white')
+                    .replace('border-slate-300', 'border-slate-900/20')
+                    .replace('cursor-not-allowed', 'cursor-pointer')
+                    .replace('opacity-60', '')
+                    .replace('hover:bg-[#003399]', '') // avoid duplication
+                    + ' hover:bg-[#002266] shadow-lg shadow-[#003399]/20';
+            } else {
+                btn.disabled = true;
+                btn.className = btn.className
+                    .replace('bg-[#003399]', 'bg-slate-200')
+                    .replace('hover:bg-[#002266]', '')
+                    .replace('text-white', 'text-slate-400')
+                    .replace('border-slate-900/20', 'border-slate-300')
+                    .replace('cursor-pointer', 'cursor-not-allowed')
+                    .replace('shadow-lg shadow-[#003399]/20', '')
+                    .trimEnd() + ' opacity-60';
+            }
+        });
     }
 
     function checkStrength(val) {
@@ -182,6 +215,10 @@
         } else {
             label.textContent = '';
         }
+
+        // Only enable submit when password is SANGAT KUAT (score === 4)
+        setSubmitEnabled(score === 4);
+
         checkMatch();
     }
 

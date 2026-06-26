@@ -33,8 +33,9 @@
                 Sistem <br>
                 <span class="text-[#FFB800]">Login Akun</span>
             </h2>
-            <p class="text-[11px] text-white/70 max-w-[250px] font-normal leading-relaxed">
-                Silakan masuk menggunakan kredensial Anda untuk mengakses dasbor akademik siswa.
+            <p class="text-[11px] text-white/70 max-w-[260px] font-normal leading-relaxed">
+                Admin/Guru masuk dengan <strong class="text-white">email</strong>.
+                Wali Murid masuk dengan <strong class="text-[#FFB800]">NISN anak</strong>.
             </p>
         </div>
 
@@ -48,14 +49,21 @@
         <form method="POST" action="{{ route('login') }}" id="loginForm" class="flex flex-col">
             @csrf
             <div class="mb-5 relative group">
-                <label for="email" class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block ml-1">Alamat Email</label>
+                <label for="email" class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block ml-1">Email / NISN</label>
                 <div class="relative">
                     <span class="absolute bottom-4 left-4 text-slate-400 group-focus-within:text-[#003399] transition-colors z-10">
-                        <i class="fa-solid fa-envelope text-sm"></i>
+                        <i class="fa-solid fa-id-card text-sm"></i>
                     </span>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus placeholder="Masukkan email Anda"
+                    <input id="email" type="text" name="email" value="{{ old('email') }}" required autofocus
+                        inputmode="text"
+                        placeholder="Email (Admin/Guru) atau NISN (Orang Tua)"
                         class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:border-[#003399] focus:ring-2 focus:ring-[#003399]/20 transition-all outline-none shadow-sm">
                 </div>
+                <p class="text-[10px] text-slate-400 font-medium mt-1.5 ml-1">
+                    <i class="fa-solid fa-circle-info text-[9px]"></i>
+                    Wali Murid: masukkan <span class="font-bold text-slate-600">NISN anak</span>.
+                    Admin / Guru: masukkan <span class="font-bold text-slate-600">email</span>.
+                </p>
             </div>
 
             <div class="mb-6 relative group">
