@@ -18,6 +18,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SwitchRoleController;
 use App\Http\Controllers\HomeroomController;
 use App\Http\Controllers\AdminReportCardController;
+use App\Http\Controllers\ParentDashboardController;
 use Illuminate\Support\Facades\Route;
 
 // ──────────────────────────────────────────────
@@ -137,11 +138,10 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
 // ──────────────────────────────────────────────
 
 Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('parent.dashboard');
-    })->name('dashboard');
-
-    // Tambahkan resource controller orang tua di sini:
+    Route::get('/dashboard', [ParentDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/academic',  [ParentDashboardController::class, 'academic'])->name('academic');
+    Route::get('/attendance',[ParentDashboardController::class, 'attendance'])->name('attendance');
+    Route::get('/report',    [ParentDashboardController::class, 'report'])->name('report');
 });
 
 // ──────────────────────────────────────────────
