@@ -167,27 +167,23 @@
 
 
                 <h2 class="text-3xl lg:text-5xl font-black text-white tracking-tight leading-none mb-4 uppercase">
-                    SISTEM MONITORING <br>
-                    <span class="text-[#FFB800]">RAPOR DIGITAL</span> Siswa
+                    AKSES <br>
+                    <span class="text-[#FFB800]">RAPOR DIGITAL</span> ANAK
                 </h2>
+
                 <p class="text-xs lg:text-sm text-white/75 max-w-md mx-auto lg:mx-0 font-normal leading-relaxed mb-8">
-                    e-Rapor adalah sistem digital untuk mengelola nilai, kehadiran, dan laporan hasil belajar siswa secara transparan dan terstruktur di SMK TI Airlangga Samarinda.
+                    Lihat nilai, kehadiran, dan hasil belajar anak secara online melalui e-Rapor SMK TI Airlangga Samarinda. Masukkan NISN untuk mulai mengakses rapor sesuai jadwal pembagian.
                 </p>
 
-                <form action="#" method="POST" class="max-w-md mx-auto lg:mx-0" autocomplete="off">
-                    <div class="bg-white p-1.5 flex items-center shadow-2xl rounded-xl border-b-4 border-[#FFB800] focus-within:ring-4 focus-within:ring-[#FFB800]/20 transition-all">
-                        <span class="text-slate-400 shrink-0 mx-3">
-                            <i class="fa-solid fa-id-card text-base text-[#003399]"></i>
-                        </span>
-                        <input type="text" name="nisn" id="nisn" placeholder="Masukkan NISN Siswa..."
-                            class="w-full bg-transparent text-slate-900 text-sm py-1 outline-none font-bold placeholder:text-slate-400">
+                <div class="max-w-md mx-auto lg:mx-0">
+                    <a href="{{ route('login') }}"
+                        class="group flex items-center justify-center gap-3 bg-white text-[#003399] font-extrabold text-sm uppercase tracking-wide py-4 px-6 rounded-xl border-b-4 border-[#FFB800] shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:bg-[#003399] hover:text-white hover:border-[#FFD34D]">
 
-                        <button type="submit"
-                            class="bg-[#003399] hover:bg-[#001F5C] text-white font-black text-xs uppercase tracking-wider px-3.5 py-3.5 rounded-lg transition-all shrink-0 flex items-center gap-2 border-l border-slate-100">
-                            <i class="fa-solid fa-magnifying-glass text-[11px] text-[#FFB800]"></i>
-                        </button>
-                    </div>
-                </form>
+                        <span>Akses Rapor Sekarang</span>
+
+                        <i class="fa-solid fa-arrow-right text-[#FFB800] group-hover:text-white transition-all group-hover:translate-x-1"></i>
+                    </a>
+                </div>
             </div>
 
             <div class="lg:col-span-5 relative group">
@@ -197,35 +193,57 @@
                     style="clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%);">
 
                     <div class="flex items-center gap-2 mb-4">
-                        <span class="text-[9px] bg-[#FFB800] text-slate-950 font-black px-2 py-0.5 rounded uppercase tracking-widest">Agenda Akademik</span>
-                        <span class="text-[9px] text-white/50 font-mono">SEMESTER GENAP 2026</span>
+                        <span class="text-[9px] text-white/50 font-mono">
+                            {{ $activeYear ? 'SEMESTER ' . strtoupper($activeYear->semester) . ' ' . $activeYear->year : 'SEMESTER GENAP 2026' }}
+                        </span>
                     </div>
 
-                    <h3 class="text-lg font-black uppercase tracking-tight leading-tight">
-                        Pembagian <span class="text-[#FFB800]">Rapor Digital</span>
-                    </h3>
-                    <p class="text-xs text-white/70 mb-6 font-normal">
-                    Rapor akan tersedia dan dapat mulai diakses oleh siswa pada hitungan mundur berikut:
-                    </p>
+                    @if($releaseDate && now()->lt($releaseDate))
+                        <div id="countdown-active-wrapper">
+                            <h3 class="text-lg font-black uppercase tracking-tight leading-tight">
+                                Pembagian <span class="text-[#FFB800]">Rapor Digital</span>
+                            </h3>
+                            <p class="text-xs text-white/70 mb-6 font-normal">
+                            Rapor akan tersedia dan dapat mulai diakses pada hitungan mundur berikut:
+                            </p>
 
-                    <div class="grid grid-cols-4 gap-2 text-center" id="countdown-container">
-                        <div class="bg-white/5 border border-white/10 rounded-lg py-2.5 backdrop-blur-xs">
-                            <span id="cd-days" class="block text-xl font-black font-mono text-[#FFB800]">00</span>
-                            <span class="text-[8px] uppercase tracking-wider opacity-60">Hari</span>
+                            <div class="grid grid-cols-4 gap-2 text-center" id="countdown-container">
+                                <div class="bg-white/5 border border-white/10 rounded-lg py-2.5 backdrop-blur-xs">
+                                    <span id="cd-days" class="block text-xl font-black font-mono text-[#FFB800]">00</span>
+                                    <span class="text-[8px] uppercase tracking-wider opacity-60">Hari</span>
+                                </div>
+                                <div class="bg-white/5 border border-white/10 rounded-lg py-2.5 backdrop-blur-xs">
+                                    <span id="cd-hours" class="block text-xl font-black font-mono text-[#FFB800]">00</span>
+                                    <span class="text-[8px] uppercase tracking-wider opacity-60">Jam</span>
+                                </div>
+                                <div class="bg-white/5 border border-white/10 rounded-lg py-2.5 backdrop-blur-xs">
+                                    <span id="cd-minutes" class="block text-xl font-black font-mono text-[#FFB800]">00</span>
+                                    <span class="text-[8px] uppercase tracking-wider opacity-60">Menit</span>
+                                </div>
+                                <div class="bg-white/5 border border-white/10 rounded-lg py-2.5 backdrop-blur-xs">
+                                    <span id="cd-seconds" class="block text-xl font-black font-mono text-[#FFB800]">00</span>
+                                    <span class="text-[8px] uppercase tracking-wider opacity-60">Detik</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="bg-white/5 border border-white/10 rounded-lg py-2.5 backdrop-blur-xs">
-                            <span id="cd-hours" class="block text-xl font-black font-mono text-[#FFB800]">00</span>
-                            <span class="text-[8px] uppercase tracking-wider opacity-60">Jam</span>
+                        <div id="countdown-finished-wrapper" class="hidden text-center py-4">
+                            <h3 class="text-lg font-black uppercase tracking-tight leading-tight text-[#FFB800] mb-2">
+                                Rapor Digital Telah Tersedia
+                            </h3>
+                            <p class="text-xs text-white/70 font-normal">
+                                Silakan login untuk melihat rapor
+                            </p>
                         </div>
-                        <div class="bg-white/5 border border-white/10 rounded-lg py-2.5 backdrop-blur-xs">
-                            <span id="cd-minutes" class="block text-xl font-black font-mono text-[#FFB800]">00</span>
-                            <span class="text-[8px] uppercase tracking-wider opacity-60">Menit</span>
+                    @else
+                        <div class="text-center py-4">
+                            <h3 class="text-lg font-black uppercase tracking-tight leading-tight text-[#FFB800] mb-2">
+                                Rapor Digital Telah Tersedia
+                            </h3>
+                            <p class="text-xs text-white/70 font-normal">
+                                Silakan login untuk melihat rapor
+                            </p>
                         </div>
-                        <div class="bg-white/5 border border-white/10 rounded-lg py-2.5 backdrop-blur-xs">
-                            <span id="cd-seconds" class="block text-xl font-black font-mono text-[#FFB800]">00</span>
-                            <span class="text-[8px] uppercase tracking-wider opacity-60">Detik</span>
-                        </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -240,36 +258,6 @@
 
     <main class="flex-grow max-w-7xl mx-auto px-6 lg:px-12 w-full pt-10 pb-20 space-y-16 relative z-20">
 
-        {{-- <section class="bg-white p-6 rounded-xl border-l-4 border-[#003399] shadow-sm relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-1 bg-[#FFB800]"></div>
-
-            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-5 text-center lg:text-left">
-                <span class="text-[#003399]">01.</span> Menu Akses Cepat Informasi
-            </h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                @php
-                    $features = [
-                        ['icon' => 'fa-chart-column', 'label' => 'Grafik Capaian Nilai'],
-                        ['icon' => 'fa-clipboard-user', 'label' => 'Presensi Absensi Siswa'],
-                        ['icon' => 'fa-file-signature', 'label' => 'Unduh Lembar Rapor'],
-                        ['icon' => 'fa-bullhorn', 'label' => 'Papan Pengumuman Kurikulum'],
-                    ];
-                @endphp
-
-                @foreach ($features as $feature)
-                <div class="bg-[#F8FAFC] p-4 flex items-center justify-between border border-slate-200/60 rounded-xl hover:border-[#003399] hover:bg-white hover:shadow-md transition-all cursor-pointer group">
-                    <div class="flex items-center gap-3.5">
-                        <div class="text-[#003399] group-hover:text-[#FFB800] transition-colors shrink-0">
-                            <i class="fa-solid {{ $feature['icon'] }} text-base"></i>
-                        </div>
-                        <span class="font-bold text-xs text-slate-700 tracking-tight group-hover:text-slate-900 transition-colors">{{ $feature['label'] }}</span>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-[9px] text-slate-400 group-hover:text-[#003399] group-hover:translate-x-1 transition-all"></i>
-                </div>
-                @endforeach
-            </div>
-        </section> --}}
-
         <section id="fitur" class="max-w-7xl mx-auto px-6 py-20">
             <div class="max-w-7xl mx-auto px-6 mb-16 text-center">
                 <h2 class="text-2xl font-black text-primary tracking-tight uppercase">Fitur Unggulan e-Rapor</h2>
@@ -277,17 +265,6 @@
                 <p class="text-sm text-slate-500 font-medium">Berbagai fitur digital untuk mendukung pengelolaan nilai dan laporan hasil belajar siswa.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-
-                {{-- <div class="relative group">
-                    <div class="absolute -bottom-4 -right-4 w-full h-full bg-[#FFB800] rounded-2xl -z-10"></div>
-                    <div class="bg-[#003399] p-8 rounded-2xl h-full border border-white/10 flex flex-col items-center text-center text-white">
-                        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-6 text-[#FFB800] text-2xl">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </div>
-                        <h4 class="font-bold text-sm mb-3 uppercase">Pengelolaan Nilai Digital</h4>
-                        <p class="text-[11px] text-white/70 leading-relaxed">Input dan kelola nilai siswa secara mudah dan terstruktur.</p>
-                    </div>
-                </div> --}}
 
                 <div class="relative group">
                     <div class="absolute -bottom-4 -right-4 w-full h-full bg-[#FFB800] rounded-2xl -z-10"></div>
@@ -363,7 +340,7 @@
                         03
                     </div>
                     <h4 class="font-bold text-slate-900 text-sm mb-2">Akses Rapor Digital</h4>
-                    <p class="text-[11px] text-slate-500 max-w-[200px] leading-relaxed">Rapor dapat dilihat secara online dan diunduh kapan saja.</p>
+                    <p class="text-[11px] text-slate-500 max-w-[200px] leading-relaxed">Rapor dapat dilihat secara online dan diunduh dengan praktis.</p>
                 </div>
             </div>
         </section>
@@ -376,17 +353,18 @@
 
                 <div class="text-center lg:text-left z-10">
                     <h3 class="text-2xl font-black text-white uppercase tracking-tight mb-2">
-                        Butuh Bantuan Teknis?
+                        Perlu Bantuan?
                     </h3>
+
                     <p class="text-white/70 text-xs max-w-xl leading-relaxed">
-                        Jika Anda mengalami kendala saat melakukan pencarian NISN atau dokumen rapor tidak muncul, tim IT SMK TI Airlangga siap membantu Anda melalui layanan pesan instan.
+                        Jika Anda mengalami kesulitan saat mengakses rapor digital atau memiliki pertanyaan, silakan hubungi pihak sekolah melalui WhatsApp. Kami siap membantu.
                     </p>
                 </div>
 
                 <div class="flex shrink-0 z-10">
                     <a href="#" class="bg-secondary hover:bg-yellow-400 text-primary font-black text-xs uppercase tracking-widest px-10 py-5 rounded-2xl transition-all shadow-lg hover:shadow-yellow-500/20 flex items-center justify-center gap-3">
                         <i class="fa-brands fa-whatsapp text-lg"></i>
-                        Hubungi Admin IT
+                        Hubungi Admin
                     </a>
                 </div>
             </div>
@@ -397,7 +375,7 @@
         <header class="max-w-4xl mx-auto px-6 lg:px-12 w-full mb-20">
             <div class="text-center mb-12">
                 <h3 class="text-2xl font-black text-primary uppercase tracking-tight mb-4">
-                    Pertanyaan <span class="text-secondary">Sering Diajukan</span>
+                    Pertanyaan <span class="text-secondary">Umum</span>
                 </h3>
                 <div class="flex items-center justify-center gap-2">
                     <p class="text-xs text-slate-500 font-medium">
@@ -459,13 +437,8 @@
                         </div>
                     </div>
                     <p class="text-white/60 text-xs leading-relaxed max-w-sm mb-8">
-                       E-Rapor digital SMK TI Airlangga Samarinda untuk melihat nilai siswa secara transparan, akurat, dan mudah diakses oleh orang tua, guru, dan siswa.
+                       Lihat nilai, kehadiran, dan hasil belajar anak secara online melalui e-Rapor SMK TI Airlangga Samarinda. Masukkan NISN untuk mulai mengakses rapor sesuai jadwal pembagian.
                     </p>
-                    <div class="flex gap-4">
-                        <a href="#" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#FFB800] hover:text-[#003399] transition-all"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#FFB800] hover:text-[#003399] transition-all"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#FFB800] hover:text-[#003399] transition-all"><i class="fa-brands fa-youtube"></i></a>
-                    </div>
                 </div>
 
                 <div class="lg:col-span-3">
@@ -490,7 +463,7 @@
                             </div>
                             <div class="flex justify-between text-xs">
                                 <span class="text-white/60">Sabtu</span>
-                                <span class="font-bold">Layanan Terbatas</span>
+                                <span class="font-bold">Tutup</span>
                             </div>
                         </div>
                         <p class="text-[9px] text-white/40 mt-6 italic">*Layanan teknis mengikuti jam kerja kurikulum sekolah.</p>
@@ -507,9 +480,12 @@
     </footer>
 </div>
 
+@if($releaseDate && now()->lt($releaseDate))
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const targetDate = new Date("June 20, 2026 08:00:00").getTime();
+        const targetDate = new Date("{{ $releaseDate->toIso8601String() }}").getTime();
+        const activeWrapper = document.getElementById('countdown-active-wrapper');
+        const finishedWrapper = document.getElementById('countdown-finished-wrapper');
 
         const timer = setInterval(function() {
             const now = new Date().getTime();
@@ -517,6 +493,10 @@
 
             if (distance < 0) {
                 clearInterval(timer);
+                if (activeWrapper && finishedWrapper) {
+                    activeWrapper.classList.add('hidden');
+                    finishedWrapper.classList.remove('hidden');
+                }
                 return;
             }
 
@@ -525,11 +505,17 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            document.getElementById("cd-days").innerText = days.toString().padStart(2, '0');
-            document.getElementById("cd-hours").innerText = hours.toString().padStart(2, '0');
-            document.getElementById("cd-minutes").innerText = minutes.toString().padStart(2, '0');
-            document.getElementById("cd-seconds").innerText = seconds.toString().padStart(2, '0');
+            const dEl = document.getElementById("cd-days");
+            const hEl = document.getElementById("cd-hours");
+            const mEl = document.getElementById("cd-minutes");
+            const sEl = document.getElementById("cd-seconds");
+
+            if (dEl) dEl.innerText = days.toString().padStart(2, '0');
+            if (hEl) hEl.innerText = hours.toString().padStart(2, '0');
+            if (mEl) mEl.innerText = minutes.toString().padStart(2, '0');
+            if (sEl) sEl.innerText = seconds.toString().padStart(2, '0');
         }, 1000);
     });
 </script>
+@endif
 @endsection

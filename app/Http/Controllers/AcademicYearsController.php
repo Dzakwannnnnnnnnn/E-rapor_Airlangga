@@ -109,4 +109,25 @@ class AcademicYearsController extends Controller
             ->route('admin.academic_years.index')
             ->with('success', 'Tahun ajaran berhasil dihapus.');
     }
+
+    /**
+     * Update the report release time for the active academic year.
+     */
+    public function updateReleaseTime(Request $request)
+    {
+        $validated = $request->validate([
+            'report_release_at' => 'nullable|date',
+        ]);
+
+        $activeYear = AcademicYear::where('is_active', true)->first();
+        if (!$activeYear) {
+            return redirect()->back()->with('error', 'Tahun ajaran aktif tidak ditemukan.');
+        }
+
+        $activeYear->update([
+            'report_release_at' => $validated['report_release_at'],
+        ]);
+
+        return redirect()->back()->with('success', 'Jadwal pembagian rapor berhasil diperbarui.');
+    }
 }

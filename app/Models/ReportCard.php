@@ -17,14 +17,12 @@ class ReportCard extends Model
         'final_score',
         'rank',
         'description',
-        'publish_at',
         'is_validated',
         'is_submitted',
         'status',
     ];
 
     protected $casts = [
-        'publish_at' => 'datetime',
     ];
 
     public function student()

@@ -77,7 +77,6 @@ class AdminReportCardController extends Controller
     {
         $reportCard->is_validated = true;
         $reportCard->status = 'validated';
-        $reportCard->publish_at = now();
         $reportCard->save();
 
         return redirect()->back()->with('success', "Rapor untuk {$reportCard->student->name} berhasil disahkan.");
@@ -120,7 +119,6 @@ class AdminReportCardController extends Controller
         foreach ($reportCards as $rc) {
             $rc->is_validated = true;
             $rc->status = 'validated';
-            $rc->publish_at = now();
             $rc->save();
         }
 

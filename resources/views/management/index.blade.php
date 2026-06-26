@@ -70,6 +70,74 @@
         </div>
     </div>
 
+    @if(session('success'))
+        <div id="flash-success" class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl px-4 py-3.5 text-sm font-semibold shadow-sm relative z-20">
+            <i class="fa-solid fa-circle-check text-emerald-500 text-base"></i>
+            {{ session('success') }}
+            <button onclick="document.getElementById('flash-success').remove()" class="ml-auto text-emerald-400 hover:text-emerald-600 cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div id="flash-error" class="flex items-center gap-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl px-4 py-3.5 text-sm font-semibold shadow-sm relative z-20">
+            <i class="fa-solid fa-circle-exclamation text-rose-500 text-base"></i>
+            {{ session('error') }}
+            <button onclick="document.getElementById('flash-error').remove()" class="ml-auto text-rose-400 hover:text-rose-600 cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    @endif
+
+    <!-- Card: Jadwal Pembagian Rapor -->
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 relative z-20">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex items-start gap-4 flex-1">
+                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0 border border-amber-100">
+                    <i class="fa-solid fa-clock text-lg"></i>
+                </div>
+                <div class="flex flex-col">
+                    <h4 class="font-extrabold text-slate-800 text-base leading-tight">Jadwal Pembagian Rapor</h4>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Atur waktu hitungan mundur global untuk pembagian rapor digital pada semester aktif ini.
+                    </p>
+                    <div class="mt-2 flex flex-wrap items-center gap-2">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase bg-primary/10 text-primary">
+                            Tahun Aktif: {{ $activeYear ? $activeYear->year . ' (' . ucfirst($activeYear->semester) . ')' : 'Belum Ada' }}
+                        </span>
+                        @if($activeYear && $activeYear->report_release_at)
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-50 text-emerald-700">
+                                Rilis: {{ $activeYear->report_release_at->translatedFormat('d F Y H:i') }}
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase bg-slate-100 text-slate-600">
+                                Rilis: Instan / Langsung
+                            </span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            @if($activeYear)
+                <form action="{{ route('admin.academic_years.update-release-time') }}" method="POST" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full md:w-auto">
+                    @csrf
+                    <div class="relative w-full sm:w-64">
+                        <input type="datetime-local" 
+                               name="report_release_at" 
+                               id="report_release_at"
+                               value="{{ $activeYear->report_release_at ? $activeYear->report_release_at->format('Y-m-d\TH:i') : '' }}"
+                               class="w-full pl-3 pr-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-primary font-medium text-slate-700">
+                    </div>
+                    <button type="submit" 
+                            class="bg-primary hover:bg-blue-800 text-white font-black text-xs uppercase tracking-wider py-2.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer text-center">
+                        Simpan Jadwal
+                    </button>
+                </form>
+            @endif
+        </div>
+    </div>
+
     <!-- Section: Akun Pengguna -->
     <div class="space-y-4 pt-2">
         <div class="flex items-center gap-3">

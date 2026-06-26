@@ -15,10 +15,12 @@ class AcademicYear extends Model
         'year',
         'semester',
         'is_active',
+        'report_release_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'report_release_at' => 'datetime',
     ];
 
     public function grades()

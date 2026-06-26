@@ -25,8 +25,13 @@ use Illuminate\Support\Facades\Route;
 // Public Routes
 // ──────────────────────────────────────────────
 
+use App\Models\AcademicYear;
+
 Route::get('/', function () {
-    return view('welcome');
+    $activeYear = AcademicYear::where('is_active', true)->first();
+    $releaseDate = $activeYear ? $activeYear->report_release_at : null;
+
+    return view('welcome', compact('activeYear', 'releaseDate'));
 });
 
 // ──────────────────────────────────────────────
@@ -70,8 +75,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/management', function () {
-        return view('management.index');
+        $activeYear = \App\Models\AcademicYear::where('is_active', true)->first();
+        return view('management.index', compact('activeYear'));
     })->name('management.index');
+
+    Route::post('/management/release-time', [AcademicYearsController::class, 'updateReleaseTime'])
+        ->name('academic_years.update-release-time');
 
     Route::get('assignments', [TeacherAssignmentController::class, 'allTeachers'])->name('assignments.teachers');
 
