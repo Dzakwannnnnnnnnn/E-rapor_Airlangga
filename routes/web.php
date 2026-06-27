@@ -19,6 +19,7 @@ use App\Http\Controllers\SwitchRoleController;
 use App\Http\Controllers\HomeroomController;
 use App\Http\Controllers\AdminReportCardController;
 use App\Http\Controllers\ParentDashboardController;
+use App\Http\Controllers\HeadmasterController;
 use Illuminate\Support\Facades\Route;
 
 // ──────────────────────────────────────────────
@@ -57,7 +58,7 @@ Route::get('/dashboard', function () {
         session(['active_role' => $role]);
     }
 
-    if (in_array($role, ['admin', 'teacher', 'parent'])) {
+    if (in_array($role, ['admin', 'teacher', 'parent', 'headmaster'])) {
         return redirect()->route($role . '.dashboard');
     }
     abort(403, 'Unauthorized role.');
@@ -154,6 +155,23 @@ Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->g
     Route::get('/attendance',[ParentDashboardController::class, 'attendance'])->name('attendance');
     Route::get('/report',    [ParentDashboardController::class, 'report'])->name('report');
     Route::get('/report/{reportCard}', [ParentDashboardController::class, 'reportView'])->name('report.view');
+});
+
+// ──────────────────────────────────────────────
+// Headmaster Routes
+// ──────────────────────────────────────────────
+
+Route::middleware(['auth', 'role:headmaster'])->prefix('headmaster')->name('headmaster.')->group(function () {
+    Route::get('/dashboard', [HeadmasterController::class, 'index'])->name('dashboard');
+    Route::get('/akademik',  [HeadmasterController::class, 'akademik'])->name('akademik');
+    Route::get('/kehadiran', [HeadmasterController::class, 'kehadiran'])->name('kehadiran');
+
+    // Pengesahan Rapor
+    Route::get('/pengesahan', [HeadmasterController::class, 'pengesahanIndex'])->name('pengesahan.index');
+    Route::get('/pengesahan/kelas/{classroom}', [HeadmasterController::class, 'pengesahanKelas'])->name('pengesahan.kelas');
+    Route::post('/pengesahan/{reportCard}/validate', [HeadmasterController::class, 'validateReport'])->name('pengesahan.validate');
+    Route::post('/pengesahan/{reportCard}/reject', [HeadmasterController::class, 'rejectReport'])->name('pengesahan.reject');
+    Route::post('/pengesahan/kelas/{classroom}/validate-all', [HeadmasterController::class, 'validateAll'])->name('pengesahan.validate-all');
 });
 
 // ──────────────────────────────────────────────

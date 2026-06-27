@@ -12,9 +12,10 @@
 
     $availableRoles = [];
     if (Auth::check()) {
-        if (Auth::user()->hasRole('admin')) $availableRoles[] = 'admin';
-        if (Auth::user()->hasRole('teacher')) $availableRoles[] = 'teacher';
-        if (Auth::user()->hasRole('parent')) $availableRoles[] = 'parent';
+        if (Auth::user()->hasRole('admin'))       $availableRoles[] = 'admin';
+        if (Auth::user()->hasRole('headmaster'))  $availableRoles[] = 'headmaster';
+        if (Auth::user()->hasRole('teacher'))     $availableRoles[] = 'teacher';
+        if (Auth::user()->hasRole('parent'))      $availableRoles[] = 'parent';
     }
     $activeRole = session('active_role', Auth::check() ? Auth::user()->role : null);
 @endphp
@@ -114,7 +115,12 @@
                             <select name="role" onchange="this.form.submit()" class="w-full bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl px-3 py-2 text-xs font-black text-white focus:outline-none focus:ring-1 focus:ring-secondary/50 cursor-pointer appearance-none">
                                 @foreach($availableRoles as $roleOption)
                                     <option value="{{ $roleOption }}" {{ $activeRole === $roleOption ? 'selected' : '' }} class="text-slate-800 font-bold bg-white">
-                                        {{ $roleOption === 'admin' ? 'Administrator' : ($roleOption === 'teacher' ? 'Area Guru' : 'Area Orang Tua') }}
+                                        @if($roleOption === 'admin') Administrator
+                                        @elseif($roleOption === 'headmaster') Kepala Sekolah
+                                        @elseif($roleOption === 'teacher') Area Guru
+                                        @elseif($roleOption === 'parent') Area Orang Tua
+                                        @else {{ ucfirst($roleOption) }}
+                                        @endif
                                     </option>
                                 @endforeach
                             </select>
@@ -143,11 +149,26 @@
                             <i class="fa-solid fa-grip w-5 text-center text-lg shrink-0"></i>
                             <span class="text-sm sidebar-text">Management</span>
                         </a>
+                    @endif
 
-
-                        <a href="{{ route('admin.report-cards.index') }}"
+                    @if($activeRole == 'headmaster')
+                        <a href="{{ route('headmaster.akademik') }}"
                         class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
-                        {{ request()->routeIs('admin.report-cards.*') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                        {{ request()->routeIs('headmaster.akademik') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                            <i class="fa-solid fa-chart-bar w-5 text-center text-lg shrink-0"></i>
+                            <span class="text-sm sidebar-text">Akademik</span>
+                        </a>
+
+                        <a href="{{ route('headmaster.kehadiran') }}"
+                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
+                        {{ request()->routeIs('headmaster.kehadiran') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                            <i class="fa-solid fa-calendar-check w-5 text-center text-lg shrink-0"></i>
+                            <span class="text-sm sidebar-text">Kehadiran</span>
+                        </a>
+
+                        <a href="{{ route('headmaster.pengesahan.index') }}"
+                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
+                        {{ request()->routeIs('headmaster.pengesahan.*') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
                             <i class="fa-solid fa-stamp w-5 text-center text-lg shrink-0"></i>
                             <span class="text-sm sidebar-text">Pengesahan Rapor</span>
                         </a>
@@ -256,14 +277,32 @@
                     <i class="fa-solid fa-grip text-lg mb-0.5"></i>
                     <span class="text-[10px] tracking-wide">Management</span>
                 </a>
+                @endif
 
-                <a href="{{ route('admin.report-cards.index') }}"
-                   class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
-                   {{ request()->routeIs('admin.report-cards.*') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
-                    <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->routeIs('admin.report-cards.*') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
-                    <i class="fa-solid fa-stamp text-lg mb-0.5"></i>
-                    <span class="text-[10px] tracking-wide">Pengesahan</span>
-                </a>
+                @if($activeRole == 'headmaster')
+                <a href="{{ route('headmaster.akademik') }}"
+                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
+                    {{ request()->routeIs('headmaster.akademik') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                        <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->is('headmaster.index') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                        <i class="fa-solid fa-chart-bar text-lg mb-0.5"></i>
+                        <span class="text-[10px] tracking-wide">Akademik</span>
+                    </a>
+
+                    <a href="{{ route('headmaster.kehadiran') }}"
+                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
+                    {{ request()->routeIs('headmaster.kehadiran.*') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                        <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->routeIs('headmaster.kehadiran.*') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                        <i class="fa-solid fa-calendar-check text-lg mb-0.5"></i>
+                        <span class="text-[10px] tracking-wide">Kehadiran</span>
+                    </a>
+
+                    <a href="{{ route('headmaster.pengesahan.index') }}"
+                    class="relative flex flex-col items-center justify-center w-16 h-full transition-colors
+                    {{ request()->routeIs('headmaster.pengesahan.index.*') ? 'text-primary font-bold' : 'text-gray-400 font-medium hover:text-primary' }}">
+                        <span class="absolute top-0 left-1.5 right-1.5 h-1 bg-secondary rounded-b-md transition-all duration-300 {{ request()->routeIs('headmaster.kehadiran.*') ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0' }}"></span>
+                        <i class="fa-solid fa-stamp text-lg mb-0.5"></i>
+                        <span class="text-[10px] tracking-wide">Rapor</span>
+                    </a>
                 @endif
 
                 @if($activeRole == 'teacher')
