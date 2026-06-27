@@ -25,7 +25,7 @@
                     <div class="mt-3 flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-1.5 text-xs md:text-sm text-white/85 font-medium">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-house-laptop text-base text-secondary opacity-95"></i>
-                            <span>Ikhtisar Data Sistem e-Rapor</span>
+                            <span>Ringkasan Kondisi Akademik</span>
                         </div>
                     </div>
                 </div>
@@ -60,228 +60,205 @@
                 <p class="text-sm text-slate-500 mt-2">Silakan aktifkan tahun ajaran di menu pengaturan.</p>
             @endif
         </div>
-
-        @if($activeYear)
-        <div class="hidden lg:flex items-center gap-8 bg-white py-4 px-6 rounded-2xl border border-slate-100 shadow-sm">
-            <div class="flex flex-col gap-4">
-                <div class="flex items-center gap-3 text-sm">
-                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                        <i class="fa-regular fa-clock"></i>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase">Dimulai</p>
-                        <p class="font-bold text-slate-700">Pertengahan Tahun</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3 text-sm">
-                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-stopwatch"></i>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase">Berakhir</p>
-                        <p class="font-bold text-slate-700">Akhir Tahun</p>
-                    </div>
-                </div>
-            </div>
-            <div class="w-px h-16 bg-slate-100"></div>
-            <div class="flex flex-col gap-2">
-                <p class="text-[10px] text-slate-400 font-bold uppercase">Semester</p>
-                <span class="px-4 py-1.5 rounded-lg bg-primary text-white text-xs font-bold shadow-sm shadow-primary/30">
-                    {{ ucfirst($activeYear->semester) }}
-                </span>
-            </div>
-        </div>
-        @endif
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full bg-gradient-to-br from-white to-blue-50/30">
-            <div>
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg">
-                        <i class="fa-solid fa-user-group"></i>
-                    </div>
-                    <span class="font-bold text-slate-700">Siswa</span>
-                </div>
-                <div class="flex items-end gap-2 mb-2">
-                    <h3 class="text-4xl font-black text-blue-600 leading-none">{{ $studentCount }}</h3>
-                    <span class="text-xs font-bold text-slate-400 mb-1">Data</span>
-                </div>
-                <p class="text-xs text-slate-500">Peserta didik terdaftar</p>
-            </div>
-            <a href="{{ Route::has('admin.students.index') ? route('admin.students.index') : '#' }}" class="mt-4 flex items-center justify-between text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors pt-3 border-t border-blue-100">
-                <span>Lihat Detail</span> <i class="fa-solid fa-arrow-right"></i>
-            </a>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full bg-gradient-to-br from-white to-emerald-50/30">
-            <div>
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg">
-                        <i class="fa-solid fa-chalkboard-user"></i>
-                    </div>
-                    <span class="font-bold text-slate-700">Guru</span>
-                </div>
-                <div class="flex items-end gap-2 mb-2">
-                    <h3 class="text-4xl font-black text-emerald-600 leading-none">{{ $teacherCount }}</h3>
-                    <span class="text-xs font-bold text-slate-400 mb-1">Data</span>
-                </div>
-                <p class="text-xs text-slate-500">Guru pengajar terdaftar</p>
-            </div>
-            <a href="{{ Route::has('admin.teachers.index') ? route('admin.teachers.index') : '#' }}" class="mt-4 flex items-center justify-between text-xs font-bold text-emerald-600 hover:text-emerald-800 transition-colors pt-3 border-t border-emerald-100">
-                <span>Lihat Detail</span> <i class="fa-solid fa-arrow-right"></i>
-            </a>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full bg-gradient-to-br from-white to-purple-50/30">
-            <div>
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-lg">
-                        <i class="fa-solid fa-school"></i>
-                    </div>
-                    <span class="font-bold text-slate-700">Kelas</span>
-                </div>
-                <div class="flex items-end gap-2 mb-2">
-                    <h3 class="text-4xl font-black text-purple-600 leading-none">{{ $classroomCount }}</h3>
-                    <span class="text-xs font-bold text-slate-400 mb-1">Data</span>
-                </div>
-                <p class="text-xs text-slate-500">Kelas aktif tersedia</p>
-            </div>
-            <a href="{{ Route::has('admin.classrooms.index') ? route('admin.classrooms.index') : '#' }}" class="mt-4 flex items-center justify-between text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors pt-3 border-t border-purple-100">
-                <span>Lihat Detail</span> <i class="fa-solid fa-arrow-right"></i>
-            </a>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full bg-gradient-to-br from-white to-orange-50/30">
-            <div>
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-lg">
-                        <i class="fa-solid fa-book-open"></i>
-                    </div>
-                    <span class="font-bold text-slate-700">Mata Pelajaran</span>
-                </div>
-                <div class="flex items-end gap-2 mb-2">
-                    <h3 class="text-4xl font-black text-orange-600 leading-none">{{ $subjectCount }}</h3>
-                    <span class="text-xs font-bold text-slate-400 mb-1">Data</span>
-                </div>
-                <p class="text-xs text-slate-500">Akademik & Ekstrakurikuler</p>
-            </div>
-            <a href="{{ Route::has('admin.subjects.index') ? route('admin.subjects.index') : '#' }}" class="mt-4 flex items-center justify-between text-xs font-bold text-orange-600 hover:text-orange-800 transition-colors pt-3 border-t border-orange-100">
-                <span>Lihat Detail</span> <i class="fa-solid fa-arrow-right"></i>
-            </a>
-        </div>
     </div>
 
     <div class="space-y-4 pt-4">
-        <div>
-            <h3 class="font-extrabold text-slate-800 text-lg">Akun Pengguna</h3>
-            <p class="text-xs text-slate-500 mt-1">Kelola akun yang dapat mengakses sistem e-Rapor.</p>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            <div class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col justify-between h-full">
-                <div class="flex items-start gap-4">
-                    <div class="w-16 h-16 rounded-full bg-blue-500 text-white flex items-center justify-center text-2xl shrink-0 shadow-sm">
-                        <i class="fa-solid fa-user-tie"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-slate-800 text-lg">Guru Pengajar</h4>
-                        <div class="flex items-baseline gap-2 mt-1">
-                            <span class="text-2xl font-black text-blue-600">{{ $teacherCount }}</span>
-                            <span class="text-xs font-bold text-slate-400">Akun</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500 mt-2">Kelola akun guru pengajar</p>
-                    </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                <h4 class="font-bold text-slate-700 text-sm mb-4">Komposisi Pengguna</h4>
+                <div class="relative w-full h-64">
+                    <canvas id="chartUserComposition"></canvas>
                 </div>
-                <a href="{{ Route::has('admin.teachers.index') ? route('admin.teachers.index') : '#' }}" class="mt-6 flex items-center justify-between w-full py-2.5 px-4 rounded-xl text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors text-center border border-blue-100/50">
-                    <span class="mx-auto">Kelola Guru</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
             </div>
 
-            <div class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col justify-between h-full">
-                <div class="flex items-start gap-4">
-                    <div class="w-16 h-16 rounded-full bg-emerald-500 text-white flex items-center justify-center text-2xl shrink-0 shadow-sm">
-                        <i class="fa-solid fa-people-roof"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-slate-800 text-lg">Wali Murid</h4>
-                        <div class="flex items-baseline gap-2 mt-1">
-                            <span class="text-2xl font-black text-emerald-600">{{ $parentCount }}</span>
-                            <span class="text-xs font-bold text-slate-400">Akun</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500 mt-2">Kelola akun orang tua / wali</p>
-                    </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                <h4 class="font-bold text-slate-700 text-sm mb-4">Distribusi Siswa per Kelas</h4>
+                <div class="relative w-full h-64">
+                    <canvas id="chartStudentsPerClass"></canvas>
                 </div>
-                <a href="{{ Route::has('admin.parents.index') ? route('admin.parents.index') : '#' }}" class="mt-6 flex items-center justify-between w-full py-2.5 px-4 rounded-xl text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 transition-colors text-center border border-emerald-100/50">
-                    <span class="mx-auto">Kelola Wali Murid</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                <h4 class="font-bold text-slate-700 text-sm mb-4">Mata Pelajaran (Akademik & Ekstra)</h4>
+                <div class="relative w-full h-64">
+                    <canvas id="pieChartSubjects"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                <h4 class="font-bold text-slate-700 text-sm mb-4">Sebaran Guru Berdasarkan Gender</h4>
+                <div class="relative w-full h-64">
+                    <canvas id="horizontalBarChartTeachers"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="space-y-4 pt-4">
-        <div>
-            <h3 class="font-extrabold text-slate-800 text-lg">Data Akademik</h3>
-            <p class="text-xs text-slate-500 mt-1">Kelola seluruh data akademik sekolah.</p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all flex flex-col">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
-                        <i class="fa-solid fa-user-graduate"></i>
-                    </div>
-                    <h4 class="font-bold text-slate-800 text-sm">Siswa</h4>
-                </div>
-                <p class="text-xs text-slate-500 mb-6 flex-1">Kelola data siswa dan informasi pribadi</p>
-                <a href="{{ Route::has('admin.students.index') ? route('admin.students.index') : '#' }}" class="flex items-center justify-between text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors pt-3 border-t border-slate-100">
-                    <span>Kelola Siswa</span> <i class="fa-solid fa-arrow-right"></i>
-                </a>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+    <a href="{{ Route::has('admin.students.index') ? route('admin.students.index') : '#' }}" class="group bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-slate-200 transition-all border-l-4 border-l-blue-500">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+                <i class="fa-solid fa-user-group text-lg"></i>
             </div>
-
-            <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all flex flex-col">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center">
-                        <i class="fa-solid fa-school-flag"></i>
-                    </div>
-                    <h4 class="font-bold text-slate-800 text-sm">Kelas</h4>
-                </div>
-                <p class="text-xs text-slate-500 mb-6 flex-1">Kelola data kelas dan jurusan</p>
-                <a href="{{ Route::has('admin.classrooms.index') ? route('admin.classrooms.index') : '#' }}" class="flex items-center justify-between text-xs font-bold text-emerald-600 hover:text-emerald-800 transition-colors pt-3 border-t border-slate-100">
-                    <span>Kelola Kelas</span> <i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all flex flex-col">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center">
-                        <i class="fa-solid fa-book"></i>
-                    </div>
-                    <h4 class="font-bold text-slate-800 text-sm">Mata Pelajaran</h4>
-                </div>
-                <p class="text-xs text-slate-500 mb-6 flex-1">Kelola mata pelajaran akademik & ekstrakurikuler</p>
-                <a href="{{ Route::has('admin.subjects.index') ? route('admin.subjects.index') : '#' }}" class="flex items-center justify-between text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors pt-3 border-t border-slate-100">
-                    <span>Kelola Mapel</span> <i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all flex flex-col">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
-                        <i class="fa-regular fa-calendar-check"></i>
-                    </div>
-                    <h4 class="font-bold text-slate-800 text-sm">Tahun Akademik</h4>
-                </div>
-                <p class="text-xs text-slate-500 mb-6 flex-1">Kelola periode tahun akademik aktif</p>
-                <a href="{{ Route::has('admin.academic_years.index') ? route('admin.academic_years.index') : '#' }}" class="flex items-center justify-between text-xs font-bold text-orange-600 hover:text-orange-800 transition-colors pt-3 border-t border-slate-100">
-                    <span>Kelola Tahun Akademik</span> <i class="fa-solid fa-arrow-right"></i>
-                </a>
+            <div class="flex flex-col">
+                <span class="font-bold text-slate-800 text-base group-hover:text-primary transition-colors">Siswa</span>
+                <span class="text-xs text-slate-500 mt-0.5">Peserta didik terdaftar</span>
             </div>
         </div>
-    </div>
+        <div class="flex items-center gap-3">
+            <span class="bg-blue-50 text-blue-600 px-2.5 py-1 rounded-xl font-black text-sm transition-colors group-hover:bg-blue-100">{{ $studentCount }}</span>
+            <div class="text-slate-300 group-hover:text-primary transition-colors mr-1">
+                <i class="fa-solid fa-chevron-right transition-transform group-hover:translate-x-1"></i>
+            </div>
+        </div>
+    </a>
 
+    <a href="{{ Route::has('admin.teachers.index') ? route('admin.teachers.index') : '#' }}" class="group bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-slate-200 transition-all border-l-4 border-l-emerald-500">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+                <i class="fa-solid fa-chalkboard-user text-lg"></i>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-bold text-slate-800 text-base group-hover:text-primary transition-colors">Guru</span>
+                <span class="text-xs text-slate-500 mt-0.5">Guru pengajar terdaftar</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-xl font-black text-sm transition-colors group-hover:bg-emerald-100">{{ $teacherCount }}</span>
+            <div class="text-slate-300 group-hover:text-primary transition-colors mr-1">
+                <i class="fa-solid fa-chevron-right transition-transform group-hover:translate-x-1"></i>
+            </div>
+        </div>
+    </a>
+
+    <a href="{{ Route::has('admin.classrooms.index') ? route('admin.classrooms.index') : '#' }}" class="group bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-slate-200 transition-all border-l-4 border-l-purple-500">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+                <i class="fa-solid fa-school text-lg"></i>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-bold text-slate-800 text-base group-hover:text-primary transition-colors">Kelas</span>
+                <span class="text-xs text-slate-500 mt-0.5">Kelas aktif tersedia</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="bg-purple-50 text-purple-600 px-2.5 py-1 rounded-xl font-black text-sm transition-colors group-hover:bg-purple-100">{{ $classroomCount }}</span>
+            <div class="text-slate-300 group-hover:text-primary transition-colors mr-1">
+                <i class="fa-solid fa-chevron-right transition-transform group-hover:translate-x-1"></i>
+            </div>
+        </div>
+    </a>
+
+    <a href="{{ Route::has('admin.subjects.index') ? route('admin.subjects.index') : '#' }}" class="group bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md hover:border-slate-200 transition-all border-l-4 border-l-orange-500">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+                <i class="fa-solid fa-book-open text-lg"></i>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-bold text-slate-800 text-base group-hover:text-primary transition-colors">Mata Pelajaran</span>
+                <span class="text-xs text-slate-500 mt-0.5">Akademik & Ekstrakurikuler</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="bg-orange-50 text-orange-600 px-2.5 py-1 rounded-xl font-black text-sm transition-colors group-hover:bg-orange-100">{{ $subjectCount }}</span>
+            <div class="text-slate-300 group-hover:text-primary transition-colors mr-1">
+                <i class="fa-solid fa-chevron-right transition-transform group-hover:translate-x-1"></i>
+            </div>
+        </div>
+    </a>
 </div>
 
+
+</div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'bottom', labels: { font: { size: 11, family: "'Inter', sans-serif" } } }
+        }
+    };
+
+    // 1. Chart Pengguna
+    const ctxUsers = document.getElementById('chartUserComposition').getContext('2d');
+    new Chart(ctxUsers, {
+        type: 'doughnut',
+        data: {
+            labels: @json($chartUserComposition['labels'] ?? []),
+            datasets: [{
+                data: @json($chartUserComposition['data'] ?? []),
+                backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(245, 158, 11, 0.8)'],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: commonOptions
+    });
+
+    // 2. Chart Siswa per Kelas
+    const ctxClasses = document.getElementById('chartStudentsPerClass').getContext('2d');
+    new Chart(ctxClasses, {
+        type: 'bar',
+        data: {
+            labels: @json($chartStudentsPerClass['labels'] ?? []),
+            datasets: [{
+                label: 'Jumlah Siswa',
+                data: @json($chartStudentsPerClass['data'] ?? []),
+                backgroundColor: 'rgba(99, 102, 241, 0.7)',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 5 } } }
+        }
+    });
+
+    // 3. Chart Mapel (Akademik & Ekstra)
+    const ctxSubjects = document.getElementById('pieChartSubjects').getContext('2d');
+    new Chart(ctxSubjects, {
+        type: 'pie',
+        data: {
+            labels: @json($chartSubjectsPerType['labels'] ?? []),
+            datasets: [{
+                data: @json($chartSubjectsPerType['data'] ?? []),
+                backgroundColor: ['rgba(14, 165, 233, 0.8)', 'rgba(168, 85, 247, 0.8)'],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: commonOptions
+    });
+
+    // 4. Chart Guru per Gender
+    const ctxTeachers = document.getElementById('horizontalBarChartTeachers').getContext('2d');
+    new Chart(ctxTeachers, {
+        type: 'bar',
+        data: {
+            labels: @json($chartTeachersPerGender['labels'] ?? []),
+            datasets: [{
+                label: 'Jumlah Guru',
+                data: @json($chartTeachersPerGender['data'] ?? []),
+                backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(236, 72, 153, 0.7)'],
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            ...commonOptions,
+            indexAxis: 'y', // Membuat bar menjadi horizontal
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+});
+</script>
+@endpush

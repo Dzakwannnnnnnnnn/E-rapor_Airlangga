@@ -153,7 +153,10 @@ class TeacherController extends Controller
             'telp'   => 'required|string|max:16',
         ]);
 
-        DB::transaction(function () use ($request, $user) {
+        $oldEmail = $user->email;
+        $emailChanged = $oldEmail !== $request->email;
+
+        DB::transaction(function () use ($request, $user, $oldEmail, $emailChanged) {
             $user->update([
                 'name'  => $request->name,
                 'email' => $request->email,
@@ -164,7 +167,43 @@ class TeacherController extends Controller
                 'gender' => $request->gender,
                 'telp'   => $request->telp,
             ]);
+
+            if ($emailChanged) {
+                // Reset password dan email_verified_at agar akun dinonaktifkan sementara sampai diaktivasi ulang
+                $user->update([
+                    'password' => null,
+                    'email_verified_at' => null,
+                ]);
+
+                // Hapus token lama jika ada
+                DB::table('password_reset_tokens')->where('email', $oldEmail)->delete();
+
+                // Buat token aktivasi baru
+                $token = Str::random(64);
+                DB::table('password_reset_tokens')->updateOrInsert(
+                    ['email' => $user->email],
+                    [
+                        'token'      => Hash::make($token),
+                        'created_at' => now(),
+                    ]
+                );
+
+                // Buat URL aktivasi
+                $activationUrl = url(route('account.activate.form', [
+                    'token' => $token,
+                    'email' => $user->email,
+                ], false));
+
+                // Kirim email aktivasi
+                Mail::to($user->email)->send(new AccountActivationMail($user, $activationUrl));
+            }
         });
+
+        if ($emailChanged) {
+            return redirect()
+                ->route('admin.teachers.index')
+                ->with('success', 'Guru berhasil diperbarui. Email aktivasi baru telah dikirim ke ' . $request->email . '.');
+        }
 
         return redirect()->route('admin.teachers.index')->with('success', 'Guru berhasil diperbarui');
     }

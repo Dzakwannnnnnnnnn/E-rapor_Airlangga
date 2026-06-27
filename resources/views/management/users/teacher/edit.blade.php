@@ -186,7 +186,7 @@
             </div>
             <div class="flex-1">
                 <h5 class="font-extrabold text-xs uppercase tracking-wide text-primary">Catatan Kredensial & Sinkronisasi</h5>
-                <p class="text-xs text-slate-600 mt-0.5 leading-normal">Pengubahan data pada form ini akan memperbarui tabel `users` (Nama & Email) dan tabel `teachers` (NIP) sekaligus secara atomik melalui mekanisme database transaction. Pastikan NIP yang dimasukkan valid untuk keperluan sinkronisasi rapor pencapaian.</p>
+                <p class="text-xs text-slate-600 mt-0.5 leading-normal">Pengubahan data pada form ini akan memperbarui tabel `users` (Nama & Email) dan tabel `teachers` (NIP) sekaligus secara atomik melalui mekanisme database transaction. Pastikan NIP yang dimasukkan valid untuk keperluan sinkronisasi rapor pencapaian. Jika email diubah, sistem secara otomatis akan mengirimkan ulang email aktivasi akun ke email yang baru.</p>
             </div>
         </div>
 

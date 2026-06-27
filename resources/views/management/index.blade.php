@@ -54,41 +54,7 @@
 
         <div class="hidden md:block w-px h-12 bg-slate-100"></div>
 
-        <div class="flex items-center gap-4 shrink-0 w-full md:w-auto justify-between md:justify-start pt-4 md:pt-0 border-t border-dashed border-slate-100 md:border-t-0">
-            <div class="w-11 h-11 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center shrink-0 border border-slate-100 group-hover:text-primary transition-colors">
-                <i class="fa-solid fa-cubes text-sm text-primary/80"></i>
-            </div>
-
-            <div class="flex flex-col text-left">
-                <span class="text-xs font-black text-slate-800 uppercase tracking-wide leading-none">
-                    <span class="text-lg font-black text-primary mr-0.5">6</span> Fitur Kelola
-                </span>
-                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 block">
-                    Hak Akses Terintegrasi
-                </span>
-            </div>
-        </div>
     </div>
-
-    @if(session('success'))
-        <div id="flash-success" class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl px-4 py-3.5 text-sm font-semibold shadow-sm relative z-20">
-            <i class="fa-solid fa-circle-check text-emerald-500 text-base"></i>
-            {{ session('success') }}
-            <button onclick="document.getElementById('flash-success').remove()" class="ml-auto text-emerald-400 hover:text-emerald-600 cursor-pointer">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div id="flash-error" class="flex items-center gap-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl px-4 py-3.5 text-sm font-semibold shadow-sm relative z-20">
-            <i class="fa-solid fa-circle-exclamation text-rose-500 text-base"></i>
-            {{ session('error') }}
-            <button onclick="document.getElementById('flash-error').remove()" class="ml-auto text-rose-400 hover:text-rose-600 cursor-pointer">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-    @endif
 
     <!-- Card: Jadwal Pembagian Rapor -->
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 relative z-20">
@@ -123,13 +89,13 @@
                 <form action="{{ route('admin.academic_years.update-release-time') }}" method="POST" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full md:w-auto">
                     @csrf
                     <div class="relative w-full sm:w-64">
-                        <input type="datetime-local" 
-                               name="report_release_at" 
+                        <input type="datetime-local"
+                               name="report_release_at"
                                id="report_release_at"
                                value="{{ $activeYear->report_release_at ? $activeYear->report_release_at->format('Y-m-d\TH:i') : '' }}"
                                class="w-full pl-3 pr-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-primary font-medium text-slate-700">
                     </div>
-                    <button type="submit" 
+                    <button type="submit"
                             class="bg-primary hover:bg-blue-800 text-white font-black text-xs uppercase tracking-wider py-2.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer text-center">
                         Simpan Jadwal
                     </button>

@@ -169,7 +169,7 @@
             </div>
             <div class="flex-1">
                 <h5 class="font-extrabold text-xs uppercase tracking-wide text-primary">Catatan Integrasi Sistem</h5>
-                <p class="text-xs text-slate-600 mt-0.5 leading-normal">Mengubah alamat email akan berdampak pada kredensial log masuk pengguna. Pastikan email yang dimasukkan berstatus aktif agar wali murid tetap dapat menerima laporan perkembangan akademik secara berkala.</p>
+                <p class="text-xs text-slate-600 mt-0.5 leading-normal">Mengubah alamat email akan berdampak pada kredensial log masuk pengguna. Pastikan email yang dimasukkan berstatus aktif agar wali murid tetap dapat menerima laporan perkembangan akademik secara berkala. Jika email diubah, sistem secara otomatis akan mengirimkan ulang email aktivasi akun ke email yang baru.</p>
             </div>
         </div>
 

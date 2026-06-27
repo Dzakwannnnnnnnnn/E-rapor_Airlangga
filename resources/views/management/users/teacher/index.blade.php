@@ -46,7 +46,6 @@
 
 <div class="max-w-6xl mx-auto mt-6 space-y-6">
 
-    <!-- Overlapping Card: Total Guru Pengajar -->
     <div class="max-w-xl mx-auto -mt-16 mb-6 relative z-20 px-4">
         <div class="bg-white rounded-2xl shadow-md border border-slate-100 p-5 flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -77,130 +76,219 @@
         </div>
 
         <div class="space-y-4">
-            <div class="flex items-center gap-2 mb-2">
-                <i class="fa-solid fa-chalkboard-user text-primary"></i>
-                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wide">Daftar Guru Pengajar</h4>
+            <div class="flex items-center gap-2 mb-2 select-none">
+                <i class="fa-solid fa-address-book text-primary text-xs"></i>
+                <h4 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Buku Induk & Data Pengajar</h4>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 gap-4 md:hidden">
                 @forelse ($teachers as $teacher)
                     @php
                         $gender = $teacher->teacher->gender ?? '';
 
                         if ($gender === 'L') {
-                            $genderClass = 'bg-blue-50/60 text-blue-600 border-blue-100';
-                            $genderIcon  = 'fa-mars text-blue-500';
+                            $genderClass = 'bg-blue-50/70 text-blue-700 border-blue-200/60';
+                            $genderIcon  = 'fa-mars';
                             $genderLabel = 'Laki-laki';
                         } elseif ($gender === 'P') {
-                            $genderClass = 'bg-pink-50/60 text-pink-600 border-pink-100';
-                            $genderIcon  = 'fa-venus text-pink-500';
+                            $genderClass = 'bg-pink-50/70 text-pink-700 border-pink-200/60';
+                            $genderIcon  = 'fa-venus';
                             $genderLabel = 'Perempuan';
                         } else {
-                            $genderClass = 'bg-slate-50 text-slate-600 border-slate-100';
-                            $genderIcon  = 'fa-venus-mars text-slate-400';
+                            $genderClass = 'bg-slate-50 text-slate-600 border-slate-200/60';
+                            $genderIcon  = 'fa-venus-mars';
                             $genderLabel = '-';
                         }
 
                         $isVerified = !is_null($teacher->email_verified_at);
                     @endphp
 
-                    <!-- Container Utama: Menggunakan p-4 pada mobile dan p-5 pada desktop -->
-                    <div class="relative bg-white rounded-xl border border-slate-100 p-4 sm:p-5 flex flex-col justify-between gap-4 hover:shadow-md hover:border-slate-200 transition-all duration-300 group">
-
-                        <!-- 1. BADGE DESKTOP: Hanya muncul di layar sm ke atas (Tanpa Animasi Pulse) -->
-                        @if(!$isVerified)
-                            <div class="hidden sm:flex absolute top-5 right-5 items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200/60 px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wide shadow-sm">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                BELUM AKTIVASI
-                            </div>
-                        @endif
-
-                        <!-- Bagian Atas: Profil & Informasi Utama -->
-                        <div class="flex items-start gap-3 sm:gap-4">
-                            <!-- Avatar Rangking Responsif -->
-                            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-sm sm:text-base shrink-0 border border-primary/5 tracking-wide">
+                    <div class="relative bg-white rounded-2xl border-t-4 border-t-primary border-x border-b border-slate-200/80 p-5 flex flex-col gap-4 shadow-sm group">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-primary text-white flex flex-col items-center justify-center font-black text-sm shrink-0 shadow-sm shadow-primary/20 tracking-wider">
                                 {{ strtoupper(substr($teacher->name, 0, 2)) }}
                             </div>
 
-                            <!-- Detail Identitas -->
                             <div class="flex-1 min-w-0">
-                                <div class="flex flex-col items-start gap-1">
-                                    <span class="font-bold text-slate-800 text-sm sm:text-base block truncate w-full group-hover:text-primary transition-colors">
-                                        {{ $teacher->name }}
-                                    </span>
-
-                                    <!-- 2. BADGE MOBILE: Hanya muncul di layar HP, mengalir rapi di bawah nama -->
-                                    @if(!$isVerified)
-                                        <span class="sm:hidden inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200/60 px-2 py-0.5 rounded-full text-[9px] font-black tracking-wide">
-                                            <span class="w-1 h-1 rounded-full bg-amber-500"></span>
-                                            BELUM AKTIVASI
-                                        </span>
-                                    @endif
-                                </div>
-
-                                <span class="text-xs text-slate-500 block truncate mt-1">
-                                    <i class="fa-solid fa-envelope mr-1.5 opacity-60"></i>{{ $teacher->email }}
+                                <span class="font-extrabold text-slate-900 text-base block truncate w-full group-hover:text-primary transition-colors">
+                                    {{ $teacher->name }}
                                 </span>
 
-                                <div class="mt-2 flex items-center gap-1.5 text-xs">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">NIP:</span>
-                                    <span class="font-semibold text-slate-700 bg-slate-50 px-2 py-0.5 rounded border border-slate-100 text-[11px] sm:text-xs">
-                                        {{ $teacher->teacher->nip ?? 'Belum diatur' }}
+                                <div class="mt-1 flex items-center gap-2">
+                                    <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase">NIP.</span>
+                                    <span class="font-mono font-bold text-slate-700 text-xs bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                                        {{ $teacher->teacher->nip ?? '⚠️ BELUM DIATUR' }}
                                     </span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Bagian Tengah: Meta Badges (Gender & Kontak) -->
-                        <div class="flex flex-wrap items-center gap-2 pt-0.5">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border {{ $genderClass }}">
-                                <i class="fa-solid {{ $genderIcon }} text-[11px]"></i>
-                                {{ $genderLabel }}
-                            </span>
-
-                            <span class="inline-flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg text-xs font-medium border border-slate-100 text-slate-600">
-                                <i class="fa-solid fa-phone text-slate-400 text-[10px]"></i>
-                                {{ $teacher->teacher->telp ?? '-' }}
-                            </span>
+                        <div class="bg-slate-50/60 border border-slate-100 rounded-xl p-3 space-y-2 text-xs">
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-400 font-medium">E-Mail Resmi:</span>
+                                <span class="font-semibold text-slate-700 truncate max-w-[180px]">{{ $teacher->email }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-400 font-medium">No. Telepon:</span>
+                                <span class="font-semibold text-slate-600 font-mono">{{ $teacher->teacher->telp ?? '-' }}</span>
+                            </div>
+                            <div class="flex items-center justify-between pt-1 border-t border-slate-200/60">
+                                <span class="text-slate-400 font-medium">Status Akun:</span>
+                                @if($isVerified)
+                                    <span class="text-emerald-700 font-bold flex items-center gap-1 text-[11px]">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> AKTIF
+                                    </span>
+                                @else
+                                    <span class="text-amber-700 font-bold flex items-center gap-1 text-[11px]">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> BELUM AKTIF
+                                    </span>
+                                @endif
+                            </div>
                         </div>
 
-                        <!-- Bagian Bawah: Tombol Aksi dengan 3 Kolom Grid Sama Rata -->
-                        <div class="grid grid-cols-3 gap-2 pt-3 border-t border-dashed border-slate-100 mt-auto w-full">
-                            <a href="{{ route('admin.teachers.show', $teacher->id) }}" class="inline-flex justify-center items-center gap-1.5 px-2 py-2 bg-slate-50 text-slate-600 hover:text-primary hover:bg-blue-50/50 rounded-lg transition-colors text-xs font-bold border border-slate-100" title="Lihat Detail">
-                                <i class="fa-solid fa-eye text-xs sm:text-sm opacity-80"></i> <span class="truncate">Detail</span>
+                        <div class="grid grid-cols-3 gap-2 pt-2 w-full">
+                            <a href="{{ route('admin.teachers.show', $teacher->id) }}" class="inline-flex justify-center items-center gap-1.5 py-2.5 bg-slate-100 hover:bg-primary hover:text-white text-slate-700 rounded-xl text-xs font-bold border border-slate-200 transition-all">
+                                <i class="fa-solid fa-address-card text-[11px]"></i> Profil
                             </a>
-
-                            <a href="{{ route('admin.teachers.edit', $teacher->id) }}" class="inline-flex justify-center items-center gap-1.5 px-2 py-2 bg-slate-50 text-slate-600 hover:text-amber-600 hover:bg-amber-50/50 rounded-lg transition-colors text-xs font-bold border border-slate-100" title="Edit Data">
-                                <i class="fa-solid fa-pen-to-square text-xs sm:text-sm opacity-80"></i> <span class="truncate">Edit</span>
+                            <a href="{{ route('admin.teachers.edit', $teacher->id) }}" class="inline-flex justify-center items-center gap-1.5 py-2.5 bg-slate-100 hover:bg-amber-500 hover:text-white text-slate-700 rounded-xl text-xs font-bold border border-slate-200 transition-all">
+                                <i class="fa-solid fa-pen-to-square text-[11px]"></i> Edit
                             </a>
-
-                            <form
-                                id="delete-teacher-{{ $teacher->id }}"
-                                action="{{ route('admin.teachers.destroy', $teacher->id) }}"
-                                method="POST"
-                                class="w-full inline-block"
-                                data-confirm="Akun guru &quot;{{ $teacher->name }}&quot; akan dihapus secara permanen dan tidak bisa dikembalikan."
-                                data-confirm-title="Hapus Guru?"
-                                data-confirm-btn="Ya, Hapus Sekarang">
+                            <form id="delete-teacher-mobile-{{ $teacher->id }}" action="{{ route('admin.teachers.destroy', $teacher->id) }}" method="POST" class="w-full inline-block" data-confirm="Akun guru &quot;{{ $teacher->name }}&quot; akan dihapus secara permanen." data-confirm-title="Hapus Guru?" data-confirm-btn="Ya, Hapus">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="w-full inline-flex justify-center items-center gap-1.5 px-2 py-2 bg-red-50/50 text-red-500 hover:bg-red-100 rounded-lg transition-colors text-xs font-bold border border-red-100/50">
-                                    <i class="fa-solid fa-trash-can text-xs sm:text-sm opacity-80"></i> <span class="truncate">Hapus</span>
+                                <button type="submit" class="w-full inline-flex justify-center items-center gap-1.5 py-2.5 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-xl text-xs font-bold border border-red-200 transition-all">
+                                    <i class="fa-solid fa-trash-can text-[11px]"></i> Hapus
                                 </button>
                             </form>
                         </div>
-
                     </div>
                 @empty
-                    <div class="md:col-span-2 bg-white rounded-xl shadow-sm border border-slate-100 p-12 text-center flex flex-col items-center">
+                    <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center flex flex-col items-center">
                         <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-3">
                             <i class="fa-solid fa-users-slash text-2xl"></i>
                         </div>
                         <p class="text-sm font-bold text-slate-600">Belum ada data Guru</p>
-                        @if($search)
-                            <p class="text-xs text-slate-400 mt-1">Pencarian untuk "{{ $search }}" tidak ditemukan.</p>
-                        @endif
                     </div>
                 @endforelse
+            </div>
+
+
+            <div class="hidden md:block bg-white rounded-2xl border-t-4 border-t-primary border-x border-b border-slate-200 shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/70 border-b border-slate-200 text-[11px] font-bold text-slate-600 uppercase tracking-wider select-none">
+                                <th class="py-4 px-6 w-[40%]">Data Induk Guru</th>
+                                <th class="py-4 px-6 w-[25%]">Email / Telepon</th>
+                                <th class="py-4 px-6 text-center w-[15%]">Gender</th>
+                                <th class="py-4 px-6 text-center w-[10%]">Status</th>
+                                <th class="py-4 px-6 text-right pr-8 w-[10%]">Kelola</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200/60">
+                            @forelse ($teachers as $teacher)
+                                @php
+                                    $gender = $teacher->teacher->gender ?? '';
+
+                                    if ($gender === 'L') {
+                                        $genderClass = 'bg-blue-50 text-blue-700 border-blue-200/60';
+                                        $genderIcon  = 'fa-mars';
+                                        $genderLabel = 'Laki-Laki';
+                                    } elseif ($gender === 'P') {
+                                        $genderClass = 'bg-pink-50 text-pink-700 border-pink-200/60';
+                                        $genderIcon  = 'fa-venus';
+                                        $genderLabel = 'Perempuan';
+                                    } else {
+                                        $genderClass = 'bg-slate-50 text-slate-500 border-slate-200/60';
+                                        $genderIcon  = 'fa-venus-mars';
+                                        $genderLabel = 'Kosong';
+                                    }
+
+                                    $isVerified = !is_null($teacher->email_verified_at);
+                                @endphp
+                                <tr class="hover:bg-primary/[0.01] transition-colors duration-150 group">
+                                    <td class="py-4 px-6 whitespace-nowrap">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-11 h-11 rounded-xl bg-primary text-white flex items-center justify-center font-black text-sm shrink-0 shadow-sm shadow-primary/20 tracking-wider">
+                                                {{ strtoupper(substr($teacher->name, 0, 2)) }}
+                                            </div>
+                                            <div class="flex flex-col min-w-0">
+                                                <span class="font-extrabold text-slate-900 text-sm group-hover:text-primary transition-colors block truncate max-w-xs">
+                                                    {{ $teacher->name }}
+                                                </span>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="text-[9px] text-slate-400 font-bold tracking-widest uppercase">NIP</span>
+                                                    <span class="text-[11px] font-mono font-bold text-slate-700 bg-slate-100 border border-slate-200/80 px-1.5 py-0.5 rounded">
+                                                        {{ $teacher->teacher->nip ?? 'Belum Diisi' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="py-4 px-6 whitespace-nowrap">
+                                        <div class="flex flex-col gap-1 text-xs">
+                                            <span class="text-slate-800 font-medium flex items-center gap-2">
+                                                <i class="fa-solid fa-envelope opacity-50 text-primary text-[11px] w-3.5"></i>{{ $teacher->email }}
+                                            </span>
+                                            <span class="text-slate-500 font-mono flex items-center gap-2">
+                                                <i class="fa-solid fa-phone opacity-40 text-slate-400 text-[10px] w-3.5"></i>{{ $teacher->teacher->telp ?? '-' }}
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <td class="py-4 px-6 whitespace-nowrap text-center">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border {{ $genderClass }} select-none">
+                                            <i class="fa-solid {{ $genderIcon }} text-[11px]"></i> {{ $genderLabel }}
+                                        </span>
+                                    </td>
+
+                                    <td class="py-4 px-6 whitespace-nowrap text-center">
+                                        @if($isVerified)
+                                            <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200/60 px-2.5 py-0.5 rounded-md text-[10px] font-black tracking-wide uppercase select-none">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Aktif
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-0.5 rounded-md text-[10px] font-black tracking-wide uppercase select-none">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Pasif
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    <td class="py-4 px-6 whitespace-nowrap text-right pr-8">
+                                        <div class="inline-flex items-center border border-slate-200 rounded-xl overflow-hidden shadow-xs bg-white">
+                                            <a href="{{ route('admin.teachers.show', $teacher->id) }}" class="w-9 h-9 inline-flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 border-r border-slate-200/80 transition-all" title="Lihat Profil">
+                                                <i class="fa-solid fa-id-card text-xs"></i>
+                                            </a>
+                                            <a href="{{ route('admin.teachers.edit', $teacher->id) }}" class="w-9 h-9 inline-flex items-center justify-center text-slate-500 hover:text-amber-600 hover:bg-slate-50 border-r border-slate-200/80 transition-all" title="Ubah Data">
+                                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                            </a>
+                                            <form id="delete-teacher-desktop-{{ $teacher->id }}" action="{{ route('admin.teachers.destroy', $teacher->id) }}" method="POST" class="inline-block" data-confirm="Akun guru &quot;{{ $teacher->name }}&quot; akan dihapus secara permanen." data-confirm-title="Hapus Guru?" data-confirm-btn="Ya, Hapus">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="w-9 h-9 inline-flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all" title="Hapus Akun">
+                                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="py-20 text-center">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 mb-3 border border-slate-100">
+                                                <i class="fa-solid fa-folder-open text-2xl"></i>
+                                            </div>
+                                            <p class="text-sm font-extrabold text-slate-700">Database Kosong</p>
+                                            @if($search)
+                                                <p class="text-xs text-slate-400 mt-1">Data guru dengan kata kunci "{{ $search }}" tidak ditemukan.</p>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="mt-6">

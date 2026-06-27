@@ -158,10 +158,13 @@
 
                                     {{-- Bagian Kanan: Tombol Aksi --}}
                                     <div class="flex items-center shrink-0 w-full sm:w-auto pt-3 sm:pt-0 mt-2 sm:mt-0 border-t border-slate-100 border-dashed sm:border-none">
-                                        <form action="{{ route('admin.teachers.assignments.destroy', [$teacher->id, $assignment->id]) }}"
+                                        <form id="delete-assignment-{{ $assignment->id }}"
+                                              action="{{ route('admin.teachers.assignments.destroy', [$teacher->id, $assignment->id]) }}"
                                               method="POST"
-                                              onsubmit="return confirm('Apakah Anda yakin ingin menghapus penugasan mengajar di kelas {{ $assignment->classroom->name }} ini?');"
-                                              class="w-full sm:w-auto">
+                                              class="w-full sm:w-auto"
+                                              data-confirm="Apakah Anda yakin ingin menghapus penugasan mengajar di kelas {{ $assignment->classroom->name }} ini?"
+                                              data-confirm-title="Hapus Penugasan?"
+                                              data-confirm-btn="Ya, Hapus">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
