@@ -150,5 +150,63 @@
         </div>
     </div>
 
+    {{-- ── KENAIKAN KELAS OTOMATIS (hanya semester genap) ── --}}
+    @if(strtolower($activeYear->semester) === 'genap')
+        <div class="mt-8 bg-gradient-to-br from-primary to-blue-800 rounded-2xl p-6 shadow-lg relative overflow-hidden">
+            <div class="absolute -right-8 -bottom-8 text-white/5 text-[8rem] pointer-events-none leading-none select-none">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div class="relative z-10">
+                <div class="flex items-start justify-between gap-4 flex-wrap">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 bg-secondary text-[9px] text-slate-950 font-extrabold px-2.5 py-0.5 rounded-full mb-2.5 uppercase tracking-widest shadow-sm">
+                            <i class="fa-solid fa-arrow-up text-[8px]"></i>
+                            Semester Genap
+                        </div>
+                        <h3 class="text-white font-black text-xl uppercase tracking-tight leading-none mb-2">
+                            Kenaikan Kelas Otomatis
+                        </h3>
+                        <p class="text-white/70 text-xs leading-relaxed max-w-lg">
+                            Proses ini akan memindahkan siswa yang rapor semester genap-nya <strong class="text-secondary">sudah disahkan</strong>
+                            ke kelas berikutnya secara otomatis (X → XI, XI → XII).
+                            Siswa di kelas XII akan ditandai sebagai lulus.
+                        </p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="inline-flex items-center gap-1 bg-white/10 border border-white/15 text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+                                <i class="fa-solid fa-circle-check text-secondary text-[9px]"></i>
+                                Hanya untuk rapor yang sudah disahkan
+                            </span>
+                            <span class="inline-flex items-center gap-1 bg-white/10 border border-white/15 text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+                                <i class="fa-solid fa-shield-halved text-secondary text-[9px]"></i>
+                                Tidak dapat dibatalkan
+                            </span>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="{{ route('admin.report-cards.promote-classes') }}"
+                          id="form-promote-classes"
+                          onsubmit="return confirm('Apakah Anda yakin ingin menjalankan kenaikan kelas? Proses ini akan memindahkan siswa ke kelas berikutnya dan tidak dapat dibatalkan secara otomatis.')">
+                        @csrf
+                        <button type="submit"
+                                class="flex items-center gap-2.5 bg-secondary hover:bg-yellow-400 text-primary font-black text-sm uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all shadow-lg hover:shadow-xl hover:scale-105 cursor-pointer border-b-4 border-yellow-600/30">
+                            <i class="fa-solid fa-user-graduate text-base"></i>
+                            Jalankan Kenaikan Kelas
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @else
+        <div class="mt-8 bg-slate-100 border border-slate-200 rounded-2xl px-6 py-4 flex items-center gap-4">
+            <div class="w-10 h-10 bg-slate-200 text-slate-400 rounded-xl flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-lock text-sm"></i>
+            </div>
+            <div>
+                <p class="text-sm font-extrabold text-slate-600 uppercase tracking-wide">Kenaikan Kelas Tidak Tersedia</p>
+                <p class="text-xs text-slate-400 mt-0.5">Fitur kenaikan kelas hanya tersedia saat semester aktif adalah <strong>Genap</strong>. Saat ini semester aktif: <strong>{{ ucfirst($activeYear->semester) }}</strong>.</p>
+            </div>
+        </div>
+    @endif
+
 </div>
 @endsection

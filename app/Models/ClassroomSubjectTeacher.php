@@ -51,10 +51,4 @@ class ClassroomSubjectTeacher extends Model
     {
         return $this->hasMany(Assessment::class, 'classroom_subject_teacher_id');
     }
-
-    public function assignments()
-    {
-        return $this->hasMany(Assignment::class, 'classroom_subject_teacher_id');
-    }
 }
-

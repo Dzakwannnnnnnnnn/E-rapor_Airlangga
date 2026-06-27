@@ -106,6 +106,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('report-cards/{reportCard}/validate', [AdminReportCardController::class, 'validateReport'])->name('report-cards.validate');
     Route::post('report-cards/{reportCard}/reject', [AdminReportCardController::class, 'rejectReport'])->name('report-cards.reject');
     Route::post('report-cards/classroom/{classroom}/validate-all', [AdminReportCardController::class, 'validateAll'])->name('report-cards.validate-all');
+    Route::post('report-cards/promote-classes', [AdminReportCardController::class, 'promoteClasses'])->name('report-cards.promote-classes');
 });
 
 // ──────────────────────────────────────────────
@@ -149,8 +150,10 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
 Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->group(function () {
     Route::get('/dashboard', [ParentDashboardController::class, 'index'])->name('dashboard');
     Route::get('/academic',  [ParentDashboardController::class, 'academic'])->name('academic');
+    Route::get('/academic/subject/{cstId}', [ParentDashboardController::class, 'academicSubject'])->name('academic.subject');
     Route::get('/attendance',[ParentDashboardController::class, 'attendance'])->name('attendance');
     Route::get('/report',    [ParentDashboardController::class, 'report'])->name('report');
+    Route::get('/report/{reportCard}', [ParentDashboardController::class, 'reportView'])->name('report.view');
 });
 
 // ──────────────────────────────────────────────

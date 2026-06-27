@@ -30,14 +30,6 @@
         : 'text-slate-400';
 @endphp
 
-{{-- ────────────────── HERO GREETING ────────────────── --}}
-<div class="mb-6">
-    <p class="text-xs font-bold text-muted uppercase tracking-widest mb-1">{{ $greet }},</p>
-    <h1 class="text-2xl md:text-3xl font-black text-text tracking-tight leading-tight">
-        Bapak/Ibu <span class="text-primary">{{ $parentName }}</span> 👋
-    </h1>
-    <p class="text-sm text-muted mt-1.5">Berikut perkembangan belajar anak Anda hari ini.</p>
-</div>
 
 @if(!$student)
     {{-- State: Siswa tidak ditemukan --}}
@@ -127,26 +119,66 @@
             </div>
         </div>
 
-        {{-- 3. Tugas Selesai --}}
+        {{-- 3. Risk Indicator – Mapel Terendah --}}
+        @php
+            $lowestScore   = $lowestGrade ? (float) $lowestGrade->final_score : null;
+            $lowestSubject = $lowestGrade ? ($lowestGrade->classroomSubjectTeacher?->subject?->name ?? 'Mata Pelajaran') : null;
+
+            // Static class strings – dynamic interpolation tidak didukung Tailwind JIT
+            if ($lowestScore === null) {
+                $riskBg       = 'bg-slate-50 group-hover:bg-slate-500';
+                $riskIconCls  = 'text-slate-400';
+                $riskTextCls  = 'text-slate-400';
+                $riskLabelCls = 'text-slate-400';
+                $riskIcon     = 'fa-question';
+                $riskLabel    = 'Belum ada data';
+            } elseif ($lowestScore < 70) {
+                $riskBg       = 'bg-red-50 group-hover:bg-red-600';
+                $riskIconCls  = 'text-red-500';
+                $riskTextCls  = 'text-red-600';
+                $riskLabelCls = 'text-red-500';
+                $riskIcon     = 'fa-triangle-exclamation';
+                $riskLabel    = 'Perlu Perhatian!';
+            } elseif ($lowestScore < 78) {
+                $riskBg       = 'bg-amber-50 group-hover:bg-amber-500';
+                $riskIconCls  = 'text-amber-500';
+                $riskTextCls  = 'text-amber-600';
+                $riskLabelCls = 'text-amber-500';
+                $riskIcon     = 'fa-circle-exclamation';
+                $riskLabel    = 'Perlu Ditingkatkan';
+            } else {
+                $riskBg       = 'bg-emerald-50 group-hover:bg-emerald-600';
+                $riskIconCls  = 'text-emerald-500';
+                $riskTextCls  = 'text-emerald-600';
+                $riskLabelCls = 'text-emerald-600';
+                $riskIcon     = 'fa-circle-check';
+                $riskLabel    = 'Cukup Baik';
+            }
+        @endphp
         <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
             <div class="flex items-start justify-between mb-3">
-                <div class="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center group-hover:bg-violet-600 transition-colors">
-                    <i class="fa-solid fa-clipboard-check text-violet-600 group-hover:text-white text-sm transition-colors"></i>
+                <div class="w-10 h-10 {{ $riskBg }} rounded-xl flex items-center justify-center transition-colors">
+                    <i class="fa-solid {{ $riskIcon }} {{ $riskIconCls }} group-hover:text-white text-sm transition-colors"></i>
                 </div>
-                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Tugas</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Risk</span>
             </div>
-            <p class="text-3xl font-black text-violet-600 tracking-tight leading-none">
-                @if($totalAssignments > 0)
-                    {{ $doneAssignments }}<span class="text-lg text-slate-300 font-bold">/{{ $totalAssignments }}</span>
-                @else
-                    <span class="text-slate-300">—</span>
-                @endif
-            </p>
-            <div class="mt-2.5">
-                <span class="text-[10px] font-bold {{ $taskPct !== null && $taskPct >= 90 ? 'text-emerald-600' : ($taskPct !== null && $taskPct >= 70 ? 'text-amber-600' : 'text-red-500') }} uppercase tracking-wide">
-                    {{ $taskPct !== null ? $taskPct . '% selesai' : 'Belum ada' }}
-                </span>
+
+            {{-- Nama mapel terendah --}}
+            @if($lowestSubject)
+                <p class="text-sm font-black {{ $riskTextCls }} leading-tight mb-0.5 truncate" title="{{ $lowestSubject }}">
+                    {{ $lowestSubject }}
+                </p>
+                <p class="text-2xl font-black {{ $riskTextCls }} tracking-tight leading-none mb-1">
+                    {{ round($lowestScore) }}
+                </p>
+            @else
+                <p class="text-2xl font-black text-slate-300 tracking-tight leading-none mb-1">—</p>
+            @endif
+
+            <div class="mt-1">
+                <span class="text-[10px] font-bold {{ $riskLabelCls }} uppercase tracking-wide">{{ $riskLabel }}</span>
             </div>
+            <p class="text-[9px] text-slate-400 font-medium mt-0.5">Mapel nilai terendah</p>
         </div>
 
         {{-- 4. Peringkat Kelas --}}

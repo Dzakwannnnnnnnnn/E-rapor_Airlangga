@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AcademicYear;
 use App\Models\Classroom;
 use App\Models\ReportCard;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class AdminReportCardController extends Controller
@@ -123,5 +124,110 @@ class AdminReportCardController extends Controller
         }
 
         return redirect()->back()->with('success', "Berhasil mengesahkan " . $reportCards->count() . " rapor di kelas {$classroom->name}.");
+    }
+
+    /**
+     * Naikan kelas otomatis berdasarkan rapor semester genap yang sudah divalidasi.
+     *
+     * Logic:
+     * - Hanya berlaku pada semester "genap" (akhir tahun pelajaran).
+     * - Siswa dengan rapor genap yang sudah is_validated = true dipindah ke kelas berikutnya.
+     * - Pemetaan kelas: "X PPLG" -> "XI PPLG", "X DKV" -> "XI DKV", dll.
+     * - Jika kelas berikutnya tidak ada di sistem -> siswa dilewati (skipped).
+     * - Jika siswa sudah di kelas tertinggi -> dianggap lulus.
+     */
+    public function promoteClasses(Request $request)
+    {
+        $activeYear = AcademicYear::where('is_active', true)->first();
+        if (!$activeYear) {
+            return redirect()->back()->with('error', 'Tahun ajaran aktif tidak ditemukan.');
+        }
+
+        if (strtolower($activeYear->semester) !== 'genap') {
+            return redirect()->back()->with('error', 'Kenaikan kelas hanya dapat dilakukan pada semester Genap.');
+        }
+
+        // Ambil semua rapor genap yang sudah divalidasi
+        $validatedReports = ReportCard::where('academic_year_id', $activeYear->id)
+            ->where('is_validated', true)
+            ->with(['student.classroom'])
+            ->get();
+
+        if ($validatedReports->isEmpty()) {
+            return redirect()->back()->with('error', 'Belum ada rapor yang disahkan untuk semester genap ini.');
+        }
+
+        // Ambil semua kelas yang tersedia
+        $allClassrooms = Classroom::all()->keyBy('name');
+
+        // Pemetaan tingkat: prefix kelas saat ini => prefix kelas berikutnya
+        $levelMap = [
+            'X '   => 'XI ',
+            'XI '  => 'XII ',
+            'XII ' => null,  // Sudah tingkat tertinggi -> lulus
+        ];
+
+        $promoted  = 0;
+        $graduated = 0;
+        $skipped   = 0;
+
+        foreach ($validatedReports as $rc) {
+            $student   = $rc->student;
+            $classroom = optional($student)->classroom;
+
+            if (!$student || !$classroom) {
+                $skipped++;
+                continue;
+            }
+
+            $currentName = $classroom->name;
+            $nextName    = null;
+            $isGraduated = false;
+
+            // Tentukan nama kelas berikutnya berdasarkan prefix tingkat
+            foreach ($levelMap as $prefix => $nextPrefix) {
+                if (str_starts_with($currentName, $prefix)) {
+                    if ($nextPrefix === null) {
+                        $isGraduated = true;
+                        $graduated++;
+                    } else {
+                        $suffix   = substr($currentName, strlen($prefix));
+                        $nextName = $nextPrefix . $suffix;
+                    }
+                    break;
+                }
+            }
+
+            if ($isGraduated) {
+                continue;
+            }
+
+            if ($nextName === null) {
+                $skipped++;
+                continue;
+            }
+
+            $nextClassroom = $allClassrooms->get($nextName);
+
+            if (!$nextClassroom) {
+                $skipped++;
+                continue;
+            }
+
+            $student->classroom_id = $nextClassroom->id;
+            $student->save();
+            $promoted++;
+        }
+
+        $msg = "Kenaikan kelas selesai: {$promoted} siswa naik kelas";
+        if ($graduated > 0) {
+            $msg .= ", {$graduated} siswa lulus (kelas tertinggi)";
+        }
+        if ($skipped > 0) {
+            $msg .= ", {$skipped} siswa dilewati (kelas tujuan tidak ditemukan di sistem)";
+        }
+        $msg .= '.';
+
+        return redirect()->back()->with('success', $msg);
     }
 }
