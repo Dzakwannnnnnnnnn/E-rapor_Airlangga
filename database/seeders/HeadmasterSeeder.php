@@ -11,7 +11,7 @@ class HeadmasterSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'kepsek@smktiairlangga.sch.id'],
+            ['email' => 'kepsek@test.com'],
             [
                 'name'              => 'Kepala Sekolah',
                 'role'              => 'headmaster',
