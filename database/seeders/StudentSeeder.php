@@ -86,15 +86,17 @@ class StudentSeeder extends Seeder
                     'telp'     => '08' . rand(100000000, 999999999),
                 ]);
 
-                // 3. Buat Student dengan parent_id yang sudah ada
+                // 3. Buat Student (tanpa parent_id, relasi lewat pivot)
                 $student = Student::create([
                     'nisn'         => (string) $nisnCounter,
                     'name'         => $name,
                     'classroom_id' => $classroom->id,
-                    'parent_id'    => $parent->id,
                 ]);
 
-                // 4. Absensi
+                // 4. Hubungkan siswa ke orang tua via pivot parent_student
+                $parent->students()->attach($student->id);
+
+                // 5. Absensi
                 Attendance::create([
                     'student_id'       => $student->id,
                     'academic_year_id' => $academicYear->id,
