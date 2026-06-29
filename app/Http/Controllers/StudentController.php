@@ -65,7 +65,7 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
-        $student->load('classroom');
+        $student->load(['classroom', 'parent.user']);
 
         return view('management.students.show', compact('student'));
     }

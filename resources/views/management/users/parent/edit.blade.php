@@ -158,6 +158,54 @@
                             </p>
                         @enderror
                     </div>
+
+                    <div class="space-y-2 md:col-span-2 border-t border-slate-100 pt-6 mt-2">
+                        <label class="block text-xs font-black text-slate-500 uppercase tracking-wider pl-1">Hubungkan dengan Siswa (Opsional / Bisa Pilih Lebih dari Satu)</label>
+                        <div x-data="{
+                            search: '',
+                            students: [
+                                @foreach($students as $student)
+                                    { id: {{ $student->id }}, name: '{{ addslashes($student->name) }}', nisn: '{{ $student->nisn }}', classroom: '{{ $student->classroom->name ?? '-' }}', checked: {{ in_array($student->id, old('student_ids', $user->parent ? $user->parent->students->pluck('id')->toArray() : [])) ? 'true' : 'false' }} },
+                                @endforeach
+                            ],
+                            get filteredStudents() {
+                                if (!this.search) return this.students;
+                                return this.students.filter(s => s.name.toLowerCase().includes(this.search.toLowerCase()) || s.nisn.includes(this.search));
+                            }
+                        }" class="space-y-3">
+                            <div class="bg-slate-50/50 border border-slate-200 rounded-xl p-4 space-y-4">
+                                <!-- Search Input -->
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                                    </div>
+                                    <input type="text" x-model="search" placeholder="Cari nama atau NISN siswa..." 
+                                        class="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 focus:border-primary rounded-lg text-xs font-medium text-slate-800 focus:outline-none transition-all shadow-sm">
+                                </div>
+                                
+                                <!-- Students list -->
+                                <div class="max-h-60 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                                    <template x-for="student in filteredStudents" :key="student.id">
+                                        <label :class="student.checked ? 'border-primary/30 bg-primary/5' : 'border-slate-100 bg-white hover:bg-slate-50'" class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all">
+                                            <input type="checkbox" name="student_ids[]" :value="student.id" x-model="student.checked" class="rounded text-primary focus:ring-primary border-slate-300 w-4 h-4 cursor-pointer">
+                                            <div class="flex-1 min-w-0">
+                                                <span class="text-xs font-bold text-slate-800 block truncate" x-text="student.name"></span>
+                                                <span class="text-[10px] text-slate-400 font-medium block" x-text="'NISN: ' + student.nisn + ' • Kelas: ' + student.classroom"></span>
+                                            </div>
+                                        </label>
+                                    </template>
+                                    <div x-show="filteredStudents.length === 0" class="text-center py-6 text-xs font-semibold text-slate-400 bg-white border border-dashed border-slate-200 rounded-xl">
+                                        Siswa tidak ditemukan.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @error('student_ids')
+                            <p class="text-xs font-bold text-danger mt-1.5 uppercase tracking-wide flex items-center gap-1.5 pl-1">
+                                <i class="fa-solid fa-circle-exclamation text-[10px]"></i> {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
                 </div>
 
             </div>

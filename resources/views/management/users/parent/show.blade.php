@@ -124,6 +124,39 @@
         </div>
     </div>
 
+    <div class="space-y-3 px-4 sm:px-0">
+        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Daftar Anak / Siswa yang Terhubung</h4>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8">
+            @if($user->parent && $user->parent->students->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @foreach($user->parent->students as $student)
+                        <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-xl hover:bg-slate-100/50 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-800 block leading-tight">{{ $student->name }}</span>
+                                    <span class="text-[10px] text-slate-400 font-medium block mt-1">NISN: {{ $student->nisn }} • Kelas: {{ $student->classroom->name ?? '-' }}</span>
+                                </div>
+                            </div>
+                            <a href="{{ route('admin.students.show', $student->id) }}" class="text-xs font-bold text-primary hover:underline">
+                                Detail Siswa
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-8">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                        <i class="fa-solid fa-graduation-cap text-lg"></i>
+                    </div>
+                    <p class="text-xs font-bold text-slate-400">Belum ada siswa yang dihubungkan ke akun wali murid ini.</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
     <div class="bg-blue-50 border-l-4 border-primary text-slate-900 rounded-2xl p-4 shadow-sm flex items-center gap-4 select-none mx-4 sm:mx-0">
         <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <i class="fa-solid fa-circle-info text-lg"></i>
