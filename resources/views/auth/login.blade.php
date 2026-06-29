@@ -46,6 +46,20 @@
     <div class="flex-1 px-6 pt-8 w-full max-w-md mx-auto relative z-10 pb-28 lg:pb-12">
         <x-auth-session-status class="mb-4" :status="session('status')" />
 
+        @if ($errors->has('email'))
+            <p class="text-[10px] text-red-500 font-bold mt-1 ml-1 flex items-center gap-1">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                {{ $errors->first('email') }}
+            </p>
+        @endif
+
+        @if ($errors->has('password'))
+            <p class="text-[10px] text-red-500 font-bold mt-1 ml-1 flex items-center gap-1">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                {{ $errors->first('password') }}
+            </p>
+        @endif
+
         <form method="POST" action="{{ route('login') }}" id="loginForm" class="flex flex-col">
             @csrf
             <div class="mb-5 relative group">
