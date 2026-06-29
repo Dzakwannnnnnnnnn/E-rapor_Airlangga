@@ -81,6 +81,19 @@
                 </div>
             </div>
 
+            <!-- Google reCAPTCHA -->
+            <div class="mb-6 flex flex-col items-center justify-center">
+                <div class="inline-block scale-95 sm:scale-100 origin-center">
+                    {!! NoCaptcha::display() !!}
+                </div>
+                @if ($errors->has('g-recaptcha-response'))
+                    <span class="text-xs text-red-500 mt-2 font-bold self-start ml-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        {{ $errors->first('g-recaptcha-response') }}
+                    </span>
+                @endif
+            </div>
+
             <div class="flex items-center justify-between mb-8">
                 <label for="remember_me" class="flex items-center gap-2 cursor-pointer ml-1">
                     <input id="remember_me" type="checkbox" name="remember" class="rounded border-slate-300 text-[#003399] w-3.5 h-3.5">
@@ -121,4 +134,5 @@
         }
     }
 </script>
+{!! NoCaptcha::renderJs('id') !!}
 @endsection

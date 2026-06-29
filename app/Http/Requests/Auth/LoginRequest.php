@@ -38,10 +38,16 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         // Accept email OR NISN (digits only) in the same "email" field.
-        return [
+        $rules = [
             'email'    => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
+
+        if (! app()->runningUnitTests()) {
+            $rules['g-recaptcha-response'] = ['required', 'captcha'];
+        }
+
+        return $rules;
     }
 
     /**
@@ -52,6 +58,8 @@ class LoginRequest extends FormRequest
         return [
             'email.required'    => 'Email atau NISN wajib diisi.',
             'password.required' => 'Kata sandi wajib diisi.',
+            'g-recaptcha-response.required' => 'Harap verifikasi bahwa Anda bukan robot.',
+            'g-recaptcha-response.captcha'  => 'Verifikasi Captcha gagal. Silakan coba lagi.',
         ];
     }
 
