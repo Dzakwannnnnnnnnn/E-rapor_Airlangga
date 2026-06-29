@@ -69,7 +69,7 @@
         </a>
     </div>
 
-    <form id="parent-form" method="POST" action="{{ route('admin.parents.store') }}" class="space-y-6 px-4 sm:px-0">
+    <form id="parent-form" method="POST" action="{{ route('admin.parents.store') }}" x-data="{ relation: '{{ old('relation', '') }}', showModal: false }" class="space-y-6 px-4 sm:px-0">
         @csrf
 
         <div class="space-y-3">
@@ -118,7 +118,7 @@
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                                 <i class="fa-solid fa-people-arrows text-sm"></i>
                             </div>
-                            <select name="relation" id="relation" required
+                            <select name="relation" id="relation" x-model="relation" required
                                 class="w-full pl-11 pr-4 py-3.5 bg-slate-50/50 border @error('relation') border-danger @else border-slate-200 focus:border-primary @enderror rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:bg-white transition-all shadow-sm appearance-none cursor-pointer">
                                 <option value="" disabled {{ old('relation') ? '' : 'selected' }}>Pilih Hubungan Keluarga</option>
                                 <option value="ayah" {{ old('relation') == 'ayah' ? 'selected' : '' }}>Ayah</option>
@@ -153,47 +153,164 @@
                         @enderror
                     </div>
 
-                    <div class="space-y-2 md:col-span-2 border-t border-slate-100 pt-6 mt-2">
-                        <label class="block text-xs font-black text-slate-500 uppercase tracking-wider pl-1">Hubungkan dengan Siswa (Opsional / Bisa Pilih Lebih dari Satu)</label>
-                        <div x-data="{
-                            search: '',
-                            students: [
-                                @foreach($students as $student)
-                                    { id: {{ $student->id }}, name: '{{ addslashes($student->name) }}', nisn: '{{ $student->nisn }}', classroom: '{{ $student->classroom->name ?? '-' }}', checked: {{ in_array($student->id, old('student_ids', [])) ? 'true' : 'false' }} },
-                                @endforeach
-                            ],
-                            get filteredStudents() {
-                                if (!this.search) return this.students;
-                                return this.students.filter(s => s.name.toLowerCase().includes(this.search.toLowerCase()) || s.nisn.includes(this.search));
-                            }
-                        }" class="space-y-3">
-                            <div class="bg-slate-50/50 border border-slate-200 rounded-xl p-4 space-y-4">
-                                <!-- Search Input -->
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                                    </div>
-                                    <input type="text" x-model="search" placeholder="Cari nama atau NISN siswa..." 
-                                        class="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 focus:border-primary rounded-lg text-xs font-medium text-slate-800 focus:outline-none transition-all shadow-sm">
+                    <div class="space-y-2 md:col-span-2 border-t border-slate-100 pt-6 mt-2"
+                         x-data="{
+                             search: '',
+                             students: [
+                                 @foreach($students as $student)
+                                     { 
+                                         id: {{ $student->id }}, 
+                                         name: '{{ addslashes($student->name) }}', 
+                                         nisn: '{{ $student->nisn }}', 
+                                         classroom: '{{ $student->classroom->name ?? '-' }}', 
+                                         checked: {{ in_array($student->id, old('student_ids', [])) ? 'true' : 'false' }},
+                                         parents: [
+                                             @foreach($student->parents as $p)
+                                                 { id: {{ $p->id }}, name: '{{ addslashes($p->user->name ?? '-') }}', relation: '{{ $p->relation }}' },
+                                             @endforeach
+                                         ]
+                                     },
+                                 @endforeach
+                             ],
+                             get filteredStudents() {
+                                 if (!this.search) return this.students;
+                                 const q = this.search.toLowerCase();
+                                 return this.students.filter(s => s.name.toLowerCase().includes(q) || s.nisn.includes(q));
+                             },
+                             get selectedCount() {
+                                 return this.students.filter(s => s.checked).length;
+                             },
+                             isEligible(student) {
+                                 if (student.checked) return true;
+                                 if (student.parents.length >= 2) return false;
+                                 return !student.parents.some(p => p.relation === relation);
+                             },
+                             getIneligibilityReason(student) {
+                                 if (student.parents.length >= 2) {
+                                     return 'Maksimal 2 orang tua/wali tercapai';
+                                 }
+                                 const matched = student.parents.find(p => p.relation === relation);
+                                 if (matched) {
+                                     return 'Hubungan ' + relation.toUpperCase() + ' sudah ada: ' + matched.name;
+                                 }
+                                 return '';
+                             }
+                         }">
+                        
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-graduation-cap"></i>
                                 </div>
-                                
-                                <!-- Students list -->
-                                <div class="max-h-60 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-                                    <template x-for="student in filteredStudents" :key="student.id">
-                                        <label :class="student.checked ? 'border-primary/30 bg-primary/5' : 'border-slate-100 bg-white hover:bg-slate-50'" class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all">
-                                            <input type="checkbox" name="student_ids[]" :value="student.id" x-model="student.checked" class="rounded text-primary focus:ring-primary border-slate-300 w-4 h-4 cursor-pointer">
-                                            <div class="flex-1 min-w-0">
-                                                <span class="text-xs font-bold text-slate-800 block truncate" x-text="student.name"></span>
-                                                <span class="text-[10px] text-slate-400 font-medium block" x-text="'NISN: ' + student.nisn + ' • Kelas: ' + student.classroom"></span>
-                                            </div>
-                                        </label>
-                                    </template>
-                                    <div x-show="filteredStudents.length === 0" class="text-center py-6 text-xs font-semibold text-slate-400 bg-white border border-dashed border-slate-200 rounded-xl">
-                                        Siswa tidak ditemukan.
+                                <div>
+                                    <span class="text-xs font-bold text-slate-800 block">Hubungkan Akun dengan Siswa</span>
+                                    <span class="text-[10px] text-slate-400 font-medium block mt-0.5" x-text="selectedCount + ' Siswa terpilih'">0 Siswa terpilih</span>
+                                </div>
+                            </div>
+                            <button type="button" @click="showModal = true" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 rounded-lg transition-all shadow-sm flex items-center gap-2 cursor-pointer">
+                                <i class="fa-solid fa-user-plus text-[10px]"></i>
+                                Pilih Siswa
+                            </button>
+                        </div>
+                        
+                        <!-- Display selected students -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4" x-show="selectedCount > 0">
+                            <template x-for="student in students.filter(s => s.checked)" :key="student.id">
+                                <div class="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl shadow-sm">
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-xs font-bold text-slate-800 block truncate" x-text="student.name"></span>
+                                        <span class="text-[10px] text-slate-400 font-medium block mt-0.5" x-text="'NISN: ' + student.nisn + ' • Kelas: ' + student.classroom"></span>
                                     </div>
+                                    <button type="button" @click="student.checked = false" class="text-xs font-bold text-danger hover:text-red-700 p-1 cursor-pointer transition-colors">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+                                    <input type="hidden" name="student_ids[]" :value="student.id">
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Alpine Modal -->
+                        <div x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                <!-- Background overlay -->
+                                <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" @click="showModal = false"></div>
+
+                                <!-- This element is to trick the browser into centering the modal contents. -->
+                                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                                <!-- Modal panel -->
+                                <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                                     class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100">
+                                    
+                                    <!-- Header -->
+                                    <div class="bg-primary text-white p-6 relative select-none">
+                                        <div class="absolute -top-12 -left-12 w-32 h-32 border-4 border-dashed border-white/10 rounded-full pointer-events-none"></div>
+                                        <div class="relative z-10 flex items-center justify-between">
+                                            <div>
+                                                <h3 class="text-sm font-black uppercase tracking-wider">Pilih Siswa / Anak</h3>
+                                                <p class="text-[9px] text-white/80 font-medium mt-1">Cari dan pilih siswa untuk dihubungkan ke wali murid.</p>
+                                            </div>
+                                            <button type="button" @click="showModal = false" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors cursor-pointer text-white">
+                                                <i class="fa-solid fa-xmark text-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Search and Filters -->
+                                    <div class="p-6 pb-3 border-b border-slate-100 space-y-4 bg-slate-50/50">
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                                            </div>
+                                            <input type="text" x-model="search" placeholder="Cari nama atau NISN siswa..." 
+                                                   class="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 focus:border-primary rounded-lg text-xs font-medium text-slate-800 focus:outline-none transition-all shadow-sm">
+                                        </div>
+                                        <div class="flex items-center justify-between text-[9px] font-black text-slate-400 uppercase tracking-wider pl-1">
+                                            <span>Hasil Pencarian</span>
+                                            <span x-text="selectedCount + ' Siswa terpilih'">0 Siswa terpilih</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Students list -->
+                                    <div class="p-6 max-h-80 overflow-y-auto space-y-2.5 custom-scrollbar">
+                                        <template x-for="student in filteredStudents" :key="student.id">
+                                            <div :class="!isEligible(student) ? 'opacity-60 bg-slate-50 border-slate-100' : (student.checked ? 'border-primary/30 bg-primary/5' : 'border-slate-100 bg-white hover:bg-slate-50')" 
+                                                 class="flex items-start gap-3 p-3 border rounded-xl transition-all relative">
+                                                
+                                                <input type="checkbox" x-model="student.checked" :disabled="!isEligible(student)" 
+                                                       class="rounded text-primary focus:ring-primary border-slate-300 w-4 h-4 cursor-pointer mt-0.5">
+                                                
+                                                <div class="flex-1 min-w-0">
+                                                    <span class="text-xs font-bold text-slate-800 block truncate" x-text="student.name"></span>
+                                                    <span class="text-[10px] text-slate-400 font-medium block mt-0.5" x-text="'NISN: ' + student.nisn + ' • Kelas: ' + student.classroom"></span>
+                                                    
+                                                    <!-- Ineligible warnings -->
+                                                    <template x-if="!isEligible(student)">
+                                                        <div class="flex items-center gap-1.5 mt-1.5 text-[9px] font-black text-amber-600 uppercase tracking-wide">
+                                                            <i class="fa-solid fa-triangle-exclamation text-[8px]"></i>
+                                                            <span x-text="getIneligibilityReason(student)"></span>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <div x-show="filteredStudents.length === 0" class="text-center py-10 text-xs font-semibold text-slate-400 bg-slate-50 border border-dashed border-slate-200 rounded-2xl">
+                                            Siswa tidak ditemukan.
+                                        </div>
+                                    </div>
+
+                                    <!-- Footer -->
+                                    <div class="bg-slate-50 px-6 py-4 flex items-center justify-end gap-3 border-t border-slate-100">
+                                        <button type="button" @click="showModal = false" 
+                                                class="px-4 py-2 bg-primary hover:bg-opacity-95 text-xs font-black text-white rounded-xl transition-all uppercase tracking-wider cursor-pointer shadow-sm shadow-primary/10">
+                                            Selesai
+                                        </button>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
+
                         @error('student_ids')
                             <p class="text-xs font-bold text-danger mt-1.5 uppercase tracking-wide flex items-center gap-1.5 pl-1">
                                 <i class="fa-solid fa-circle-exclamation text-[10px]"></i> {{ $message }}

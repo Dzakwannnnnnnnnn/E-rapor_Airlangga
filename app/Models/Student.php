@@ -13,7 +13,6 @@ class Student extends Model
         'nisn',
         'name',
         'classroom_id',
-        'parent_id',
     ];
 
     public function classroom()
@@ -21,9 +20,9 @@ class Student extends Model
         return $this->belongsTo(Classroom::class);
     }
 
-    public function parent()
+    public function parents()
     {
-        return $this->belongsTo(Parents::class);
+        return $this->belongsToMany(Parents::class, 'parent_student', 'student_id', 'parent_id')->withTimestamps();
     }
 
     public function grades()

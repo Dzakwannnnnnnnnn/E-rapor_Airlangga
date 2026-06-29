@@ -110,22 +110,29 @@
                 </div>
 
                 <div class="space-y-1.5 md:col-span-2 border-t border-slate-100 pt-6 mt-2">
-                    <span class="block text-[10px] font-black text-slate-400 uppercase tracking-wider pl-0.5">Orang Tua / Wali</span>
-                    <div class="flex items-center justify-between bg-slate-50/70 border border-slate-100 rounded-xl px-4 py-3">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-user-group text-slate-400 text-sm w-4 text-center"></i>
-                            <span class="text-sm font-semibold text-slate-700">
-                                @if($student->parent && $student->parent->user)
-                                    {{ $student->parent->user->name }} (<span class="capitalize">{{ $student->parent->relation }}</span>)
-                                @else
-                                    <span class="text-slate-400 font-medium">Belum dihubungkan ke akun Orang Tua / Wali</span>
+                    <span class="block text-[10px] font-black text-slate-400 uppercase tracking-wider pl-0.5">Orang Tua / Wali (Maksimal 2 Hubungan Berbeda)</span>
+                    <div class="bg-slate-50/70 border border-slate-100 rounded-xl px-4 py-3 space-y-2.5">
+                        @if($student->parents && $student->parents->count() > 0)
+                            @foreach($student->parents as $p)
+                                @if($p->user)
+                                    <div class="flex items-center justify-between py-1.5 border-b border-slate-100 last:border-0 last:pb-0 first:pt-0">
+                                        <div class="flex items-center gap-3">
+                                            <i class="fa-solid fa-user text-slate-400 text-sm w-4 text-center"></i>
+                                            <span class="text-sm font-semibold text-slate-700">
+                                                {{ $p->user->name }} (<span class="capitalize text-primary font-bold">{{ $p->relation }}</span>)
+                                            </span>
+                                        </div>
+                                        <a href="{{ route('admin.parents.show', $p->user->id) }}" class="text-xs font-bold text-primary hover:underline">
+                                            Detail Wali Murid
+                                        </a>
+                                    </div>
                                 @endif
-                            </span>
-                        </div>
-                        @if($student->parent && $student->parent->user)
-                            <a href="{{ route('admin.parents.show', $student->parent->user->id) }}" class="text-xs font-bold text-primary hover:underline">
-                                Detail Wali Murid
-                            </a>
+                            @endforeach
+                        @else
+                            <div class="flex items-center gap-3 py-1">
+                                <i class="fa-solid fa-user-group text-slate-400 text-sm w-4 text-center"></i>
+                                <span class="text-sm font-semibold text-slate-400">Belum dihubungkan ke akun Orang Tua / Wali</span>
+                            </div>
                         @endif
                     </div>
                 </div>

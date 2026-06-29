@@ -148,43 +148,41 @@ class LoginRequest extends FormRequest
         // Find the student by NISN
         $student = Student::where('nisn', $nisn)->first();
 
-        if (! $student || ! $student->parent_id) {
+        if (! $student || $student->parents()->count() === 0) {
             RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([
                 'email' => 'NISN tidak ditemukan atau belum terhubung ke akun orang tua.',
             ]);
         }
 
-        // Get the parent's user account (relationship set by admin)
-        $parent = $student->parent()->with('user')->first();
+        // Get the parent user accounts (relationship set by admin)
+        $parents = $student->parents()->with('user')->get();
+        $authenticatedUser = null;
 
-        if (! $parent || ! $parent->user) {
-            RateLimiter::hit($this->throttleKey());
-            throw ValidationException::withMessages([
-                'email' => 'Akun orang tua untuk siswa ini belum tersedia. Hubungi administrator.',
-            ]);
+        foreach ($parents as $parent) {
+            if ($parent->user && Hash::check($password, $parent->user->password)) {
+                $authenticatedUser = $parent->user;
+                break;
+            }
         }
 
-        $user = $parent->user;
-
-        // Verify that the account has been activated (email verified)
-        if (! $user->email_verified_at) {
-            RateLimiter::hit($this->throttleKey());
-            throw ValidationException::withMessages([
-                'email' => 'Akun orang tua belum diaktifkan. Silakan cek email untuk aktivasi.',
-            ]);
-        }
-
-        // Verify password against the parent user's stored hash
-        if (! Hash::check($password, $user->password)) {
+        if (! $authenticatedUser) {
             RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([
                 'email' => 'NISN atau kata sandi yang dimasukkan tidak sesuai.',
             ]);
         }
 
+        // Verify that the account has been activated (email verified)
+        if (! $authenticatedUser->email_verified_at) {
+            RateLimiter::hit($this->throttleKey());
+            throw ValidationException::withMessages([
+                'email' => 'Akun orang tua belum diaktifkan. Silakan cek email untuk aktivasi.',
+            ]);
+        }
+
         // Log in the parent user
-        Auth::login($user, $this->boolean('remember'));
+        Auth::login($authenticatedUser, $this->boolean('remember'));
     }
 
     /**

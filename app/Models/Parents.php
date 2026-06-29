@@ -22,6 +22,6 @@ class Parents extends Model
 
     public function students()
     {
-        return $this->hasMany(Student::class, 'parent_id');
+        return $this->belongsToMany(Student::class, 'parent_student', 'parent_id', 'student_id')->withTimestamps();
     }
 }

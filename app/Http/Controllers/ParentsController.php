@@ -41,7 +41,7 @@ class ParentsController extends Controller
      */
     public function create()
     {
-        $students = Student::with('classroom')->orderBy('name')->get();
+        $students = Student::with(['parents.user', 'classroom'])->orderBy('name')->get();
         return view('management.users.parent.create', compact('students'));
     }
 
@@ -59,6 +59,20 @@ class ParentsController extends Controller
             'student_ids.*' => 'exists:students,id',
         ]);
 
+        if ($request->has('student_ids')) {
+            foreach ($request->student_ids as $studentId) {
+                $student = Student::with('parents')->findOrFail($studentId);
+                if ($student->parents->count() >= 2) {
+                    return back()->withErrors(['student_ids' => "Siswa {$student->name} sudah memiliki maksimal 2 orang tua."])->withInput();
+                }
+                foreach ($student->parents as $p) {
+                    if ($p->relation === $request->relation) {
+                        return back()->withErrors(['student_ids' => "Siswa {$student->name} sudah memiliki wali murid dengan hubungan " . ucfirst($request->relation) . "."])->withInput();
+                    }
+                }
+            }
+        }
+
         DB::transaction(function () use ($request) {
             $user = User::create([
                 'name'     => $request->name,
@@ -74,9 +88,7 @@ class ParentsController extends Controller
             ]);
 
             if ($request->has('student_ids')) {
-                Student::whereIn('id', $request->student_ids)->update([
-                    'parent_id' => $parent->id,
-                ]);
+                $parent->students()->attach($request->student_ids);
             }
 
             // Buat token aktivasi dan simpan ke password_reset_tokens
@@ -119,7 +131,7 @@ class ParentsController extends Controller
     public function edit(string $id)
     {
         $user = User::with('parent')->where('role', 'parent')->findOrFail($id);
-        $students = Student::with('classroom')->orderBy('name')->get();
+        $students = Student::with(['parents.user', 'classroom'])->orderBy('name')->get();
         return view('management.users.parent.edit', compact('user', 'students'));
     }
 
@@ -139,6 +151,24 @@ class ParentsController extends Controller
             'student_ids.*' => 'exists:students,id',
         ]);
 
+        if ($request->has('student_ids')) {
+            foreach ($request->student_ids as $studentId) {
+                // exclude current parent during validation
+                $student = Student::with(['parents' => function($q) use ($user) {
+                    $q->where('parents.id', '!=', $user->parent->id);
+                }])->findOrFail($studentId);
+
+                if ($student->parents->count() >= 2) {
+                    return back()->withErrors(['student_ids' => "Siswa {$student->name} sudah memiliki maksimal 2 orang tua."])->withInput();
+                }
+                foreach ($student->parents as $p) {
+                    if ($p->relation === $request->relation) {
+                        return back()->withErrors(['student_ids' => "Siswa {$student->name} sudah memiliki wali murid dengan hubungan " . ucfirst($request->relation) . "."])->withInput();
+                    }
+                }
+            }
+        }
+
         $oldEmail = $user->email;
         $emailChanged = $oldEmail !== $request->email;
 
@@ -153,15 +183,8 @@ class ParentsController extends Controller
                 'relation' => $request->relation,
             ]);
 
-            // Reset parent_id for currently linked students
-            Student::where('parent_id', $user->parent->id)->update(['parent_id' => null]);
-
-            // Link newly selected students
-            if ($request->has('student_ids')) {
-                Student::whereIn('id', $request->student_ids)->update([
-                    'parent_id' => $user->parent->id,
-                ]);
-            }
+            // Sync new associations
+            $user->parent->students()->sync($request->input('student_ids', []));
 
             if ($emailChanged) {
                 // Reset password dan email_verified_at agar akun dinonaktifkan sementara sampai diaktivasi ulang
@@ -211,7 +234,10 @@ class ParentsController extends Controller
         $user = User::where('role', 'parent')->findOrFail($id);
 
         DB::transaction(function () use ($user) {
-            $user->parent()->delete();
+            if ($user->parent) {
+                $user->parent->students()->detach();
+                $user->parent()->delete();
+            }
             $user->delete();
         });
 

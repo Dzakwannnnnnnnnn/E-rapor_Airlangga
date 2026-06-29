@@ -20,9 +20,7 @@ class ParentDashboardController extends Controller
     {
         $parent = Auth::user()->parent;
         return $parent
-            ? Student::with(['classroom', 'attendances', 'reportCards.academicYear'])
-                ->where('parent_id', $parent->id)
-                ->first()
+            ? $parent->students()->with(['classroom', 'attendances', 'reportCards.academicYear'])->first()
             : null;
     }
 
