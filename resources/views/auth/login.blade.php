@@ -83,14 +83,24 @@
 
             <!-- Google reCAPTCHA -->
             <div class="mb-6 flex flex-col items-center justify-center">
-                <div class="inline-block scale-95 sm:scale-100 origin-center">
-                    {!! NoCaptcha::display() !!}
-                </div>
-                @if ($errors->has('g-recaptcha-response'))
-                    <span class="text-xs text-red-500 mt-2 font-bold self-start ml-1 flex items-center gap-1.5">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        {{ $errors->first('g-recaptcha-response') }}
-                    </span>
+                @if (config('captcha.sitekey'))
+                    <div class="inline-block scale-95 sm:scale-100 origin-center">
+                        {!! NoCaptcha::display() !!}
+                    </div>
+                    @if ($errors->has('g-recaptcha-response'))
+                        <span class="text-xs text-red-500 mt-2 font-bold self-start ml-1 flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            {{ $errors->first('g-recaptcha-response') }}
+                        </span>
+                    @endif
+                @else
+                    <div class="w-full p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-[11px] font-bold flex items-start gap-2 shadow-sm">
+                        <i class="fa-solid fa-triangle-exclamation text-sm mt-0.5"></i>
+                        <div>
+                            <span class="block text-slate-800 uppercase tracking-wider text-[9px] mb-1 font-black">Pemberitahuan Sistem</span>
+                            NOCAPTCHA_SITEKEY belum diatur di server ini. Silakan tambahkan kunci di file <code>.env</code> dan jalankan command <code>php artisan config:clear</code> untuk memperbarui cache.
+                        </div>
+                    </div>
                 @endif
             </div>
 
@@ -134,5 +144,7 @@
         }
     }
 </script>
-{!! NoCaptcha::renderJs('id') !!}
+@if (config('captcha.sitekey'))
+    {!! NoCaptcha::renderJs('id') !!}
+@endif
 @endsection
