@@ -8,6 +8,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -43,8 +44,9 @@ class LoginRequest extends FormRequest
             'password' => ['required', 'string'],
         ];
 
+        // Only require the captcha response field if a sitekey is configured.
         if (! app()->runningUnitTests() && config('captcha.sitekey')) {
-            $rules['g-recaptcha-response'] = ['required', 'captcha'];
+            $rules['g-recaptcha-response'] = ['required', 'string'];
         }
 
         return $rules;
@@ -59,8 +61,54 @@ class LoginRequest extends FormRequest
             'email.required'    => 'Email atau NISN wajib diisi.',
             'password.required' => 'Kata sandi wajib diisi.',
             'g-recaptcha-response.required' => 'Harap verifikasi bahwa Anda bukan robot.',
-            'g-recaptcha-response.captcha'  => 'Verifikasi Captcha gagal. Silakan coba lagi.',
         ];
+    }
+
+    /**
+     * Run additional validation after the standard rules pass.
+     * Performs manual Google reCAPTCHA v2 verification by calling the
+     * siteverify API directly — avoids relying on the no-captcha package's
+     * Guzzle dependency which can fail on some hosting environments.
+     */
+    public function withValidator($validator): void
+    {
+        if (app()->runningUnitTests() || ! config('captcha.secret')) {
+            return;
+        }
+
+        $validator->after(function ($validator) {
+            $token    = $this->input('g-recaptcha-response');
+            $secret   = config('captcha.secret');
+            $remoteIp = $this->ip();
+
+            if (empty($token)) {
+                return; // 'required' rule already handles this
+            }
+
+            try {
+                $response = Http::asForm()->post(
+                    'https://www.google.com/recaptcha/api/siteverify',
+                    [
+                        'secret'   => $secret,
+                        'response' => $token,
+                        'remoteip' => $remoteIp,
+                    ]
+                );
+
+                $result = $response->json();
+
+                if (! ($result['success'] ?? false)) {
+                    $validator->errors()->add(
+                        'g-recaptcha-response',
+                        'Verifikasi Captcha gagal. Silakan coba lagi.'
+                    );
+                }
+            } catch (\Throwable $e) {
+                // If we cannot reach Google's API, log it but do NOT block the user.
+                // This prevents a Google outage from locking everyone out.
+                \Illuminate\Support\Facades\Log::warning('reCAPTCHA verification failed to contact Google API: ' . $e->getMessage());
+            }
+        });
     }
 
     /**
