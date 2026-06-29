@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             ClassroomSubjectTeacherSeeder::class, // 6. Penugasan guru per kelas per mapel
             AssessmentSeeder::class,              // 7. Assessment template per assignment
             GradeEntrySeeder::class,              // 8. Nilai siswa
+            HeadmasterSeeder::class,
         ]);
 
         // 1. Assign Homeroom Teachers (Wali Kelas) to Classrooms
