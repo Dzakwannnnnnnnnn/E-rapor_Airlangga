@@ -9,12 +9,18 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
-        //
+        $this->app->singleton('captcha', function ($app) {
+            $options = $app['config']['captcha.options'] ?? [];
+            $options['handler'] = new \App\Support\CaptchaSocketHandler();
+
+            return new \Anhskohbo\NoCaptcha\NoCaptcha(
+                $app['config']['captcha.secret'],
+                $app['config']['captcha.sitekey'],
+                $options
+            );
+        });
     }
 
     /**
