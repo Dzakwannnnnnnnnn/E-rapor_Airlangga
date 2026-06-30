@@ -105,6 +105,10 @@
                                 <i class="fa-solid fa-id-card text-sm"></i>
                             </div>
                             <input type="text" name="nip" id="nip" value="{{ old('nip') }}" required
+                                maxlength="16"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,16)"
                                 class="w-full pl-11 pr-4 py-3.5 bg-slate-50/50 border @error('nip') border-danger @else border-slate-200 focus:border-primary @enderror rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white transition-all shadow-sm"
                                 placeholder="Contoh: 19850330XXXXXXXXXX">
                         </div>
@@ -162,6 +166,10 @@
                                 <i class="fa-solid fa-phone text-sm"></i>
                             </div>
                             <input type="text" name="telp" id="telp" value="{{ old('telp') }}" required
+                                maxlength="16"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,16)"
                                 class="w-full pl-11 pr-4 py-3.5 bg-slate-50/50 border @error('telp') border-danger @else border-slate-200 focus:border-primary @enderror rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white transition-all shadow-sm"
                                 placeholder="Contoh: 081234567890">
                         </div>

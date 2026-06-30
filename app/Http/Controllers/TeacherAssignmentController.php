@@ -58,18 +58,36 @@ class TeacherAssignmentController extends Controller
     /**
      * HALAMAN FORM TAMBAH: Menampilkan form untuk memplot kelas & mapel baru.
      */
-    public function create(Teacher $teacher)
-    {
-        $user          = $teacher->user;
-        $activeYear    = AcademicYear::where('is_active', true)->first();
-        $academicYears = AcademicYear::orderByDesc('year')->orderByDesc('semester')->get();
-        $classrooms    = Classroom::orderBy('name')->get();
-        $subjects      = Subject::orderBy('name')->get();
+public function create(Teacher $teacher)
+{
+    $user       = $teacher->user;
+    $activeYear = AcademicYear::where('is_active', true)->first();
 
-        return view('management.users.teacher.assignments.create', compact(
-            'teacher', 'user', 'activeYear', 'academicYears', 'classrooms', 'subjects'
-        ));
-    }
+    $academicYears = AcademicYear::orderByDesc('year')
+        ->orderByDesc('semester')
+        ->get();
+
+    $classrooms = Classroom::orderBy('name')->get();
+
+    $subjects = Subject::orderBy('name')->get();
+
+
+    // Ambil kombinasi tahun ajaran + kelas + mapel yang sudah memiliki guru
+    $usedAssignments = ClassroomSubjectTeacher::select('academic_year_id', 'classroom_id', 'subject_id')
+        ->get()
+        ->toArray();
+
+
+    return view('management.users.teacher.assignments.create', compact(
+        'teacher',
+        'user',
+        'activeYear',
+        'academicYears',
+        'classrooms',
+        'subjects',
+        'usedAssignments'
+    ));
+}
 
     /**
      * PROSES SIMPAN: Tambah penugasan guru ke kelas & mapel tertentu.
@@ -109,12 +127,14 @@ class TeacherAssignmentController extends Controller
                 ->with('error', 'Guru ini sudah memiliki penugasan yang sama.');
         }
 
-        ClassroomSubjectTeacher::create([
+        $assignment = ClassroomSubjectTeacher::create([
             'teacher_id'       => $teacher->id,
             'classroom_id'     => $request->classroom_id,
             'subject_id'       => $request->subject_id,
             'academic_year_id' => $request->academic_year_id,
         ]);
+
+        $assignment->generateDefaultAssessments();
 
         return redirect()
             ->route('admin.teachers.assignments.index', $teacher->id)

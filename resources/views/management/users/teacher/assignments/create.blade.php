@@ -117,7 +117,9 @@
                             class="w-full pl-11 pr-10 py-3.5 bg-slate-50/50 border @error('classroom_id') border-danger @else border-slate-200 focus:border-primary @enderror rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:bg-white transition-all shadow-sm appearance-none cursor-pointer">
                             <option value="" disabled selected>Pilih Kelas</option>
                             @foreach($classrooms as $classroom)
-                                <option value="{{ $classroom->id }}">{{ $classroom->name }}</option>
+                                <option value="{{ $classroom->id }}" data-name="{{ $classroom->name }}">
+                                    {{ $classroom->name }}
+                                </option>
                             @endforeach
                         </select>
                         <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400">
@@ -142,7 +144,9 @@
                             class="w-full pl-11 pr-10 py-3.5 bg-slate-50/50 border @error('subject_id') border-danger @else border-slate-200 focus:border-primary @enderror rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:bg-white transition-all shadow-sm appearance-none cursor-pointer">
                             <option value="" disabled selected>Pilih Mata Pelajaran</option>
                             @foreach($subjects as $subject)
-                                <option value="{{ $subject->id }}">{{ $subject->name }} ({{ $subject->code ?? '-' }})</option>
+                                <option value="{{ $subject->id }}">
+                                    {{ $subject->name }}
+                                </option>
                             @endforeach
                         </select>
                         <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400">
@@ -156,7 +160,7 @@
                     @enderror
                 </div>
 
-                {{-- Desktop-only action panel (hidden on mobile, bottom bar handles mobile) --}}
+                {{-- Desktop-only action panel --}}
                 <div class="hidden md:flex items-center justify-end gap-4 pt-4 pb-2">
                     <a href="{{ route('admin.teachers.assignments.index', $teacher->id) }}"
                        class="px-5 py-3 rounded-xl border border-slate-200 text-slate-500 text-xs font-black uppercase tracking-wider hover:bg-slate-50 transition-all text-center">
@@ -167,7 +171,7 @@
                         Simpan Penugasan
                     </button>
                 </div>
-                
+
             </form>
         </div>
     </div>
@@ -190,3 +194,108 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const academicYearSelect = document.getElementById('academic_year_id');
+    const classroomSelect = document.getElementById('classroom_id');
+    const subjectSelect = document.getElementById('subject_id');
+    
+    // Store all subject options
+    const originalSubjects = Array.from(subjectSelect.options).slice(1).map(opt => ({
+        value: opt.value,
+        text: opt.text
+    }));
+
+    const usedAssignments = @json($usedAssignments);
+
+    function updateSubjects() {
+        const selectedYear = academicYearSelect.value;
+        const selectedClass = classroomSelect.value;
+
+        // Save selected value
+        const previousValue = subjectSelect.value;
+
+        // Reset subject dropdown
+        subjectSelect.innerHTML = '<option value="" disabled selected>Pilih Mata Pelajaran</option>';
+
+        if (!selectedClass || !selectedYear) {
+            subjectSelect.disabled = true;
+            return;
+        }
+
+        subjectSelect.disabled = false;
+
+        // Filter used subjects for the selected class and academic year
+        const usedSubjectIds = usedAssignments
+            .filter(item => item.academic_year_id == selectedYear && item.classroom_id == selectedClass)
+            .map(item => item.subject_id);
+
+        // Populate subjects that are NOT used
+        let hasAvailable = false;
+        originalSubjects.forEach(subject => {
+            if (!usedSubjectIds.includes(parseInt(subject.value))) {
+                const opt = document.createElement('option');
+                opt.value = subject.value;
+                opt.textContent = subject.text;
+                if (subject.value === previousValue) {
+                    opt.selected = true;
+                }
+                subjectSelect.appendChild(opt);
+                hasAvailable = true;
+            }
+        });
+
+        if (!hasAvailable) {
+            const opt = document.createElement('option');
+            opt.value = "";
+            opt.disabled = true;
+            opt.selected = true;
+            opt.textContent = "Semua mata pelajaran telah diisi untuk kelas ini";
+            subjectSelect.appendChild(opt);
+        }
+    }
+
+    function updateClassrooms() {
+        const selectedYear = academicYearSelect.value;
+        if (!selectedYear) return;
+
+        Array.from(classroomSelect.options).forEach(opt => {
+            if (opt.value === "") return; // Skip placeholder
+            const classId = opt.value;
+            
+            // Get used subjects for this class and year
+            const usedSubjectIds = usedAssignments
+                .filter(item => item.academic_year_id == selectedYear && item.classroom_id == classId)
+                .map(item => item.subject_id);
+            
+            // Check if all subjects are filled
+            const originalName = opt.getAttribute('data-name');
+            if (usedSubjectIds.length >= originalSubjects.length) {
+                opt.disabled = true;
+                opt.textContent = originalName + ' (Penuh / Sudah Terisi)';
+                // If it was selected, deselect it
+                if (classroomSelect.value === classId) {
+                    classroomSelect.value = "";
+                }
+            } else {
+                opt.disabled = false;
+                opt.textContent = originalName;
+            }
+        });
+    }
+
+    academicYearSelect.addEventListener('change', function() {
+        updateClassrooms();
+        updateSubjects();
+    });
+    
+    classroomSelect.addEventListener('change', updateSubjects);
+
+    // Initial trigger
+    updateClassrooms();
+    updateSubjects();
+});
+</script>
+@endpush

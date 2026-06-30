@@ -20,6 +20,9 @@ class GradesController extends Controller
         $teacher = Auth::user()->teacher;
         abort_if(!$teacher || $assignment->teacher_id != $teacher->id, 403);
 
+        // Generate default assessment templates if none exist
+        $assignment->generateDefaultAssessments();
+
         $assignment->load([
             'classroom.students',
             'subject',
