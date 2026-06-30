@@ -77,6 +77,23 @@
                     padding-right: 0 !important;
                     justify-content: center !important;
                 }
+                
+                /* Collapse submenus and group headers when sidebar is collapsed */
+                .sidebar-collapsed .sidebar-group-header {
+                    display: none !important;
+                }
+                .sidebar-collapsed .submenu-toggle {
+                    justify-content: center !important;
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
+                    gap: 0 !important;
+                }
+                .sidebar-collapsed .submenu-toggle .fa-chevron-down {
+                    display: none !important;
+                }
+                .sidebar-collapsed [id^="submenu-"] {
+                    display: none !important;
+                }
             }
         </style>
     </head>
@@ -133,6 +150,11 @@
                 @endif
 
                 <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+                    <!-- UTAMA GROUP -->
+                    <div class="sidebar-group-header text-[10px] font-black text-white/40 uppercase tracking-widest px-4 pt-2 pb-1.5 sidebar-text">
+                        Utama
+                    </div>
+
                     @if($activeRole !== 'parent')
                     <a href="/dashboard"
                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
@@ -143,15 +165,156 @@
                     @endif
 
                     @if($activeRole == 'admin')
-                        <a href="{{ route('admin.management.index') }}"
-                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
-                        {{ request()->is('admin/management*') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
-                            <i class="fa-solid fa-grip w-5 text-center text-lg shrink-0"></i>
-                            <span class="text-sm sidebar-text">Management</span>
-                        </a>
+                        @php
+                            $isManagementActive = request()->is('admin/management*') || request()->is('admin/teachers*') || request()->is('admin/students*') || request()->is('admin/parents*') || request()->is('admin/academic_years*') || request()->is('admin/classrooms*') || request()->is('admin/subjects*') || request()->is('admin/assignments*') || request()->is('admin/teachers/*/assignments*') || request()->is('admin/report-cards*');
+                            $isMasterActive = request()->is('admin/teachers*') || request()->is('admin/students*') || request()->is('admin/parents*') || request()->is('admin/academic_years*') || request()->is('admin/classrooms*') || request()->is('admin/subjects*') || request()->is('admin/assignments*') || request()->is('admin/teachers/*/assignments*');
+                            $isUsersActive = request()->is('admin/teachers*') || request()->is('admin/students*') || request()->is('admin/parents*');
+                            $isAkademikActive = request()->is('admin/academic_years*') || request()->is('admin/classrooms*') || request()->is('admin/subjects*') || request()->is('admin/assignments*') || request()->is('admin/teachers/*/assignments*');
+                            $isEvaluasiActive = request()->is('admin/report-cards*');
+                        @endphp
+
+                        <div class="sidebar-group-header text-[10px] font-black text-white/40 uppercase tracking-widest px-4 pt-4 pb-1.5 sidebar-text">
+                            Administrasi
+                        </div>
+
+                        <!-- LEVEL 1: MANAGEMENT -->
+                        <div class="space-y-1">
+                            <button type="button" class="submenu-toggle w-full flex items-center justify-between px-4 py-3 rounded-lg transition border-l-4 border-transparent text-gray-400 font-medium hover:bg-white/10 hover:text-secondary focus:outline-none" data-submenu="submenu-management">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-grip w-5 text-center text-lg shrink-0"></i>
+                                    <span class="text-sm sidebar-text font-bold">Management</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-down text-[10px] sidebar-text transition-transform duration-200 {{ $isManagementActive ? 'rotate-180 text-secondary' : '' }}"></i>
+                            </button>
+                            
+                            <!-- LEVEL 1 WRAPPER -->
+                            <div id="submenu-management" class="{{ $isManagementActive ? 'block' : 'hidden' }} pl-4 space-y-1" data-active="{{ $isManagementActive ? 'true' : 'false' }}">
+                                
+                                <a href="{{ route('admin.management.index') }}"
+                                   class="flex items-center gap-3 px-4 py-2 text-xs rounded-lg transition border-l-2
+                                   {{ request()->is('admin/management') ? 'text-secondary font-bold border-secondary bg-white/5' : 'text-gray-400 font-medium border-transparent hover:text-secondary hover:bg-white/5' }}">
+                                    <i class="fa-solid fa-chart-line w-4 text-center shrink-0"></i>
+                                    <span class="sidebar-text">Dashboard Panel</span>
+                                </a>
+
+                                <!-- LEVEL 2: DATA MASTER -->
+                                <div class="space-y-1">
+                                    <button type="button" class="submenu-toggle w-full flex items-center justify-between px-4 py-2 rounded-lg transition text-gray-400 font-medium hover:bg-white/5 hover:text-secondary focus:outline-none" data-submenu="submenu-master">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fa-solid fa-database w-4 text-center shrink-0"></i>
+                                            <span class="text-xs sidebar-text">Data Master</span>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-down text-[9px] sidebar-text transition-transform duration-200 {{ $isMasterActive ? 'rotate-180 text-secondary' : '' }}"></i>
+                                    </button>
+
+                                    <!-- LEVEL 2 WRAPPER -->
+                                    <div id="submenu-master" class="{{ $isMasterActive ? 'block' : 'hidden' }} pl-3 space-y-1" data-active="{{ $isMasterActive ? 'true' : 'false' }}">
+                                        
+                                        <!-- LEVEL 3: DATA PENGGUNA -->
+                                        <div class="space-y-1">
+                                            <button type="button" class="submenu-toggle w-full flex items-center justify-between px-3 py-1.5 rounded-lg transition text-gray-400 font-medium hover:bg-white/5 hover:text-secondary focus:outline-none" data-submenu="submenu-users">
+                                                <div class="flex items-center gap-2">
+                                                    <i class="fa-solid fa-users-gear text-[10px] w-3 text-center shrink-0"></i>
+                                                    <span class="text-[11px] sidebar-text">Data Pengguna</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-down text-[8px] sidebar-text transition-transform duration-200 {{ $isUsersActive ? 'rotate-180 text-secondary' : '' }}"></i>
+                                            </button>
+
+                                            <!-- LEVEL 3 WRAPPER -->
+                                            <div id="submenu-users" class="{{ $isUsersActive ? 'block' : 'hidden' }} pl-4 space-y-0.5" data-active="{{ $isUsersActive ? 'true' : 'false' }}">
+                                                <a href="{{ route('admin.teachers.index') }}"
+                                                   class="flex items-center gap-2 px-3 py-1.5 text-[11px] rounded-lg transition border-l-2
+                                                   {{ request()->is('admin/teachers*') ? 'text-secondary font-bold border-secondary bg-white/5' : 'text-gray-400 font-medium border-transparent hover:text-secondary hover:bg-white/5' }}">
+                                                    <i class="fa-solid fa-chalkboard-user text-[10px] w-3 text-center shrink-0"></i>
+                                                    <span class="sidebar-text">Data Guru</span>
+                                                </a>
+                                                <a href="{{ route('admin.students.index') }}"
+                                                   class="flex items-center gap-2 px-3 py-1.5 text-[11px] rounded-lg transition border-l-2
+                                                   {{ request()->is('admin/students*') ? 'text-secondary font-bold border-secondary bg-white/5' : 'text-gray-400 font-medium border-transparent hover:text-secondary hover:bg-white/5' }}">
+                                                    <i class="fa-solid fa-user-graduate text-[10px] w-3 text-center shrink-0"></i>
+                                                    <span class="sidebar-text">Data Siswa</span>
+                                                </a>
+                                                <a href="{{ route('admin.parents.index') }}"
+                                                   class="flex items-center gap-2 px-3 py-1.5 text-[11px] rounded-lg transition border-l-2
+                                                   {{ request()->is('admin/parents*') ? 'text-secondary font-bold border-secondary bg-white/5' : 'text-gray-400 font-medium border-transparent hover:text-secondary hover:bg-white/5' }}">
+                                                    <i class="fa-solid fa-users text-[10px] w-3 text-center shrink-0"></i>
+                                                    <span class="sidebar-text">Data Wali</span>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <!-- LEVEL 3: DATA AKADEMIK -->
+                                        <div class="space-y-1">
+                                            <button type="button" class="submenu-toggle w-full flex items-center justify-between px-3 py-1.5 rounded-lg transition text-gray-400 font-medium hover:bg-white/5 hover:text-secondary focus:outline-none" data-submenu="submenu-academic">
+                                                <div class="flex items-center gap-2">
+                                                    <i class="fa-solid fa-graduation-cap text-[10px] w-3 text-center shrink-0"></i>
+                                                    <span class="text-[11px] sidebar-text">Data Akademik</span>
+                                                </div>
+                                                <i class="fa-solid fa-chevron-down text-[8px] sidebar-text transition-transform duration-200 {{ $isAkademikActive ? 'rotate-180 text-secondary' : '' }}"></i>
+                                            </button>
+
+                                            <!-- LEVEL 3 WRAPPER -->
+                                            <div id="submenu-academic" class="{{ $isAkademikActive ? 'block' : 'hidden' }} pl-4 space-y-0.5" data-active="{{ $isAkademikActive ? 'true' : 'false' }}">
+                                                <a href="{{ route('admin.academic_years.index') }}"
+                                                   class="flex items-center gap-2 px-3 py-1.5 text-[11px] rounded-lg transition border-l-2
+                                                   {{ request()->is('admin/academic_years*') ? 'text-secondary font-bold border-secondary bg-white/5' : 'text-gray-400 font-medium border-transparent hover:text-secondary hover:bg-white/5' }}">
+                                                    <i class="fa-solid fa-calendar-days text-[10px] w-3 text-center shrink-0"></i>
+                                                    <span class="sidebar-text">Tahun Ajaran</span>
+                                                </a>
+                                                <a href="{{ route('admin.classrooms.index') }}"
+                                                   class="flex items-center gap-2 px-3 py-1.5 text-[11px] rounded-lg transition border-l-2
+                                                   {{ request()->is('admin/classrooms*') ? 'text-secondary font-bold border-secondary bg-white/5' : 'text-gray-400 font-medium border-transparent hover:text-secondary hover:bg-white/5' }}">
+                                                    <i class="fa-solid fa-school text-[10px] w-3 text-center shrink-0"></i>
+                                                    <span class="sidebar-text">Kelas / Ruangan</span>
+                                                </a>
+                                                <a href="{{ route('admin.subjects.index') }}"
+                                                   class="flex items-center gap-2 px-3 py-1.5 text-[11px] rounded-lg transition border-l-2
+                                                   {{ request()->is('admin/subjects*') ? 'text-secondary font-bold border-secondary bg-white/5' : 'text-gray-400 font-medium border-transparent hover:text-secondary hover:bg-white/5' }}">
+                                                    <i class="fa-solid fa-book text-[10px] w-3 text-center shrink-0"></i>
+                                                    <span class="sidebar-text">Mata Pelajaran</span>
+                                                </a>
+                                                <a href="{{ route('admin.assignments.teachers') }}"
+                                                   class="flex items-center gap-2 px-3 py-1.5 text-[11px] rounded-lg transition border-l-2
+                                                   {{ request()->is('admin/assignments*') || request()->is('admin/teachers/*/assignments*') ? 'text-secondary font-bold border-secondary bg-white/5' : 'text-gray-400 font-medium border-transparent hover:text-secondary hover:bg-white/5' }}">
+                                                    <i class="fa-solid fa-clipboard-list text-[10px] w-3 text-center shrink-0"></i>
+                                                    <span class="sidebar-text">Penugasan Guru</span>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- LEVEL 2: EVALUASI -->
+                                <div class="space-y-1">
+                                    <button type="button" class="submenu-toggle w-full flex items-center justify-between px-4 py-2 rounded-lg transition text-gray-400 font-medium hover:bg-white/5 hover:text-secondary focus:outline-none" data-submenu="submenu-eval">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fa-solid fa-file-signature w-4 text-center shrink-0"></i>
+                                            <span class="text-xs sidebar-text">Evaluasi</span>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-down text-[9px] sidebar-text transition-transform duration-200 {{ $isEvaluasiActive ? 'rotate-180 text-secondary' : '' }}"></i>
+                                    </button>
+
+                                    <!-- LEVEL 2 WRAPPER -->
+                                    <div id="submenu-eval" class="{{ $isEvaluasiActive ? 'block' : 'hidden' }} pl-3 space-y-1" data-active="{{ $isEvaluasiActive ? 'true' : 'false' }}">
+                                        <a href="{{ route('admin.report-cards.index') }}"
+                                           class="flex items-center gap-2 px-3 py-1.5 text-[11px] rounded-lg transition border-l-2
+                                           {{ request()->is('admin/report-cards*') ? 'text-secondary font-bold border-secondary bg-white/5' : 'text-gray-400 font-medium border-transparent hover:text-secondary hover:bg-white/5' }}">
+                                            <i class="fa-solid fa-file-circle-check text-[10px] w-3 text-center shrink-0"></i>
+                                            <span class="sidebar-text">Validasi Rapor</span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
                     @endif
 
                     @if($activeRole == 'headmaster')
+                        <div class="sidebar-group-header text-[10px] font-black text-white/40 uppercase tracking-widest px-4 pt-4 pb-1.5 sidebar-text">
+                            Monitoring
+                        </div>
+
                         <a href="{{ route('headmaster.akademik') }}"
                         class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
                         {{ request()->routeIs('headmaster.akademik') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
@@ -175,9 +338,13 @@
                     @endif
 
                     @if($activeRole == 'teacher')
+                        <div class="sidebar-group-header text-[10px] font-black text-white/40 uppercase tracking-widest px-4 pt-4 pb-1.5 sidebar-text">
+                            Pembelajaran
+                        </div>
+
                         <a href="{{ route('teacher.kelas_saya.index') }}"
                         class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
-                        {{ request()->routeIs('teacher.kelas_saya.index') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
+                        {{ request()->routeIs('teacher.kelas_saya.index') || request()->routeIs('teacher.grades.index') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
                             <i class="fa-solid fa-book-open w-5 text-center text-lg shrink-0"></i>
                             <span class="text-sm sidebar-text">Kelas Saya</span>
                         </a>
@@ -200,6 +367,10 @@
                     @endif
 
                     @if($activeRole == 'parent')
+                        <div class="sidebar-group-header text-[10px] font-black text-white/40 uppercase tracking-widest px-4 pt-4 pb-1.5 sidebar-text">
+                            Akademik Anak
+                        </div>
+
                         <a href="{{ route('parent.dashboard') }}"
                         class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
                         {{ request()->routeIs('parent.dashboard') ? 'bg-white/10 text-secondary font-bold border-secondary' : 'text-gray-400 font-medium border-transparent hover:bg-white/10 hover:text-secondary' }}">
@@ -227,8 +398,11 @@
                             <i class="fa-solid fa-file-circle-check w-5 text-center text-lg shrink-0"></i>
                             <span class="text-sm sidebar-text">Rapor</span>
                         </a>
-
                     @endif
+
+                    <div class="sidebar-group-header text-[10px] font-black text-white/40 uppercase tracking-widest px-4 pt-4 pb-1.5 sidebar-text">
+                        Akun
+                    </div>
 
                     <a href="/profile"
                        class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition border-l-4
@@ -406,11 +580,70 @@
 
                         if (isCollapsed) {
                             toggleIcon.classList.replace('fa-chevron-left', 'fa-chevron-right');
+                            // Hide submenus when sidebar is collapsed
+                            document.querySelectorAll('[id^="submenu-"]').forEach(submenu => {
+                                submenu.classList.add('hidden');
+                                submenu.classList.remove('block');
+                            });
+                            document.querySelectorAll('.submenu-toggle .fa-chevron-down').forEach(chevron => {
+                                chevron.classList.remove('rotate-180');
+                            });
                         } else {
                             toggleIcon.classList.replace('fa-chevron-right', 'fa-chevron-left');
+                            // Restore active submenus when sidebar is expanded
+                            document.querySelectorAll('[id^="submenu-"]').forEach(submenu => {
+                                if (submenu.dataset.active === 'true') {
+                                    submenu.classList.remove('hidden');
+                                    submenu.classList.add('block');
+                                    const btn = document.querySelector(`[data-submenu="${submenu.id}"]`);
+                                    if (btn) {
+                                        const chevron = btn.querySelector('.fa-chevron-down');
+                                        if (chevron) chevron.classList.add('rotate-180');
+                                    }
+                                }
+                            });
                         }
                     });
                 }
+
+                // Submenu toggling logic
+                document.querySelectorAll('.submenu-toggle').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        if (sidebar && sidebar.classList.contains('sidebar-collapsed')) {
+                            // Expand sidebar first
+                            sidebar.classList.remove('sidebar-collapsed');
+                            localStorage.setItem('sidebar-collapsed', 'false');
+                            if (toggleIcon) {
+                                toggleIcon.classList.replace('fa-chevron-right', 'fa-chevron-left');
+                            }
+                        }
+
+                        const submenuId = this.dataset.submenu;
+                        const submenu = document.getElementById(submenuId);
+                        const chevron = this.querySelector('.fa-chevron-down');
+
+                        if (submenu) {
+                            const isHidden = submenu.classList.contains('hidden');
+                            if (isHidden) {
+                                submenu.classList.remove('hidden');
+                                submenu.classList.add('block');
+                                if (chevron) {
+                                    chevron.classList.add('rotate-180');
+                                    chevron.classList.add('text-secondary');
+                                }
+                                submenu.dataset.active = 'true';
+                            } else {
+                                submenu.classList.add('hidden');
+                                submenu.classList.remove('block');
+                                if (chevron) {
+                                    chevron.classList.remove('rotate-180');
+                                    chevron.classList.remove('text-secondary');
+                                }
+                                submenu.dataset.active = 'false';
+                            }
+                        }
+                    });
+                });
             });
         </script>
 
