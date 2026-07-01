@@ -207,22 +207,12 @@ class ParentDashboardController extends Controller
             fn($r) => $r->academic_year_id !== optional($activeYear)->id
         );
 
-        $allValidated = false;
-        if ($activeYear) {
-            $totalActiveStudents = Student::has('classroom')->count();
-            $validatedReports = ReportCard::where('academic_year_id', $activeYear->id)
-                ->where('is_validated', true)
-                ->count();
-            $allValidated = ($totalActiveStudents > 0) && ($validatedReports === $totalActiveStudents);
-        }
-
         return view('parent.report', compact(
             'student',
             'activeYear',
             'activeReport',
             'historyReports',
-            'totalStudents',
-            'allValidated'
+            'totalStudents'
         ));
     }
 
@@ -237,25 +227,14 @@ class ParentDashboardController extends Controller
             abort(403, 'Akses tidak diizinkan.');
         }
 
-        // Check validation/release status before rendering
+        // Check release status before rendering active year report card
         $activeYear = AcademicYear::where('is_active', true)->first();
         if ($activeYear && $reportCard->academic_year_id === $activeYear->id) {
             $releaseDate = $activeYear->report_release_at;
             $isReleased = $releaseDate ? now()->gte($releaseDate) : false;
 
-            $totalActiveStudents = Student::has('classroom')->count();
-            $validatedReports = ReportCard::where('academic_year_id', $activeYear->id)
-                ->where('is_validated', true)
-                ->count();
-            $allValidated = ($totalActiveStudents > 0) && ($validatedReports === $totalActiveStudents);
-
-            if (!$isReleased || !$allValidated) {
-                abort(403, 'Akses tidak diizinkan. Rapor belum dirilis atau belum disahkan oleh Kepala Sekolah.');
-            }
-        } else {
-            // Historical report card must be validated to be viewed
-            if (!$reportCard->is_validated) {
-                abort(403, 'Akses tidak diizinkan. Rapor belum disahkan.');
+            if (!$isReleased) {
+                abort(403, 'Akses tidak diizinkan. Rapor belum dirilis.');
             }
         }
 

@@ -16,7 +16,7 @@
     $releaseAt   = $activeYear?->report_release_at;
     $now         = now();
     $isReleased  = $releaseAt ? $now->gte($releaseAt) : false;
-    $isPublished = $activeReport && $activeReport->is_validated && $isReleased && ($allValidated ?? false);
+    $isPublished = $activeReport && $isReleased;
 
     // Sisa waktu menuju rilis
     $countdown = null;
@@ -210,10 +210,10 @@
                                 </p>
 
                                 <h3 class="text-lg font-black uppercase tracking-tight leading-tight text-[#FFB800] mb-2">
-                                    Menunggu Pengesahan
+                                    Belum Diterbitkan
                                 </h3>
                                 <p class="text-xs text-white/70 font-normal leading-relaxed">
-                                    Tenggat rilis telah lewat, namun rapor masih dalam proses pengesahan oleh Kepala Sekolah.
+                                    Tenggat rilis telah lewat, namun dokumen rapor Anda belum diterbitkan oleh pihak sekolah.
                                 </p>
                             </div>
                         @endif

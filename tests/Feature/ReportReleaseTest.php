@@ -82,74 +82,25 @@ class ReportReleaseTest extends TestCase
         $response->assertSee('Pembagian');
     }
 
-    public function test_welcome_page_when_release_passed_but_not_all_validated(): void
+    public function test_welcome_page_when_release_passed(): void
     {
         // Release date is in the past (setUp sets it to 2 hours ago)
-        // Let's create report cards. Student 1 validated, Student 2 not validated.
-        ReportCard::create([
-            'student_id' => $this->student1->id,
-            'academic_year_id' => $this->academicYear->id,
-            'final_score' => 85.00,
-            'is_validated' => true,
-            'is_submitted' => true,
-        ]);
-
-        ReportCard::create([
-            'student_id' => $this->student2->id,
-            'academic_year_id' => $this->academicYear->id,
-            'final_score' => 80.00,
-            'is_validated' => false,
-            'is_submitted' => true,
-        ]);
-
-        $response = $this->get('/');
-        $response->assertStatus(200);
-        $response->assertSee('Menunggu Pengesahan');
-        $response->assertSee('Tenggat rilis telah lewat, namun rapor masih dalam proses pengesahan oleh Kepala Sekolah.');
-        $response->assertDontSee('Rapor Digital Telah Tersedia');
-    }
-
-    public function test_welcome_page_when_release_passed_and_all_validated(): void
-    {
-        // Both students validated
-        ReportCard::create([
-            'student_id' => $this->student1->id,
-            'academic_year_id' => $this->academicYear->id,
-            'final_score' => 85.00,
-            'is_validated' => true,
-            'is_submitted' => true,
-        ]);
-
-        ReportCard::create([
-            'student_id' => $this->student2->id,
-            'academic_year_id' => $this->academicYear->id,
-            'final_score' => 80.00,
-            'is_validated' => true,
-            'is_submitted' => true,
-        ]);
-
         $response = $this->get('/');
         $response->assertStatus(200);
         $response->assertSee('Rapor Digital Telah Tersedia');
-        $response->assertDontSee('Menunggu Pengesahan');
     }
 
-    public function test_parent_cannot_view_unreleased_or_unvalidated_report(): void
+    public function test_parent_cannot_view_unreleased_report(): void
     {
-        // Report for Student 1 is validated
+        // Set release date in the future
+        $this->academicYear->update([
+            'report_release_at' => now()->addDays(2),
+        ]);
+
         $rc = ReportCard::create([
             'student_id' => $this->student1->id,
             'academic_year_id' => $this->academicYear->id,
             'final_score' => 85.00,
-            'is_validated' => true,
-            'is_submitted' => true,
-        ]);
-
-        // Student 2 is NOT validated
-        ReportCard::create([
-            'student_id' => $this->student2->id,
-            'academic_year_id' => $this->academicYear->id,
-            'final_score' => 80.00,
             'is_validated' => false,
             'is_submitted' => true,
         ]);
@@ -160,9 +111,9 @@ class ReportReleaseTest extends TestCase
             ->get('/parent/report');
 
         $response->assertStatus(200);
-        $response->assertSee('Tenggat rilis telah lewat, namun rapor masih dalam proses pengesahan oleh Kepala Sekolah.');
+        $response->assertSee('Estimasi Penerbitan Dokumen');
 
-        // Try viewing report card directly
+        // Try viewing report card directly before release
         $responseView = $this->actingAs($this->parentUser)
             ->withSession(['active_role' => 'parent'])
             ->get("/parent/report/{$rc->id}");
@@ -170,22 +121,14 @@ class ReportReleaseTest extends TestCase
         $responseView->assertStatus(403);
     }
 
-    public function test_parent_can_view_released_and_all_validated_report(): void
+    public function test_parent_can_view_released_report_even_if_not_validated(): void
     {
-        // Both students validated
+        // Report for Student 1 is not validated, but release has passed
         $rc = ReportCard::create([
             'student_id' => $this->student1->id,
             'academic_year_id' => $this->academicYear->id,
             'final_score' => 85.00,
-            'is_validated' => true,
-            'is_submitted' => true,
-        ]);
-
-        ReportCard::create([
-            'student_id' => $this->student2->id,
-            'academic_year_id' => $this->academicYear->id,
-            'final_score' => 80.00,
-            'is_validated' => true,
+            'is_validated' => false,
             'is_submitted' => true,
         ]);
 
@@ -203,5 +146,17 @@ class ReportReleaseTest extends TestCase
             ->get("/parent/report/{$rc->id}");
 
         $responseView->assertStatus(200);
+    }
+
+    public function test_parent_sees_not_yet_published_when_no_report_card_exists(): void
+    {
+        // Release date has passed, but student1 does not have any report card generated yet
+        $response = $this->actingAs($this->parentUser)
+            ->withSession(['active_role' => 'parent'])
+            ->get('/parent/report');
+
+        $response->assertStatus(200);
+        $response->assertSee('Belum Diterbitkan');
+        $response->assertSee('Tenggat rilis telah lewat, namun dokumen rapor Anda belum diterbitkan oleh pihak sekolah.');
     }
 }
