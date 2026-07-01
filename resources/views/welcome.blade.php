@@ -226,7 +226,7 @@
                                 </div>
                             </div>
                         </div>
-                        @if($allValidated)
+                        @if($allValidated ?? false)
                             <div id="countdown-finished-wrapper" class="hidden text-center py-4">
                                 <h3 class="text-lg font-black uppercase tracking-tight leading-tight text-[#FFB800] mb-2">
                                     Rapor Digital Telah Tersedia
@@ -246,7 +246,7 @@
                             </div>
                         @endif
                     @else
-                        @if($allValidated)
+                        @if($allValidated ?? false)
                             <div class="text-center py-4">
                                 <h3 class="text-lg font-black uppercase tracking-tight leading-tight text-[#FFB800] mb-2">
                                     Rapor Digital Telah Tersedia

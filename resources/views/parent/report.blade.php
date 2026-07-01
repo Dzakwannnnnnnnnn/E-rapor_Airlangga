@@ -16,7 +16,7 @@
     $releaseAt   = $activeYear?->report_release_at;
     $now         = now();
     $isReleased  = $releaseAt ? $now->gte($releaseAt) : false;
-    $isPublished = $activeReport && $activeReport->is_validated && $isReleased && $allValidated;
+    $isPublished = $activeReport && $activeReport->is_validated && $isReleased && ($allValidated ?? false);
 
     // Sisa waktu menuju rilis
     $countdown = null;
