@@ -30,53 +30,57 @@
     }
 @endphp
 
-{{-- Hero Header (Kop Dokumen Resmi dengan Penyesuaian Warna & Dekorasi) --}}
+{{-- Hero Header Section --}}
 <div class="-mx-4 -mt-4 md:-mx-8 md:-mt-8 w-[calc(100%+2rem)] md:w-[calc(100%+4rem)] overflow-hidden relative">
-    <div class="bg-primary text-white pt-12 pb-24 px-6 md:px-8 relative overflow-hidden select-none">
+    <div class="bg-primary text-white pt-10 pb-24 px-6 md:px-8 relative overflow-hidden select-none">
 
-        {{-- Elemen Dekoratif Aksen Grafis dari Detail Akademik --}}
+        {{-- Elemen Dekoratif Aksen Grafis --}}
         <div class="absolute -top-12 -left-12 w-64 h-64 border-4 border-dashed border-white/10 rounded-full pointer-events-none z-0"></div>
         <div class="absolute top-6 right-[10%] opacity-25 grid grid-cols-6 gap-1.5 pointer-events-none z-0">
             @for ($i = 0; $i < 24; $i++) <div class="w-1.5 h-1.5 bg-white rounded-full"></div> @endfor
         </div>
         <div class="absolute top-4 right-[25%] w-72 h-72 bg-blue-500/10 rounded-full blur-2xl pointer-events-none z-0"></div>
 
-        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center md:items-start justify-between gap-6 relative z-10">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center md:items-start justify-between gap-6 relative z-10">
             <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
-                {{-- Logo / Emblem Dokumen (Kaku Struktural dengan Backdrop Modern) --}}
-                <div class="w-20 h-24 md:w-24 md:h-28 bg-white/10 border border-white/20 flex flex-col items-center justify-center shrink-0 shadow-lg relative p-2 backdrop-blur-sm">
-                    <i class="fa-solid fa-building-columns text-secondary text-3xl md:text-4xl mb-2"></i>
-                    <div class="w-full h-px bg-white/20 mb-1"></div>
-                    <div class="w-3/4 h-px bg-white/20"></div>
-                    @if($isPublished)
-                        <span class="absolute -bottom-3 -right-3 w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center border-2 border-primary shadow-sm" title="Telah Disahkan">
-                            <i class="fa-solid fa-check-double text-white text-xs"></i>
-                        </span>
-                    @endif
+                {{-- Round Logo/Emblem --}}
+                <div class="relative shrink-0">
+                    <div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white text-primary flex items-center justify-center font-extrabold text-3xl md:text-4xl shadow-md border-4 border-white/20">
+                        <i class="fa-solid fa-file-signature"></i>
+                    </div>
                 </div>
 
-                <div class="flex-1 text-center md:text-left min-w-0 mt-2">
-                    <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-[10px] text-secondary font-bold px-3 py-1 rounded-sm mb-3 uppercase tracking-widest shadow-sm backdrop-blur-sm">
-                        <i class="fa-solid fa-bookmark text-[9px]"></i>
-                        Tahun Ajaran {{ $semesterLabel }}
+                <div class="flex-1 text-center md:text-left min-w-0 mt-1">
+                    <h3 class="font-extrabold text-xl md:text-3xl leading-tight uppercase tracking-wide">Laporan Hasil Belajar</h3>
+                    
+                    <div class="mt-3 flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-1.5 text-xs md:text-sm text-white/85 font-medium">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-user text-sm text-secondary"></i>
+                            <span>Siswa: <strong class="text-white">{{ $studentName }}</strong></span>
+                            @if($student && $classroom)
+                                <span class="bg-white/20 px-2 py-0.5 rounded text-[11px] font-bold">{{ $classroom->name }}</span>
+                            @endif
+                        </div>
+                        @if($activeYear)
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-alt text-sm text-secondary"></i>
+                                <span>Tahun Ajaran: <strong class="text-white">{{ $semesterLabel }}</strong></span>
+                            </div>
+                        @endif
                     </div>
-                    <h3 class="font-serif font-bold text-2xl md:text-3xl leading-tight uppercase tracking-widest text-white">Laporan Hasil Belajar</h3>
-                    <p class="text-white/85 text-xs md:text-sm font-medium mt-2 leading-relaxed max-w-md">
-                        Dokumen resmi riwayat akademik dan evaluasi hasil pembelajaran peserta didik atas nama <strong class="text-secondary uppercase">{{ $studentName }}</strong>.
-                    </p>
                 </div>
             </div>
 
             {{-- Grade Badge (Stempel Nilai Resmi) --}}
             @if($isPublished && $activeReport)
-                <div class="shrink-0 self-center md:self-start w-24 h-24 bg-transparent border-4 border-secondary/60 flex flex-col items-center justify-center shadow-sm opacity-95 transform rotate-[-5deg]">
+                <div class="shrink-0 self-center md:self-start w-20 h-20 bg-transparent border-4 border-secondary/60 flex flex-col items-center justify-center shadow-sm opacity-95 transform rotate-[-5deg] mt-2 md:mt-0">
                     @php
                         $s = (float) $activeReport->final_score;
                         $lbl = $s >= 88 ? 'A' : ($s >= 82 ? 'A-' : ($s >= 78 ? 'B+' : ($s >= 75 ? 'B' : 'C')));
                     @endphp
-                    <span class="text-3xl font-black text-secondary leading-none">{{ $lbl }}</span>
-                    <span class="w-12 h-px bg-secondary/40 my-1"></span>
-                    <span class="text-[9px] font-bold text-secondary/80 uppercase tracking-widest">Predikat</span>
+                    <span class="text-2xl font-black text-secondary leading-none">{{ $lbl }}</span>
+                    <span class="w-10 h-px bg-secondary/40 my-1"></span>
+                    <span class="text-[8px] font-bold text-secondary/80 uppercase tracking-widest">Predikat</span>
                 </div>
             @endif
         </div>
@@ -87,37 +91,37 @@
     </div>
 </div>
 
-{{-- Content --}}
-<div class="max-w-4xl mx-auto mt-6 space-y-8 px-4 md:px-0 pb-16 relative z-20 -mt-10 md:-mt-12">
+{{-- Content Area --}}
+<div class="max-w-6xl mx-auto mt-6 space-y-8 px-4 md:px-0 pb-16 relative z-20">
 
     @if(!$student)
         {{-- Siswa Tidak Ditemukan --}}
-        <div class="bg-white rounded-md border-t-4 border-amber-600 border border-slate-200 p-10 text-center shadow-sm">
-            <i class="fa-solid fa-triangle-exclamation text-amber-600 text-3xl block mb-3"></i>
+        <div class="bg-white rounded-2xl border border-slate-100 p-10 text-center shadow-sm -mt-16">
+            <i class="fa-solid fa-triangle-exclamation text-amber-500 text-3xl block mb-3"></i>
             <p class="text-sm font-bold text-slate-800 uppercase tracking-wide">Siswa Tidak Terdaftar</p>
             <p class="text-xs text-slate-500 mt-2">Data peserta didik tidak ditemukan dalam sistem akademik.</p>
         </div>
     @else
         {{-- CARD UTAMA: Dokumen Semester Ini --}}
-        <div class="bg-white rounded-md border border-slate-200 shadow-md overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-md overflow-hidden -mt-16">
 
             {{-- Header Form / Data Diri --}}
-            <div class="bg-slate-50 border-b border-slate-200 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-white border border-slate-200 text-primary flex items-center justify-center shrink-0">
+                    <div class="w-12 h-12 bg-white border border-slate-100 text-primary flex items-center justify-center shrink-0 rounded-xl shadow-sm">
                         <i class="fa-solid fa-id-card text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-0.5">Identitas Peserta Didik</p>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Identitas Peserta Didik</p>
                         <p class="text-base font-extrabold text-slate-900 uppercase tracking-wide">{{ $studentName }}</p>
-                        <p class="text-xs text-slate-600 mt-0.5">
+                        <p class="text-xs text-slate-500 mt-0.5">
                             Kelas: <span class="font-bold text-primary">{{ $classroom?->name ?? '—' }}</span> <span class="mx-1 text-slate-300">|</span> NISN: <span class="font-bold text-slate-700">{{ $student->nisn ?? '—' }}</span>
                         </p>
                     </div>
                 </div>
                 <div class="shrink-0 self-start md:self-center">
                     @if($activeYear)
-                        <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 rounded-sm uppercase tracking-widest border
+                        <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest border
                             {{ $isPublished ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-amber-50 text-amber-700 border-amber-300' }}">
                             <i class="fa-solid {{ $isPublished ? 'fa-check-circle' : 'fa-clock' }}"></i>
                             {{ $isPublished ? 'Dokumen Sah' : 'Menunggu Pengesahan' }}
@@ -131,40 +135,40 @@
                 @if($isPublished && $activeReport)
                     {{-- Grid Statistik Resmi --}}
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div class="border border-emerald-100 p-4 rounded-sm bg-emerald-50/50 text-center shadow-inner">
+                        <div class="border border-emerald-100 p-4 rounded-xl bg-emerald-50/50 text-center shadow-inner">
                             <p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest mb-2">Nilai Rata-rata</p>
                             <p class="text-2xl font-black text-emerald-600">{{ number_format((float)$activeReport->final_score, 1) }}</p>
                         </div>
-                        <div class="border border-slate-200 p-4 rounded-sm bg-slate-50/50 text-center">
+                        <div class="border border-slate-100 p-4 rounded-xl bg-slate-50/50 text-center">
                             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Peringkat Kelas</p>
                             <p class="text-2xl font-black text-slate-800">{{ $activeReport->rank ?? '—' }}</p>
                             <p class="text-[9px] text-slate-500 font-medium mt-1">dari {{ $totalStudents }} Siswa</p>
                         </div>
-                        <div class="border border-slate-200 p-4 rounded-sm bg-slate-50/50 text-center md:col-span-2 flex flex-col justify-center items-center">
+                        <div class="border border-slate-100 p-4 rounded-xl bg-slate-50/50 text-center md:col-span-2 flex flex-col justify-center items-center">
                             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Keputusan Akhir</p>
-                            <span class="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 text-xs font-bold px-4 py-1.5 border border-emerald-300 uppercase tracking-widest">
+                            <span class="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 text-xs font-bold px-4 py-1.5 border border-emerald-300 rounded-full uppercase tracking-widest">
                                 <i class="fa-solid fa-stamp text-sm"></i> LULUS
                             </span>
                         </div>
                     </div>
 
                     <a href="{{ route('parent.report.view', $activeReport->id) }}"
-                       class="w-full flex items-center justify-center gap-3 px-5 py-3 bg-primary hover:bg-opacity-90 text-white font-bold uppercase tracking-widest text-sm rounded-sm transition-all shadow-sm">
+                       class="w-full flex items-center justify-center gap-3 px-5 py-3 bg-primary hover:bg-opacity-90 text-white font-bold uppercase tracking-widest text-sm rounded-xl transition-all shadow-sm">
                         <i class="fa-solid fa-file-pdf"></i>
                         Buka Dokumen Rapor
                     </a>
                 @else
                     {{-- Status Belum Rilis / Draft --}}
-                    <div class="bg-slate-50 border border-slate-200 p-6 text-center">
-                        <div class="w-12 h-12 bg-white border border-slate-200 text-slate-400 flex items-center justify-center mx-auto mb-4 rounded-full shadow-sm">
+                    <div class="bg-slate-50 border border-slate-100 p-6 text-center rounded-2xl">
+                        <div class="w-12 h-12 bg-white border border-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4 rounded-full shadow-sm">
                             <i class="fa-solid fa-file-signature text-lg"></i>
                         </div>
                         <p class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-1">Status Dokumen: Proses Penyusunan</p>
 
                         @if($activeReport && $activeReport->is_submitted)
-                            <p class="text-xs text-slate-600 mb-4">Dokumen telah disubmit oleh Wali Kelas dan sedang menunggu pengesahan Kepala Sekolah.</p>
+                            <p class="text-xs text-slate-500 mb-4">Dokumen telah disubmit oleh Wali Kelas dan sedang menunggu pengesahan Kepala Sekolah.</p>
                         @else
-                            <p class="text-xs text-slate-600 mb-4">Dokumen Rapor sedang dalam proses evaluasi dan penginputan nilai.</p>
+                            <p class="text-xs text-slate-500 mb-4">Dokumen Rapor sedang dalam proses evaluasi dan penginputan nilai.</p>
                         @endif
 
                         {{-- Countdown Resmi --}}
@@ -230,20 +234,20 @@
             </div>
 
             @if($historyReports->isEmpty())
-                <div class="bg-slate-50 border border-slate-200 p-8 text-center rounded-sm">
-                    <p class="text-xs text-slate-500 uppercase tracking-widest">Arsip Tidak Ditemukan</p>
+                <div class="bg-slate-50 border border-slate-100 p-8 text-center rounded-2xl">
+                    <p class="text-xs text-slate-400 uppercase tracking-widest font-bold">Arsip Tidak Ditemukan</p>
                 </div>
             @else
-                <div class="bg-white border border-slate-300 rounded-sm shadow-sm">
+                <div class="bg-white border border-slate-100 rounded-2xl shadow-md overflow-hidden">
                     {{-- Header Tabel Arsip --}}
-                    <div class="hidden md:flex bg-slate-50 border-b border-slate-200 px-6 py-3 text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+                    <div class="hidden md:flex bg-slate-50 border-b border-slate-100 px-6 py-3 text-[10px] font-bold text-slate-600 uppercase tracking-widest">
                         <div class="flex-1">Semester / Tahun Ajaran</div>
                         <div class="w-32 text-center">Status</div>
                         <div class="w-24 text-center">Predikat</div>
                         <div class="w-12 text-right">Aksi</div>
                     </div>
 
-                    <div class="divide-y divide-slate-200">
+                    <div class="divide-y divide-slate-100">
                         @foreach($historyReports as $hist)
                             @php
                                 $histSem   = $hist->academicYear;
@@ -260,7 +264,7 @@
 
                                 {{-- Kolom Nama Semester --}}
                                 <div class="flex-1 flex items-center gap-3 mb-2 md:mb-0">
-                                    <div class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center shrink-0 bg-white shadow-sm">
+                                    <div class="w-8 h-8 rounded-full border border-slate-100 flex items-center justify-center shrink-0 bg-white shadow-sm">
                                         <i class="fa-solid fa-file-contract text-xs {{ $hist->is_validated ? 'text-primary' : 'text-slate-400' }}"></i>
                                     </div>
                                     <div>
