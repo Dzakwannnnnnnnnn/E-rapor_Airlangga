@@ -226,23 +226,45 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="countdown-finished-wrapper" class="hidden text-center py-4">
-                            <h3 class="text-lg font-black uppercase tracking-tight leading-tight text-[#FFB800] mb-2">
-                                Rapor Digital Telah Tersedia
-                            </h3>
-                            <p class="text-xs text-white/70 font-normal">
-                                Silakan login untuk melihat rapor
-                            </p>
-                        </div>
+                        @if($allValidated)
+                            <div id="countdown-finished-wrapper" class="hidden text-center py-4">
+                                <h3 class="text-lg font-black uppercase tracking-tight leading-tight text-[#FFB800] mb-2">
+                                    Rapor Digital Telah Tersedia
+                                </h3>
+                                <p class="text-xs text-white/70 font-normal">
+                                    Silakan login untuk melihat rapor
+                                </p>
+                            </div>
+                        @else
+                            <div id="countdown-finished-wrapper" class="hidden text-center py-4">
+                                <h3 class="text-lg font-black uppercase tracking-tight leading-tight text-[#FFB800] mb-2">
+                                    Menunggu Pengesahan
+                                </h3>
+                                <p class="text-xs text-white/70 font-normal">
+                                    Rapor sedang dalam proses pengesahan oleh Kepala Sekolah. Silakan login kembali nanti.
+                                </p>
+                            </div>
+                        @endif
                     @else
-                        <div class="text-center py-4">
-                            <h3 class="text-lg font-black uppercase tracking-tight leading-tight text-[#FFB800] mb-2">
-                                Rapor Digital Telah Tersedia
-                            </h3>
-                            <p class="text-xs text-white/70 font-normal">
-                                Silakan login untuk melihat rapor
-                            </p>
-                        </div>
+                        @if($allValidated)
+                            <div class="text-center py-4">
+                                <h3 class="text-lg font-black uppercase tracking-tight leading-tight text-[#FFB800] mb-2">
+                                    Rapor Digital Telah Tersedia
+                                </h3>
+                                <p class="text-xs text-white/70 font-normal">
+                                    Silakan login untuk melihat rapor
+                                </p>
+                            </div>
+                        @else
+                            <div class="text-center py-4">
+                                <h3 class="text-lg font-black uppercase tracking-tight leading-tight text-[#FFB800] mb-2">
+                                    Menunggu Pengesahan
+                                </h3>
+                                <p class="text-xs text-white/70 font-normal">
+                                    Tenggat rilis telah lewat, namun rapor masih dalam proses pengesahan oleh Kepala Sekolah.
+                                </p>
+                            </div>
+                        @endif
                     @endif
                 </div>
             </div>

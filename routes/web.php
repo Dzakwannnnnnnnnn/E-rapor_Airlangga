@@ -32,7 +32,16 @@ Route::get('/', function () {
     $activeYear = AcademicYear::where('is_active', true)->first();
     $releaseDate = $activeYear ? $activeYear->report_release_at : null;
 
-    return view('welcome', compact('activeYear', 'releaseDate'));
+    $allValidated = false;
+    if ($activeYear) {
+        $totalStudents = \App\Models\Student::has('classroom')->count();
+        $validatedReports = \App\Models\ReportCard::where('academic_year_id', $activeYear->id)
+            ->where('is_validated', true)
+            ->count();
+        $allValidated = ($totalStudents > 0) && ($validatedReports === $totalStudents);
+    }
+
+    return view('welcome', compact('activeYear', 'releaseDate', 'allValidated'));
 });
 
 // ──────────────────────────────────────────────

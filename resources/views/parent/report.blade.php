@@ -15,8 +15,8 @@
     // Hitung countdown ke publish date
     $releaseAt   = $activeYear?->report_release_at;
     $now         = now();
-    $isPublished = $activeReport && $activeReport->is_validated;
     $isReleased  = $releaseAt ? $now->gte($releaseAt) : false;
+    $isPublished = $activeReport && $activeReport->is_validated && $isReleased && $allValidated;
 
     // Sisa waktu menuju rilis
     $countdown = null;
@@ -169,33 +169,52 @@
 
                         {{-- Countdown Resmi --}}
                         @if($countdown)
-                            <div class="inline-block border border-amber-200 bg-amber-50 px-6 py-4 rounded-sm text-left mx-auto">
-                                <p class="text-[10px] font-bold text-amber-800 uppercase tracking-widest mb-3 border-b border-amber-200 pb-2">
-                                    <i class="fa-regular fa-calendar-check mr-1"></i> Estimasi Penerbitan Dokumen
+                            <div id="countdown-active-wrapper" class="inline-block bg-[#002266] text-white p-6 rounded-2xl shadow-lg border border-white/10 text-left mx-auto max-w-sm w-full relative overflow-hidden">
+                                {{-- Background decorative circle --}}
+                                <div class="absolute -top-10 -right-10 w-24 h-24 bg-white/5 rounded-full pointer-events-none"></div>
+
+                                <p class="text-[10px] font-bold text-[#FFB800] uppercase tracking-widest mb-4 border-b border-white/10 pb-2 flex items-center gap-1.5">
+                                    <i class="fa-regular fa-calendar-check text-xs"></i> Estimasi Penerbitan Dokumen
                                 </p>
-                                <div class="flex items-center justify-center gap-4 text-amber-900">
-                                    <div class="text-center">
-                                        <span class="text-2xl font-black block">{{ $countdown['days'] }}</span>
-                                        <span class="text-[9px] uppercase tracking-widest">Hari</span>
+
+                                <div class="grid grid-cols-4 gap-2 text-center mb-4" id="countdown-container">
+                                    <div class="bg-white/5 border border-white/10 rounded-lg py-2.5 backdrop-blur-xs">
+                                        <span id="parent-cd-days" class="block text-xl font-black font-mono text-[#FFB800] leading-none">00</span>
+                                        <span class="text-[8px] uppercase tracking-wider opacity-60">Hari</span>
                                     </div>
-                                    <span class="text-xl font-bold opacity-50">:</span>
-                                    <div class="text-center">
-                                        <span class="text-2xl font-black block">{{ str_pad($countdown['hours'], 2, '0', STR_PAD_LEFT) }}</span>
-                                        <span class="text-[9px] uppercase tracking-widest">Jam</span>
+                                    <div class="bg-white/5 border border-white/10 rounded-lg py-2.5 backdrop-blur-xs">
+                                        <span id="parent-cd-hours" class="block text-xl font-black font-mono text-[#FFB800] leading-none">00</span>
+                                        <span class="text-[8px] uppercase tracking-wider opacity-60">Jam</span>
                                     </div>
-                                    <span class="text-xl font-bold opacity-50">:</span>
-                                    <div class="text-center">
-                                        <span class="text-2xl font-black block">{{ str_pad($countdown['minutes'], 2, '0', STR_PAD_LEFT) }}</span>
-                                        <span class="text-[9px] uppercase tracking-widest">Menit</span>
+                                    <div class="bg-white/5 border border-white/10 rounded-lg py-2.5 backdrop-blur-xs">
+                                        <span id="parent-cd-minutes" class="block text-xl font-black font-mono text-[#FFB800] leading-none">00</span>
+                                        <span class="text-[8px] uppercase tracking-wider opacity-60">Menit</span>
+                                    </div>
+                                    <div class="bg-white/5 border border-white/10 rounded-lg py-2.5 backdrop-blur-xs">
+                                        <span id="parent-cd-seconds" class="block text-xl font-black font-mono text-[#FFB800] leading-none">00</span>
+                                        <span class="text-[8px] uppercase tracking-wider opacity-60">Detik</span>
                                     </div>
                                 </div>
-                                <p class="text-[10px] text-amber-700 mt-4 text-center">
+
+                                <p class="text-[10px] text-white/70 text-center">
                                     Jadwal: <strong>{{ $releaseAt->format('d F Y, H:i') }} WIB</strong>
                                 </p>
                             </div>
                         @elseif($releaseAt && $isReleased && !$isPublished)
-                            <div class="inline-block border border-blue-200 bg-blue-50 px-6 py-3 rounded-sm text-blue-800 text-xs font-medium">
-                                <i class="fa-solid fa-circle-info mr-2"></i> Tenggat rilis telah lewat, menunggu tahap finalisasi administrasi.
+                            <div class="inline-block bg-[#002266] text-white p-6 rounded-2xl shadow-lg border border-white/10 text-left mx-auto max-w-sm w-full relative overflow-hidden">
+                                {{-- Background decorative circle --}}
+                                <div class="absolute -top-10 -right-10 w-24 h-24 bg-white/5 rounded-full pointer-events-none"></div>
+
+                                <p class="text-[10px] font-bold text-[#FFB800] uppercase tracking-widest mb-3 border-b border-white/10 pb-2 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-info text-xs"></i> Status Rapor
+                                </p>
+
+                                <h3 class="text-lg font-black uppercase tracking-tight leading-tight text-[#FFB800] mb-2">
+                                    Menunggu Pengesahan
+                                </h3>
+                                <p class="text-xs text-white/70 font-normal leading-relaxed">
+                                    Tenggat rilis telah lewat, namun rapor masih dalam proses pengesahan oleh Kepala Sekolah.
+                                </p>
                             </div>
                         @endif
                     </div>
@@ -290,5 +309,41 @@
         </div>
     @endif
 </div>
+
+@if($releaseAt && !$isReleased)
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const targetDate = new Date("{{ $releaseAt->toIso8601String() }}").getTime();
+
+        const timer = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                clearInterval(timer);
+                window.location.reload();
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const dEl = document.getElementById("parent-cd-days");
+            const hEl = document.getElementById("parent-cd-hours");
+            const mEl = document.getElementById("parent-cd-minutes");
+            const sEl = document.getElementById("parent-cd-seconds");
+
+            if (dEl) dEl.innerText = days.toString().padStart(2, '0');
+            if (hEl) hEl.innerText = hours.toString().padStart(2, '0');
+            if (mEl) mEl.innerText = minutes.toString().padStart(2, '0');
+            if (sEl) sEl.innerText = seconds.toString().padStart(2, '0');
+        }, 1000);
+    });
+</script>
+@endpush
+@endif
 
 @endsection
