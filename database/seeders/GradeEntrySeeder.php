@@ -22,9 +22,6 @@ class GradeEntrySeeder extends Seeder
 
         foreach ($assignments as $assignment) {
             // Skip seeding grades for Rahmawati to simulate entering scores from scratch
-            if ($assignment->teacher->user->email === 'rahmawati@test.com') {
-                continue;
-            }
 
             $students   = $assignment->classroom->students;
             $assessments = $assignment->assessments;
